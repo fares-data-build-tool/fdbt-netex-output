@@ -3,7 +3,7 @@ import singleTicketNetexGenerator from './single-ticket/singleTicketNetexGenerat
 import periodTicketNetexGenerator from './period-ticket/periodTicketNetexGenerator';
 import * as dynamodb from './data/dynamodb';
 import * as s3 from './data/s3';
-import { OperatorData, ServiceData, MatchingData, GeographicalFareZonePass } from './types';
+import { OperatorData, ServiceData, MatchingData, GeographicalFareZonePass, MultipleServicePeriodPass, SelectedService } from './types';
 
 const getOperatorsTableData = async (nocCode: string): Promise<OperatorData> => {
     try {
@@ -36,17 +36,18 @@ const getOperatorsTableData = async (nocCode: string): Promise<OperatorData> => 
     }
 };
 
-const getServicesTableData = async (nocCode: string, lineName: string): Promise<ServiceData> => {
-    try {
-        const servicesItem = await dynamodb.getServicesItem(nocCode, lineName);
-        const serviceDescription = dynamodb.getAttributeValueFromDynamoDBItemAsAString(servicesItem, 'Description');
+const getServicesTableData = async (nocCode: string, lineName: string | SelectedService[]): Promise<ServiceData> => {
+    // try {
+    //     if(lineName)
+    //     const servicesItem = await dynamodb.getServicesItem(nocCode, lineName);
+    //     const serviceDescription = dynamodb.getAttributeValueFromDynamoDBItemAsAString(servicesItem, 'Description');
 
-        return {
-            serviceDescription,
-        };
-    } catch (error) {
-        throw new Error(`Error retrieving service info from dynamo: ${error.message}`);
-    }
+    //     return {
+    //         serviceDescription,
+    //     };
+    // } catch (error) {
+    //     throw new Error(`Error retrieving service info from dynamo: ${error.message}`);
+    // }
 };
 
 export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
@@ -63,13 +64,25 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
             }_${new Date().toISOString()}.xml`;
             const fileNameWithoutSlashes = fileName.replace('/', '_');
             await s3.uploadNetexToS3(generatedNetex, fileNameWithoutSlashes);
-        } else if (s3Data.type === 'period') {
+        } else if (s3Data.type === 'periodGeoZone') {
             const geoFareZonePass: GeographicalFareZonePass = s3Data;
             const operatorData = await getOperatorsTableData(geoFareZonePass.nocCode);
             const netexGen = periodTicketNetexGenerator(geoFareZonePass, operatorData);
             const generatedNetex = await netexGen.generate();
             const fileName = `${geoFareZonePass.operatorName.replace(/\/|\s/g, '_')}_${geoFareZonePass.zoneName}_${
                 geoFareZonePass.productName
+            }_${new Date().toISOString()}.xml`;
+            const fileNameWithoutSlashes = fileName.replace('/', '_');
+            await s3.uploadNetexToS3(generatedNetex, fileNameWithoutSlashes);
+        } else if (s3Data.type === 'periodMultipleServices') {
+            const multipleServiceData: MultipleServicePeriodPass = s3Data;
+            const operatorData = await getOperatorsTableData(multipleServiceData.nocCode);
+            const {selectedServices} = multipleServiceData;
+            const servicesData = await getServicesTableData(multipleServiceData.nocCode, selectedServices);
+            const netexGen; // generator method
+            const generatedNetex = await netexGen.generate();
+            const fileName = `${multipleServiceData.operatorShortName.replace(/\/|\s/g, '_')}_${
+                multipleServiceData.lineName
             }_${new Date().toISOString()}.xml`;
             const fileNameWithoutSlashes = fileName.replace('/', '_');
             await s3.uploadNetexToS3(generatedNetex, fileNameWithoutSlashes);

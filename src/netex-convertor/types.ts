@@ -54,3 +54,19 @@ export interface GeographicalFareZonePass {
     daysValid: string;
     expiryRules: string;
 }
+
+export interface MultipleServicePeriodPass {
+    operatorName: string;
+    type: string;
+    productName: string;
+    productPrice: string;
+    daysValid: string;
+    expiryRules: string;
+    nocCode: string;
+    selectedServices: [SelectedService];
+}
+
+export interface SelectedService {
+    lineName: string; 
+    startDate: string;
+}
