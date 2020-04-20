@@ -1,93 +1,77 @@
-import AWS from 'aws-sdk';
-import * as mysql from 'mysql2';
-import { Query } from 'mysql2';
+import { createPool, Pool } from 'mysql2/promise';
+import awsParamStore from 'aws-param-store';
 
-const { RDS_HOST } = process.env;
+export const getAuroraDBClient = (): Pool => {
+    let client: Pool;
 
-const getSsmParameterValue = async (parameterName: string): Promise<string> => {
-    const ssm = new AWS.SSM();
-    const params = {
-        Name: parameterName,
-        WithDecryption: true,
-    };
-    const value = await ssm.getParameter(params).promise();
-
-    if (value === undefined || value.Parameter === undefined || value.Parameter.Value === undefined) {
-        throw new Error('Parameters are undefined.');
-    }
-
-    return value.Parameter.Value;
-};
-
-const connectToDatabase = async (): Promise<mysql.Connection> => {
-    let connection: mysql.Connection;
-    try {
-        const user = await getSsmParameterValue('fdbt-rds-netex-output-username');
-        const password = await getSsmParameterValue('fdbt-rds-netex-output-password');
-
-        connection = mysql.createConnection({
-            host: RDS_HOST,
-            database: 'FDBT',
-            user,
-            password,
+    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+        client = createPool({
+            host: 'localhost',
+            user: 'fdbt_site',
+            password: 'password',
+            database: 'fdbt',
+            waitForConnections: true,
+            connectionLimit: 10,
+            queueLimit: 0,
         });
-    } catch (error) {
-        throw new Error(`Error connecting to database: ${error.message}`);
+    } else {
+        client = createPool({
+            host: process.env.RDS_HOST,
+            user: awsParamStore.getParameterSync('fdbt-rds-site-username', { region: 'eu-west-2' }).Value,
+            password: awsParamStore.getParameterSync('fdbt-rds-site-password', { region: 'eu-west-2' }).Value,
+            database: 'fdbt',
+            waitForConnections: true,
+            connectionLimit: 10,
+            queueLimit: 0,
+        });
     }
-    return connection;
+
+    return client;
 };
 
-export const getAttributeValueFromNocTable = async (nocCode: string, attribute: string): Promise<Query> => {
-    try {
-        const connection = await connectToDatabase();
-        const queryInput = `Select ${attribute} from nocTable where NocCode = "${nocCode}"`;
-        const attributeValue = connection.query(queryInput);
-        connection.end();
+let connectionPool: Pool;
 
-        return attributeValue;
+const executeQuery = async (query: string): Promise <[]> => {
+    if (!connectionPool) {
+        connectionPool = getAuroraDBClient();
+    }
+    const [rows] = await connectionPool.execute(query);
+    return JSON.parse(JSON.stringify(rows));
+};
+
+export const getAttributeValueByNocCode = async (nocCode: string, attribute: string, table: string): Promise<[]> => {
+    try {
+        let queryInput;
+        switch (table) {
+        case 'nocLine':    
+        case 'nocTable':
+            queryInput = `Select ${attribute} from ${table} where nocCode = ${nocCode}`;
+            break;
+        case 'nocPublicName':
+            queryInput = `Select ${attribute} from ${table} inner join nocTable on nocPublicName.pubNmId = nocTable.pubNmId where nocCode = ${nocCode}`;
+            break;
+        default:
+            throw new Error(`Unrecognised database table.`);
+        }
+
+        const queryResult = await executeQuery(queryInput);
+
+        return queryResult;
+        
     } catch (err) {
-        throw new Error(`Could not retireve attribute value from database: ${err.name}, ${err.message}`);
+        throw new Error(`Could not retrieve attribute value from AuroraDB: ${err.name}, ${err.message}`);
     }
 };
 
-export const getAttributeValueFromNocPublicName = async (
-    nocCode: string,
-    attribute: string
-): Promise<Query> => {
+export const getAttributeValueByNocCodeAndLineName = async (nocCode: string, lineName: string, attribute: string, table: string): Promise<[]> => {
     try {
-        const connection = await connectToDatabase();
-        const queryInput = `Select ${attribute} from nocPublicName inner join NocTable on nocPublicName.pubNmId = nocTable.pubNmId where NocCode = "${nocCode}"`;
-        const attributeValue = connection.query(queryInput);
-        connection.end();
+        const queryInput = `Select ${attribute} from ${table} where (nocCode = "${nocCode}" and lineName = "${lineName}")`;
+            
+        const queryResult = await executeQuery(queryInput);
 
-        return attributeValue;
+        return queryResult;
+        
     } catch (err) {
-        throw new Error(`Could not retireve attribute value from database: ${err.name}, ${err.message}`);
-    }
-};
-
-export const getAttributeValueFromNocLine = async (nocCode: string, attribute: string): Promise<Query> => {
-    try {
-        const connection = await connectToDatabase();
-        const queryInput = `Select ${attribute} from nocLine where NocCode = "${nocCode}"`;
-        const attributeValue = connection.query(queryInput);
-        connection.end();
-
-        return attributeValue;
-    } catch (err) {
-        throw new Error(`Could not retireve attribute value from database: ${err.name}, ${err.message}`);
-    }
-};
-
-export const getAttributeValueFromTndsOperatorService = async (nocCode: string, lineName: string, attribute: string): Promise<Query> => {
-    try {
-        const connection = await connectToDatabase();
-        const queryInput = `Select ${attribute} from tndsOperatorService where (NocCode = "${nocCode}" and lineName = "${lineName}"`;
-        const attributeValue = connection.query(queryInput);
-        connection.end();
-
-        return attributeValue;
-    } catch (err) {
-        throw new Error(`Could not retireve attribute value from database: ${err.name}, ${err.message}`);
+        throw new Error(`Could not retrieve attribute value from AuroraDB: ${err.name}, ${err.message}`);
     }
 };

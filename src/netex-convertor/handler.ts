@@ -5,63 +5,43 @@ import * as rds from './data/rds';
 import * as s3 from './data/s3';
 import { OperatorData, ServiceData, MatchingData, GeographicalFareZonePass } from './types';
 
-const getNocTableData = (nocCode: string): Promise<OperatorData> => {
+const getOperatorData = async (nocCode: string): Promise<OperatorData> => {
     try {
-        const opId = rds.getAttributeValueFromNocTable(nocCode, 'OpId');
-        const vosaPSVLicenseName = rds.getAttributeValueFromNocTable(nocCode,
-            'vosaPsvLicenseName',
+        const opId = await rds.getAttributeValueByNocCode(nocCode, 'OpId', 'nocTable');
+        const vosaPSVLicenseName = await rds.getAttributeValueByNocCode(nocCode,
+            'vosaPsvLicenseName', 'nocTable'
         );
+        const website = await rds.getAttributeValueByNocCode(nocCode, 'website', 'nocPublicName');
+        const ttrteEnq = await rds.getAttributeValueByNocCode(nocCode, 'ttrteEnq', 'nocPublicName');
+        const publicName = await rds.getAttributeValueByNocCode(nocCode, 'operatorPublicName', 'nocTable');
+        const fareEnq = await rds.getAttributeValueByNocCode(nocCode, 'fareEnq', 'nocPublicName');
+        const complEnq = await rds.getAttributeValueByNocCode(nocCode, 'ComplEnq', 'nocPublicName');
+        const mode = await rds.getAttributeValueByNocCode(nocCode, 'mode', 'nocLine');
 
         return {
             opId,
             vosaPSVLicenseName,
-        };
-    } catch (error) {
-        throw new Error(`Error retrieving nocTable info from dynamo: ${error.message}`);
-    }
-};
-
-const getNocPublicNameData = (nocCode: string): Promise<OperatorData> => {
-    try {
-        const website = rds.getAttributeValueFromNocPublicName(nocCode, 'website');
-        const ttrteEnq = rds.getAttributeValueFromNocPublicName(nocCode, 'ttrteEnq');
-        const publicName = rds.getAttributeValueFromNocPublicName(nocCode, 'operatorPublicName');
-        const fareEnq = rds.getAttributeValueFromNocPublicName(nocCode, 'fareEnq');
-        const complEnq = rds.getAttributeValueFromNocPublicName(nocCode, 'ComplEnq');
-
-        return {
             website,
             ttrteEnq,
             publicName,
             fareEnq,
             complEnq,
-        };
-    } catch (error) {
-        throw new Error(`Error retrieving nocPublicName info from dynamo: ${error.message}`);
-    }
-};
-
-const getNocLineData = (nocCode: string): Promise<OperatorData> => {
-    try {
-        const mode = rds.getAttributeValueFromNocLine(nocCode, 'mode');
-
-        return {
             mode,
         };
     } catch (error) {
-        throw new Error(`Error retrieving nocLine info from dynamo: ${error.message}`);
+        throw new Error(`Error retrieving operator data from database: ${error.message}`);
     }
 };
 
-const getTndsOperatorServiceData = (nocCode: string, lineName: string): Promise<ServiceData> => {
+const getTndsServiceData = async (nocCode: string, lineName: string): Promise<ServiceData> => {
     try {
-        const serviceDescription = rds.getAttributeValueFromTndsOperatorService(nocCode, lineName, 'serviceDescription');
+        const serviceDescription = await rds.getAttributeValueByNocCodeAndLineName(nocCode, lineName, 'description', 'tndsService');
 
         return {
             serviceDescription,
         };
     } catch (error) {
-        throw new Error(`Error retrieving service info from dynamo: ${error.message}`);
+        throw new Error(`Error retrieving service data from database: ${error.message}`);
     }
 };
 
@@ -70,11 +50,9 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
         const s3Data = await s3.fetchDataFromS3(event);
         if (s3Data.type === 'pointToPoint') {
             const matchingData: MatchingData = s3Data;
-            const operatorData = getNocTableData(matchingData.nocCode);
-            const operatorData = getNocPublicNameData(matchingData.nocCode);
-            const operatorData = getNocLineData(matchingData.nocCode);
-            const servicesData = getTndsOperatorServiceData(matchingData.nocCode, matchingData.lineName);
-            const netexGen = singleTicketNetexGenerator(matchingData, operatorData, servicesData);
+            const operatorData = getOperatorData(matchingData.nocCode);
+            const serviceData = getTndsServiceData(matchingData.nocCode, matchingData.lineName);
+            const netexGen = singleTicketNetexGenerator(matchingData, operatorData, serviceData);
             const generatedNetex = await netexGen.generate();
             const fileName = `${matchingData.operatorShortName.replace(/\/|\s/g, '_')}_${
                 matchingData.lineName
@@ -83,9 +61,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
             await s3.uploadNetexToS3(generatedNetex, fileNameWithoutSlashes);
         } else if (s3Data.type === 'period') {
             const geoFareZonePass: GeographicalFareZonePass = s3Data;
-            const operatorData = getNocTableData(geoFareZonePass.nocCode);
-            const operatorData = getNocPublicNameData(geoFareZonePass.nocCode);
-            const operatorData = getNocLineData(geoFareZonePass.nocCode);
+            const operatorData = getOperatorData(geoFareZonePass.nocCode);
             const netexGen = periodTicketNetexGenerator(geoFareZonePass, operatorData);
             const generatedNetex = await netexGen.generate();
             const fileName = `${geoFareZonePass.operatorName.replace(/\/|\s/g, '_')}_${geoFareZonePass.zoneName}_${
