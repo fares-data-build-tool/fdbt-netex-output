@@ -15,7 +15,7 @@ const getOperatorData = async (nocCode: string): Promise<OperatorData> => {
         const ttrteEnq = await rds.getAttributeValueByNocCode(nocCode, 'ttrteEnq', 'nocPublicName');
         const publicName = await rds.getAttributeValueByNocCode(nocCode, 'operatorPublicName', 'nocTable');
         const fareEnq = await rds.getAttributeValueByNocCode(nocCode, 'fareEnq', 'nocPublicName');
-        const complEnq = await rds.getAttributeValueByNocCode(nocCode, 'ComplEnq', 'nocPublicName');
+        const complEnq = await rds.getAttributeValueByNocCode(nocCode, 'complEnq', 'nocPublicName');
         const mode = await rds.getAttributeValueByNocCode(nocCode, 'mode', 'nocLine');
 
         return {
@@ -50,8 +50,8 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
         const s3Data = await s3.fetchDataFromS3(event);
         if (s3Data.type === 'pointToPoint') {
             const matchingData: MatchingData = s3Data;
-            const operatorData = getOperatorData(matchingData.nocCode);
-            const serviceData = getTndsServiceData(matchingData.nocCode, matchingData.lineName);
+            const operatorData = await getOperatorData(matchingData.nocCode);
+            const serviceData = await getTndsServiceData(matchingData.nocCode, matchingData.lineName);
             const netexGen = singleTicketNetexGenerator(matchingData, operatorData, serviceData);
             const generatedNetex = await netexGen.generate();
             const fileName = `${matchingData.operatorShortName.replace(/\/|\s/g, '_')}_${
@@ -61,7 +61,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
             await s3.uploadNetexToS3(generatedNetex, fileNameWithoutSlashes);
         } else if (s3Data.type === 'period') {
             const geoFareZonePass: GeographicalFareZonePass = s3Data;
-            const operatorData = getOperatorData(geoFareZonePass.nocCode);
+            const operatorData = await getOperatorData(geoFareZonePass.nocCode);
             const netexGen = periodTicketNetexGenerator(geoFareZonePass, operatorData);
             const generatedNetex = await netexGen.generate();
             const fileName = `${geoFareZonePass.operatorName.replace(/\/|\s/g, '_')}_${geoFareZonePass.zoneName}_${

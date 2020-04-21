@@ -1,13 +1,17 @@
 import { createPool, Pool } from 'mysql2/promise';
 import awsParamStore from 'aws-param-store';
 
+export interface AttributeType {
+    attribute: string;
+}
+
 export const getAuroraDBClient = (): Pool => {
     let client: Pool;
 
     if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
         client = createPool({
             host: 'localhost',
-            user: 'fdbt_site',
+            user: 'fdbt_netex',
             password: 'password',
             database: 'fdbt',
             waitForConnections: true,
@@ -17,8 +21,8 @@ export const getAuroraDBClient = (): Pool => {
     } else {
         client = createPool({
             host: process.env.RDS_HOST,
-            user: awsParamStore.getParameterSync('fdbt-rds-site-username', { region: 'eu-west-2' }).Value,
-            password: awsParamStore.getParameterSync('fdbt-rds-site-password', { region: 'eu-west-2' }).Value,
+            user: awsParamStore.getParameterSync('fdbt-rds-netex-output-username', { region: 'eu-west-2' }).Value,
+            password: awsParamStore.getParameterSync('fdbt-rds-netex-output-password', { region: 'eu-west-2' }).Value,
             database: 'fdbt',
             waitForConnections: true,
             connectionLimit: 10,
@@ -39,37 +43,37 @@ const executeQuery = async (query: string): Promise <[]> => {
     return JSON.parse(JSON.stringify(rows));
 };
 
-export const getAttributeValueByNocCode = async (nocCode: string, attribute: string, table: string): Promise<[]> => {
+export const getAttributeValueByNocCode = async (nocCode: string): Promise<string> => {
     try {
-        let queryInput;
-        switch (table) {
-        case 'nocLine':    
-        case 'nocTable':
-            queryInput = `Select ${attribute} from ${table} where nocCode = ${nocCode}`;
-            break;
-        case 'nocPublicName':
-            queryInput = `Select ${attribute} from ${table} inner join nocTable on nocPublicName.pubNmId = nocTable.pubNmId where nocCode = ${nocCode}`;
-            break;
-        default:
-            throw new Error(`Unrecognised database table.`);
-        }
+        const queryInput = 'SELECT nocTable.opId, nocTable.vosaPsvLicenseName, nocTable.operatorPublicName,' +
+        ' website.nocPublicName, ttrteEnq.nocPublicName, fareEnq.nocPublicName, complEnq.nocPublicName, nocLine.mode' +
+        ' FROM ((nocTable INNER JOIN nocPublicName ON nocTable.pubNmId = nocPublicName.pubNmId)' +
+        ' INNER JOIN nocLine ON nocTable.nocCode = nocLine.nocCode) WHERE `nocCode` = ?';
 
-        const queryResult = await executeQuery(queryInput);
+        const queryResult = (await executeQuery(queryInput, [nocCode])).map((item: AttributeType) => ({
+            attribute: item.attribute,
+        }));
 
-        return queryResult;
+        const attributeValue = queryResult[0].attribute;
+
+        return attributeValue;
         
     } catch (err) {
         throw new Error(`Could not retrieve attribute value from AuroraDB: ${err.name}, ${err.message}`);
     }
 };
 
-export const getAttributeValueByNocCodeAndLineName = async (nocCode: string, lineName: string, attribute: string, table: string): Promise<[]> => {
+export const getAttributeValueByNocCodeAndLineName = async (nocCode: string, lineName: string, attribute: string, table: string): Promise<string> => {
     try {
         const queryInput = `Select ${attribute} from ${table} where (nocCode = "${nocCode}" and lineName = "${lineName}")`;
             
-        const queryResult = await executeQuery(queryInput);
+        const queryResult = (await executeQuery(queryInput)).map((item: AttributeType) => ({
+            attribute: item.attribute,
+        }));
 
-        return queryResult;
+        const attributeValue = queryResult[0].attribute;
+
+        return attributeValue;
         
     } catch (err) {
         throw new Error(`Could not retrieve attribute value from AuroraDB: ${err.name}, ${err.message}`);
