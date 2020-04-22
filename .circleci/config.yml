@@ -150,7 +150,6 @@ workflows:
                           only:
                               - develop
                               - master
-                              - feature/TFN-332_update_netex_convertor_to_aurora
 
             - audit-netex-output-resources:
                   requires:
@@ -160,7 +159,6 @@ workflows:
                           only:
                               - develop
                               - master
-                              - feature/TFN-332_update_netex_convertor_to_aurora
 
             - audit-netex-validator:
                   requires:
@@ -170,7 +168,6 @@ workflows:
                           only:
                               - develop
                               - master
-                              - feature/TFN-332_update_netex_convertor_to_aurora
 
             - deploy-netex-validator-to-test:
                   requires:
@@ -180,7 +177,6 @@ workflows:
                       branches:
                           only:
                               - develop
-                              - feature/TFN-332_update_netex_convertor_to_aurora
 
             - hold-netex-validator-preprod-deployment:
                   type: approval
@@ -207,7 +203,6 @@ workflows:
                           only:
                               - develop
                               - master
-                              - feature/TFN-332_update_netex_convertor_to_aurora
 
             - test-netex-output-resources:
                   requires:
@@ -217,7 +212,6 @@ workflows:
                           only:
                               - develop
                               - master
-                              - feature/TFN-332_update_netex_convertor_to_aurora
 
             - lint-netex-output-resources:
                   requires:
@@ -227,7 +221,6 @@ workflows:
                           only:
                               - develop
                               - master
-                              - feature/TFN-332_update_netex_convertor_to_aurora
 
             - deploy-netex-output-resources-to-test:
                   requires:
@@ -238,7 +231,6 @@ workflows:
                       branches:
                           only:
                               - develop
-                              - feature/TFN-332_update_netex_convertor_to_aurora
 
             - hold-preprod-deployment:
                   type: approval
