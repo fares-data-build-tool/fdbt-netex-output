@@ -41,6 +41,8 @@ functions:
                 - Fn::ImportValue: ${self:provider.stage}:PrivateSubnetA
                 - Fn::ImportValue: ${self:provider.stage}:PrivateSubnetB
         environment:
+            AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
+-           UNVALIDATED_NETEX_BUCKET: fdbt-unvalidated-netex-data-${self:provider.stage}
             RDS_HOST:
                 Fn::ImportValue: ${self:provider.stage}:RdsHostName       
 

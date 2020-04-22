@@ -5,7 +5,7 @@ import * as s3 from './data/s3';
 import * as singleTicketNetexGenerator from './single-ticket/singleTicketNetexGenerator';
 import * as periodTicketNetexGenerator from './period-ticket/periodTicketNetexGenerator';
 
-jest.mock('./data/rds.ts');
+jest.mock('./data/auroradb.ts');
 jest.spyOn(s3, 'uploadNetexToS3').mockImplementation(() => Promise.resolve());
 
 describe('netexConvertorHandler', () => {
