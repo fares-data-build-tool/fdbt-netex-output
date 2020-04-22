@@ -3,55 +3,15 @@ import singleTicketNetexGenerator from './single-ticket/singleTicketNetexGenerat
 import periodTicketNetexGenerator from './period-ticket/periodTicketNetexGenerator';
 import * as rds from './data/rds';
 import * as s3 from './data/s3';
-import { OperatorData, ServiceData, MatchingData, GeographicalFareZonePass } from './types';
-
-const getOperatorData = async (nocCode: string): Promise<OperatorData> => {
-    try {
-        const opId = await rds.getAttributeValueByNocCode(nocCode, 'OpId', 'nocTable');
-        const vosaPSVLicenseName = await rds.getAttributeValueByNocCode(nocCode,
-            'vosaPsvLicenseName', 'nocTable'
-        );
-        const website = await rds.getAttributeValueByNocCode(nocCode, 'website', 'nocPublicName');
-        const ttrteEnq = await rds.getAttributeValueByNocCode(nocCode, 'ttrteEnq', 'nocPublicName');
-        const publicName = await rds.getAttributeValueByNocCode(nocCode, 'operatorPublicName', 'nocTable');
-        const fareEnq = await rds.getAttributeValueByNocCode(nocCode, 'fareEnq', 'nocPublicName');
-        const complEnq = await rds.getAttributeValueByNocCode(nocCode, 'complEnq', 'nocPublicName');
-        const mode = await rds.getAttributeValueByNocCode(nocCode, 'mode', 'nocLine');
-
-        return {
-            opId,
-            vosaPSVLicenseName,
-            website,
-            ttrteEnq,
-            publicName,
-            fareEnq,
-            complEnq,
-            mode,
-        };
-    } catch (error) {
-        throw new Error(`Error retrieving operator data from database: ${error.message}`);
-    }
-};
-
-const getTndsServiceData = async (nocCode: string, lineName: string): Promise<ServiceData> => {
-    try {
-        const serviceDescription = await rds.getAttributeValueByNocCodeAndLineName(nocCode, lineName, 'description', 'tndsService');
-
-        return {
-            serviceDescription,
-        };
-    } catch (error) {
-        throw new Error(`Error retrieving service data from database: ${error.message}`);
-    }
-};
+import { MatchingData, GeographicalFareZonePass } from './types';
 
 export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
     try {
         const s3Data = await s3.fetchDataFromS3(event);
         if (s3Data.type === 'pointToPoint') {
             const matchingData: MatchingData = s3Data;
-            const operatorData = await getOperatorData(matchingData.nocCode);
-            const serviceData = await getTndsServiceData(matchingData.nocCode, matchingData.lineName);
+            const operatorData = await rds.getOperatorDataByNocCode(matchingData.nocCode);
+            const serviceData = await rds.getTndsServiceDataByNocCodeAndLineName(matchingData.nocCode, matchingData.lineName);
             const netexGen = singleTicketNetexGenerator(matchingData, operatorData, serviceData);
             const generatedNetex = await netexGen.generate();
             const fileName = `${matchingData.operatorShortName.replace(/\/|\s/g, '_')}_${
@@ -61,7 +21,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
             await s3.uploadNetexToS3(generatedNetex, fileNameWithoutSlashes);
         } else if (s3Data.type === 'period') {
             const geoFareZonePass: GeographicalFareZonePass = s3Data;
-            const operatorData = await getOperatorData(geoFareZonePass.nocCode);
+            const operatorData = await rds.getOperatorDataByNocCode(geoFareZonePass.nocCode);
             const netexGen = periodTicketNetexGenerator(geoFareZonePass, operatorData);
             const generatedNetex = await netexGen.generate();
             const fileName = `${geoFareZonePass.operatorName.replace(/\/|\s/g, '_')}_${geoFareZonePass.zoneName}_${

@@ -1,9 +1,6 @@
 import { createPool, Pool } from 'mysql2/promise';
 import awsParamStore from 'aws-param-store';
-
-export interface AttributeType {
-    attribute: string;
-}
+import { OperatorData, ServiceData } from '../types';
 
 export const getAuroraDBClient = (): Pool => {
     let client: Pool;
@@ -35,47 +32,53 @@ export const getAuroraDBClient = (): Pool => {
 
 let connectionPool: Pool;
 
-const executeQuery = async (query: string): Promise <[]> => {
+const executeQuery = async <T>(query: string, values: string[]): Promise<T> => {
     if (!connectionPool) {
         connectionPool = getAuroraDBClient();
     }
-    const [rows] = await connectionPool.execute(query);
+    const [rows] = await connectionPool.execute(query, values);
     return JSON.parse(JSON.stringify(rows));
 };
 
-export const getAttributeValueByNocCode = async (nocCode: string): Promise<string> => {
+export const getOperatorDataByNocCode = async (nocCode: string): Promise<OperatorData> => {
     try {
-        const queryInput = 'SELECT nocTable.opId, nocTable.vosaPsvLicenseName, nocTable.operatorPublicName,' +
-        ' website.nocPublicName, ttrteEnq.nocPublicName, fareEnq.nocPublicName, complEnq.nocPublicName, nocLine.mode' +
-        ' FROM ((nocTable INNER JOIN nocPublicName ON nocTable.pubNmId = nocPublicName.pubNmId)' +
-        ' INNER JOIN nocLine ON nocTable.nocCode = nocLine.nocCode) WHERE `nocCode` = ?';
+        const queryInput =
+            'SELECT nocTable.opId, nocTable.vosaPsvLicenseName, nocTable.operatorPublicName,' +
+            ' nocPublicName.website, nocPublicName.ttrteEnq, nocPublicName.fareEnq, nocPublicName.complEnq, nocLine.mode' +
+            ' FROM nocTable JOIN nocPublicName ON nocTable.pubNmId = nocPublicName.pubNmId' +
+            ' JOIN nocLine ON nocTable.nocCode = nocLine.nocCode WHERE nocTable.nocCode = ?';
 
-        const queryResult = (await executeQuery(queryInput, [nocCode])).map((item: AttributeType) => ({
-            attribute: item.attribute,
-        }));
+        const queryResult = await executeQuery<OperatorData[]>(queryInput, [nocCode]);
 
-        const attributeValue = queryResult[0].attribute;
+        const operatorData = queryResult[0];
 
-        return attributeValue;
-        
+        if (!operatorData) {
+            throw new Error(`No operator data found for nocCode: ${nocCode}`);
+        }
+
+        return operatorData;
     } catch (err) {
-        throw new Error(`Could not retrieve attribute value from AuroraDB: ${err.name}, ${err.message}`);
+        throw new Error(`Could not retrieve operator data from AuroraDB: ${err.stack}`);
     }
 };
 
-export const getAttributeValueByNocCodeAndLineName = async (nocCode: string, lineName: string, attribute: string, table: string): Promise<string> => {
+export const getTndsServiceDataByNocCodeAndLineName = async (
+    nocCode: string,
+    lineName: string,
+): Promise<ServiceData> => {
     try {
-        const queryInput = `Select ${attribute} from ${table} where (nocCode = "${nocCode}" and lineName = "${lineName}")`;
-            
-        const queryResult = (await executeQuery(queryInput)).map((item: AttributeType) => ({
-            attribute: item.attribute,
-        }));
+        const queryInput = 'SELECT tndsService.description FROM tndsService WHERE (`nocCode` = ? and `lineName` = ?)';
 
-        const attributeValue = queryResult[0].attribute;
+        const queryResult = await executeQuery<ServiceData[]>(queryInput, [nocCode, lineName]);
 
-        return attributeValue;
-        
+        const tndsServiceData = queryResult[0];
+
+        if (!tndsServiceData) {
+            throw new Error(`No service data found for nocCode: ${nocCode}, lineName: ${lineName}`);
+        }
+
+        return tndsServiceData;
     } catch (err) {
-        throw new Error(`Could not retrieve attribute value from AuroraDB: ${err.name}, ${err.message}`);
+        throw new Error(`Could not retrieve tnds service data from AuroraDB: ${err.stack}`);
     }
 };
