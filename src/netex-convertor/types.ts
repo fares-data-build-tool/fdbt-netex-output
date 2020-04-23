@@ -1,16 +1,16 @@
 export interface OperatorData {
     website: string;
     ttrteEnq: string;
-    publicName: string;
+    operatorPublicName: string;
     opId: string;
-    vosaPSVLicenseName: string;
+    vosaPsvLicenseName: string;
     fareEnq: string;
     complEnq: string;
     mode: string;
 }
 
 export interface ServiceData {
-    serviceDescription: string;
+    description: string;
 }
 
 export interface Stop {
@@ -55,7 +55,7 @@ export interface GeographicalFareZonePass {
     expiryRules: string;
 }
 
-export interface MultipleServicePeriodPass {
+export interface MultipleServicesPeriodPass {
     operatorName: string;
     type: string;
     productName: string;
@@ -67,6 +67,6 @@ export interface MultipleServicePeriodPass {
 }
 
 export interface SelectedService {
-    lineName: string; 
+    lineName: string;
     startDate: string;
 }

@@ -7,3 +7,7 @@ export const getCleanWebsite = (nocWebsite: string): string => {
     }
     return '';
 };
+
+export interface NetexObject {
+    [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+}

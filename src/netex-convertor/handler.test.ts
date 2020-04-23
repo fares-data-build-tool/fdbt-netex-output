@@ -1,12 +1,11 @@
 import { S3Event } from 'aws-lambda';
-
 import { netexConvertorHandler } from './handler';
 import * as mocks from './testdata/test-data';
 import * as s3 from './data/s3';
 import * as singleTicketNetexGenerator from './single-ticket/singleTicketNetexGenerator';
-import * as periodTicketNetexGenerator from './period-ticket/periodTicketNetexGenerator';
+import * as periodGeoZoneTicketNetexGenerator from './period-geozone-ticket/periodGeoZoneTicketNetexGenerator';
 
-jest.mock('./data/dynamodb.ts');
+jest.mock('./data/auroradb.ts');
 jest.spyOn(s3, 'uploadNetexToS3').mockImplementation(() => Promise.resolve());
 
 describe('netexConvertorHandler', () => {
@@ -30,13 +29,13 @@ describe('netexConvertorHandler', () => {
         expect(singleTicketNetexGeneratorSpy).toHaveBeenCalled();
     });
 
-    it('should call the periodTicketNetexGenerator when a user uploads info for a period ticket', async () => {
-        const periodTicketNetexGeneratorSpy = jest.spyOn(periodTicketNetexGenerator, 'default');
+    it('should call the periodGeoZoneTicketNetexGenerator when a user uploads info for a period ticket', async () => {
+        const periodGeoZoneTicketNetexGeneratorSpy = jest.spyOn(periodGeoZoneTicketNetexGenerator, 'default');
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: () => {} }));
+        periodGeoZoneTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: () => {} }));
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(mocks.mockPeriodTicketMatchingDataUpload));
         await netexConvertorHandler(event);
-        expect(periodTicketNetexGeneratorSpy).toHaveBeenCalled();
+        expect(periodGeoZoneTicketNetexGeneratorSpy).toHaveBeenCalled();
     });
 
     it('should throw an error if the user data uploaded to the fdbt-matching-data bucket does not contain a "type" attribute', async () => {
