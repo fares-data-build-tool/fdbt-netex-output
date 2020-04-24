@@ -1,5 +1,3 @@
-import parser from 'xml2json';
-import fs from 'fs';
 import { MatchingData, OperatorData, ServiceData } from '../types';
 import {
     getScheduledStopPointsList,
@@ -8,28 +6,9 @@ import {
     getDistanceMatrixElements,
     getFareTables,
     getFareTableElements,
-    getNetexMode,
-    NetexObject,
+    getNetexMode
 } from './singleTicketNetexHelpers';
-import { getCleanWebsite } from '../sharedHelpers';
-
-const getNetexTemplateAsJson = async (): Promise<NetexObject> => {
-    try {
-        const fileData = await fs.promises.readFile(`${__dirname}/singleTicketNetexTemplate.xml`, { encoding: 'utf8' });
-        const json = JSON.parse(parser.toJson(fileData, { reversible: true, trim: true }));
-
-        return json;
-    } catch (error) {
-        throw new Error(`Error converting NeTEx template to JSON: ${error.stack}`);
-    }
-};
-
-const convertJsonToXml = (netexFileAsJsonObject: NetexObject): string => {
-    const netexFileAsJsonString = JSON.stringify(netexFileAsJsonObject);
-    const netexFileAsXmlString = parser.toXml(netexFileAsJsonString, { sanitize: true, ignoreNull: true });
-
-    return netexFileAsXmlString;
-};
+import { NetexObject, getCleanWebsite, getNetexTemplateAsJson, convertJsonToXml } from '../sharedHelpers';
 
 const singleTicketNetexGenerator = (
     matchingData: MatchingData,
@@ -193,7 +172,7 @@ const singleTicketNetexGenerator = (
     };
 
     const generate = async (): Promise<string> => {
-        const netexJson = await getNetexTemplateAsJson();
+        const netexJson = await getNetexTemplateAsJson('singleTicketNetexTemplate.xml');
 
         netexJson.PublicationDelivery = updatePublicationTimeStamp(netexJson.PublicationDelivery);
         netexJson.PublicationDelivery.PublicationRequest = updatePublicationRequest(

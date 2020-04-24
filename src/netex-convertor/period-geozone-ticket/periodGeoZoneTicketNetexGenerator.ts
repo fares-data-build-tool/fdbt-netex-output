@@ -1,32 +1,9 @@
-import parser from 'xml2json';
-import fs from 'fs';
 import { OperatorData, GeographicalFareZonePass } from '../types';
 import {
-    NetexObject,
     getScheduledStopPointsList,
-    getTopographicProjectionRefList,
+    getTopographicProjectionRefList
 } from './periodGeoZoneTicketNetexHelpers';
-import { getCleanWebsite } from '../sharedHelpers';
-
-const getNetexTemplateAsJson = async (): Promise<NetexObject> => {
-    try {
-        const fileData = await fs.promises.readFile(`${__dirname}/periodGeoZoneTicketNetexTemplate.xml`, {
-            encoding: 'utf8',
-        });
-        const json = JSON.parse(parser.toJson(fileData, { reversible: true, trim: true }));
-
-        return json;
-    } catch (error) {
-        throw new Error(`Error converting NeTEx template to JSON: ${error.stack}`);
-    }
-};
-
-const convertJsonToXml = (netexFileAsJsonObject: NetexObject): string => {
-    const netexFileAsJsonString = JSON.stringify(netexFileAsJsonObject);
-    const netexFileAsXmlString = parser.toXml(netexFileAsJsonString, { sanitize: true, ignoreNull: true });
-
-    return netexFileAsXmlString;
-};
+import { NetexObject, getCleanWebsite, getNetexTemplateAsJson, convertJsonToXml } from '../sharedHelpers';
 
 const periodGeoZoneTicketNetexGenerator = (
     geoFareZonePass: GeographicalFareZonePass,
@@ -276,7 +253,7 @@ const periodGeoZoneTicketNetexGenerator = (
     };
 
     const generate = async (): Promise<string> => {
-        const netexJson = await getNetexTemplateAsJson();
+        const netexJson = await getNetexTemplateAsJson('periodGeoZoneTicketNetexTemplate.xml');
 
         netexJson.PublicationDelivery = updatePublicationTimeStamp(netexJson.PublicationDelivery);
         netexJson.PublicationDelivery.PublicationRequest = updatePublicationRequest(
