@@ -29,7 +29,7 @@
 		</RequestPolicy>
 	</PublicationRequest>
 	<PublicationRefreshInterval>P1M</PublicationRefreshInterval>
-	<Description>Example of simple zonal pass fares.</Description>
+	<Description>Example of simple multi-services pass.</Description>
 	<!-- =============== RESULTS =========== -->
 	<dataObjects>
 		<CompositeFrame version="1.0" id="" dataSourceRef="op:src" responsibilitySetRef="op:tariffs">

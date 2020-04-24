@@ -701,7 +701,7 @@ export const mockSingleTicketMatchingDataUpload = {
     ],
 };
 
-export const mockPeriodTicketMatchingDataUpload = {
+export const mockPeriodGeoZoneTicketMatchingDataUpload = {
     operatorName: 'Pilkington Bus',
     type: 'periodGeoZone',
     zoneName: 'Test Town Centre',
@@ -892,6 +892,30 @@ export const mockPeriodTicketMatchingDataUpload = {
     daysValid: '31',
     expiryRules: 'endOfCalendarDay',
     nocCode: 'NWBT',
+};
+
+export const mockPeriodMultiServicesTicketMatchingDataUpload = {
+    operatorName: 'Blackpool Transport',
+    type: 'periodMultipleServices',
+    productName: 'dfvdfvd',
+    productPrice: '123',
+    daysValid: '4',
+    expiryRules: 'endOfCalendarDay',
+    nocCode: 'BLAC',
+    selectedServices: [
+        {
+            lineName: '4',
+            startDate: '05/04/2020'
+        },
+        {
+            lineName: '17',
+            startDate: '05/04/2020'
+        },
+        {
+            line: '2C',
+            startDate: '05/04/2020'
+        }
+    ]
 };
 
 export const mockMatchingDataUploadWithNoType = {

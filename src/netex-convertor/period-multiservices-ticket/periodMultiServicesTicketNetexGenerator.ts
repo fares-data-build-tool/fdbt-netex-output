@@ -54,8 +54,8 @@ const periodMultiServicesTicketNetexGenerator = (
     const updateCompositeFrame = (compositeFrame: NetexObject): NetexObject => {
         const compositeFrameToUpdate = { ...compositeFrame };
         compositeFrameToUpdate.id = `epd:UK:${multipleServicesData.nocCode}:CompositeFrame_UK_PI_NETWORK_FARE_OFFER:Pass@${multipleServicesData.productName}:op`;
-        compositeFrameToUpdate.Name.$t = `Fares for ${multipleServicesData.operatorName} - ${multipleServicesData.zoneName}`;
-        compositeFrameToUpdate.Description.$t = `${multipleServicesData.operatorName} - ${multipleServicesData.zoneName} is accessible under a period pass. A price is given for a geographical zone, which contains a selection of stops as a fare zone.`;
+        compositeFrameToUpdate.Name.$t = `Fares for ${multipleServicesData.operatorName} - ${multipleServicesData.productName}`;
+        compositeFrameToUpdate.Description.$t = `${multipleServicesData.operatorName} - ${multipleServicesData.productName} is accessible under a period pass. A price is given for multiple services.`;
 
         return compositeFrameToUpdate;
     };
