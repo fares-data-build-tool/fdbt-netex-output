@@ -43,30 +43,21 @@ export interface MatchingData {
     fareZones: FareZone[];
 }
 
-export interface GeographicalFareZonePass {
-    operatorName: string;
-    nocCode: string;
-    type: string;
-    productName: string;
-    productPrice: string;
-    zoneName: string;
-    stops: Stop[];
-    daysValid: string;
-    expiryRules: string;
-}
-
-export interface MultipleServicesPeriodPass {
+export interface UserPeriodTicket {
     operatorName: string;
     type: string;
     productName: string;
     productPrice: string;
+    zoneName?: string;
+    stops?: Stop[];
     daysValid: string;
     expiryRules: string;
     nocCode: string;
-    selectedServices: [SelectedService];
+    selectedServices?: SelectedService[];
 }
 
 export interface SelectedService {
     lineName: string;
     startDate: string;
+    description: string;
 }

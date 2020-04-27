@@ -1,10 +1,9 @@
 import { S3Event } from 'aws-lambda';
 import singleTicketNetexGenerator from './single-ticket/singleTicketNetexGenerator';
-import periodGeoZoneTicketNetexGenerator from './period-geozone-ticket/periodGeoZoneTicketNetexGenerator';
-import periodMultiServicesTicketNetexGenerator from './period-multiservices-ticket/periodMultiServicesTicketNetexGenerator';
+import periodTicketNetexGenerator from './period-ticket/periodTicketNetexGenerator';
 import * as db from './data/auroradb';
 import * as s3 from './data/s3';
-import { MatchingData, GeographicalFareZonePass, MultipleServicesPeriodPass } from './types';
+import { MatchingData, UserPeriodTicket } from './types';
 
 export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
     try {
@@ -23,23 +22,13 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
             }_${new Date().toISOString()}.xml`;
             const fileNameWithoutSlashes = fileName.replace('/', '_');
             await s3.uploadNetexToS3(generatedNetex, fileNameWithoutSlashes);
-        } else if (s3Data.type === 'periodGeoZone') {
-            const geoFareZonePass: GeographicalFareZonePass = s3Data;
-            const operatorData = await db.getOperatorDataByNocCode(geoFareZonePass.nocCode);
-            const netexGen = periodGeoZoneTicketNetexGenerator(geoFareZonePass, operatorData);
+        } else if (s3Data.type === 'periodGeoZone' || s3Data.type === 'periodMultipleServices') {
+            const userPeriodTicket: UserPeriodTicket = s3Data;
+            const operatorData = await db.getOperatorDataByNocCode(userPeriodTicket.nocCode);
+            const netexGen = periodTicketNetexGenerator(userPeriodTicket, operatorData);
             const generatedNetex = await netexGen.generate();
-            const fileName = `${geoFareZonePass.operatorName.replace(/\/|\s/g, '_')}_${geoFareZonePass.zoneName}_${
-                geoFareZonePass.productName
-            }_${new Date().toISOString()}.xml`;
-            const fileNameWithoutSlashes = fileName.replace('/', '_');
-            await s3.uploadNetexToS3(generatedNetex, fileNameWithoutSlashes);
-        } else if (s3Data.type === 'periodMultipleServices') {
-            const multipleServicesData: MultipleServicesPeriodPass = s3Data;
-            const operatorData = await db.getOperatorDataByNocCode(multipleServicesData.nocCode);
-            const netexGen = periodMultiServicesTicketNetexGenerator(multipleServicesData, operatorData);
-            const generatedNetex = await netexGen.generate();
-            const fileName = `${multipleServicesData.operatorName.replace(/\/|\s/g, '_')}_${
-                multipleServicesData.productName
+            const fileName = `${userPeriodTicket.operatorName.replace(/\/|\s/g, '_')}_${
+                userPeriodTicket.productName
             }_${new Date().toISOString()}.xml`;
             const fileNameWithoutSlashes = fileName.replace('/', '_');
             await s3.uploadNetexToS3(generatedNetex, fileNameWithoutSlashes);

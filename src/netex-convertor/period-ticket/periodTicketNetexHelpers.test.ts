@@ -1,9 +1,13 @@
-import * as netexHelpers from './periodGeoZoneTicketNetexHelpers';
+import * as netexHelpers from './periodTicketNetexHelpers';
 import geoZonePeriodData from '../testdata/geoZonePeriodData';
-import { expectedScheduledStopPointsList, expectedTopographicProjectionsList } from '../testdata/test-data';
+import multiServicesPeriodData from '../testdata/multiServicesPeriodData';
+import operatorData from '../testdata/operatorData';
+import { expectedScheduledStopPointsList, expectedTopographicProjectionsList, expectedLinesList } from '../testdata/test-data';
 
-describe('periodGeoZoneTicketNetexHelpers', () => {
+describe('periodTicketNetexHelpers', () => {
     const { stops } = geoZonePeriodData;
+    const userPeriodTicket = multiServicesPeriodData;
+    const opData = operatorData;
 
     describe('getScheduledStopPointsList', () => {
         it('returns a list of NeTEx scheduled stop points given a list of stops', () => {
@@ -18,6 +22,14 @@ describe('periodGeoZoneTicketNetexHelpers', () => {
             const topographicProjectionsList = netexHelpers.getTopographicProjectionRefList(stops);
 
             expect(topographicProjectionsList).toEqual(expectedTopographicProjectionsList);
+        });
+    });
+
+    describe('getLinesList', () => {
+        it('returns a list of NeTEx lines given a UserPeriodTicket object', () => {
+            const linesList = netexHelpers.getLinesList(userPeriodTicket, opData);
+
+            expect(linesList).toEqual(expectedLinesList);
         });
     });
 });

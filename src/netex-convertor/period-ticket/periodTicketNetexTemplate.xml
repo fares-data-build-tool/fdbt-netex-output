@@ -29,7 +29,7 @@
 		</RequestPolicy>
 	</PublicationRequest>
 	<PublicationRefreshInterval>P1M</PublicationRefreshInterval>
-	<Description>Example of simple multi-services pass.</Description>
+	<Description>Example of simple zonal pass fares.</Description>
 	<!-- =============== RESULTS =========== -->
 	<dataObjects>
 		<CompositeFrame version="1.0" id="" dataSourceRef="op:src" responsibilitySetRef="op:tariffs">
@@ -631,7 +631,7 @@
 						</FareTable>
 					</fareTables>
 				</FareFrame>
-				<!-- ====== Travel shops Advanced stuff - This just to show that we can capture access details about travel shops  -->
+				<!-- ====== Travel shops Advanced stuff - This just to show that we can capture access sdetails about travel shops  -->
 				<SiteFrame version="1.0" id="" responsibilitySetRef="op:tariffs">
 					<Name></Name>
 					<TypeOfFrameRef version="fxc:v1.0" ref="fxc:UK:DFT:TypeOfFrame_UK_PI_STOP:FXCP" />
@@ -793,7 +793,6 @@
 						</FareDayType>
 					</dayTypes>
 				</ServiceCalendarFrame>
-				<!--==== STEP 3:: Define EACH BUS STOP IN THE ENTIRE SERVICE, IN ALL ZONES ====-->
 				<ServiceFrame version="1.0" id="operator@Network@Line_1" dataSourceRef="op:operator" responsibilitySetRef="tariffs">
 					<Description>This frame contains the stop and line definitions for the service. It could also be exchanged separately.</Description>
 					<TypeOfFrameRef ref="fxc:UK:DFT:TypeOfFrame_UK_PI_NETWORK:FXCP" version="fxc:v1.0" />

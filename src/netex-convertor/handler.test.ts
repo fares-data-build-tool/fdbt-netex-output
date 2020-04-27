@@ -3,8 +3,7 @@ import { netexConvertorHandler } from './handler';
 import * as mocks from './testdata/test-data';
 import * as s3 from './data/s3';
 import * as singleTicketNetexGenerator from './single-ticket/singleTicketNetexGenerator';
-import * as periodGeoZoneTicketNetexGenerator from './period-geozone-ticket/periodGeoZoneTicketNetexGenerator';
-import * as periodMultiServicesTicketNetexGenerator from './period-multiservices-ticket/periodMultiServicesTicketNetexGenerator';
+import * as periodTicketNetexGenerator from './period-ticket/periodTicketNetexGenerator';
 
 jest.mock('./data/auroradb.ts');
 jest.spyOn(s3, 'uploadNetexToS3').mockImplementation(() => Promise.resolve());
@@ -30,22 +29,22 @@ describe('netexConvertorHandler', () => {
         expect(singleTicketNetexGeneratorSpy).toHaveBeenCalled();
     });
 
-    it('should call the periodGeoZoneTicketNetexGenerator when a user uploads info for a geozone period ticket', async () => {
-        const periodGeoZoneTicketNetexGeneratorSpy = jest.spyOn(periodGeoZoneTicketNetexGenerator, 'default');
+    it('should call the periodTicketNetexGenerator when a user uploads info for a geozone period ticket', async () => {
+        const periodTicketNetexGeneratorSpy = jest.spyOn(periodTicketNetexGenerator, 'default');
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        periodGeoZoneTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: () => {} }));
+        periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: () => {} }));
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(mocks.mockPeriodGeoZoneTicketMatchingDataUpload));
         await netexConvertorHandler(event);
-        expect(periodGeoZoneTicketNetexGeneratorSpy).toHaveBeenCalled();
+        expect(periodTicketNetexGeneratorSpy).toHaveBeenCalled();
     });
 
-    it('should call the periodMultiServicesTicketNetexGenerator when a user uploads info for a multiple services period ticket', async () => {
-        const periodMultiServicesTicketNetexGeneratorSpy = jest.spyOn(periodMultiServicesTicketNetexGenerator, 'default');
+    it('should call the periodTicketNetexGenerator when a user uploads info for a multiple services period ticket', async () => {
+        const periodTicketNetexGeneratorSpy = jest.spyOn(periodTicketNetexGenerator, 'default');
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        periodMultiServicesTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: () => {} }));
+        periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: () => {} }));
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(mocks.mockPeriodMultiServicesTicketMatchingDataUpload));
         await netexConvertorHandler(event);
-        expect(periodMultiServicesTicketNetexGeneratorSpy).toHaveBeenCalled();
+        expect(periodTicketNetexGeneratorSpy).toHaveBeenCalled();
     });
 
     it('should throw an error if the user data uploaded to the fdbt-matching-data bucket does not contain a "type" attribute', async () => {
