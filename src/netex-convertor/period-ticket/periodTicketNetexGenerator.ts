@@ -3,7 +3,7 @@ import {
     getScheduledStopPointsList,
     getTopographicProjectionRefList,
     getLinesList,
-    getLineRefList
+    getLineRefList,
 } from './periodTicketNetexHelpers';
 import { NetexObject, getCleanWebsite, getNetexTemplateAsJson, convertJsonToXml } from '../sharedHelpers';
 
@@ -153,9 +153,34 @@ const periodTicketNetexGenerator = (
         priceFareFrameToUpdate.tariffs.Tariff.timeIntervals.TimeInterval[3].id = `op:Tariff@${userPeriodTicket.productName}@1year`;
         priceFareFrameToUpdate.tariffs.Tariff.timeIntervals.TimeInterval[4].id = `op:Tariff@${userPeriodTicket.productName}@1term`;
         priceFareFrameToUpdate.tariffs.Tariff.timeIntervals.TimeInterval[5].id = `op:Tariff@${userPeriodTicket.productName}@1academic_year`;
-        priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[0].id = `op:Tariff@${userPeriodTicket.productName}@access_zones`;
-        priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[0].GenericParameterAssignment.id = `op:Tariff@${userPeriodTicket.productName}@access_zones`;
-        priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[0].GenericParameterAssignment.validityParameters.FareZoneRef.ref = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}`;
+
+        if (userPeriodTicket.type === 'periodGeoZone') {
+            priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[0].id = `op:Tariff@${userPeriodTicket.productName}@access_zones`;
+            priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[0].GenericParameterAssignment.id = `op:Tariff@${userPeriodTicket.productName}@access_zones`;
+            priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[0].GenericParameterAssignment.validityParameters.FareZoneRef.ref = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}`;
+        } else if (userPeriodTicket.type === 'periodMultipleServices') {
+            priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[0] = {
+                version: '1.0',
+                id: `op:Tariff@${userPeriodTicket.productName}@access_lines`,
+            };
+            priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[0].TypeOfFareStructureElementRef = {
+                version: 'fxc:v1.0',
+                ref: 'fxc:access',
+            };
+            priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[0].GenericParameterAssignment = {
+                id: `Tariff@${userPeriodTicket.productName}@access_lines`,
+                version: '1.0',
+                order: '1',
+            };
+            priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[0].GenericParameterAssignment.TypeOfAccessRightsAssignmentRef = {
+                version: 'fxc:v1.0',
+                ref: 'fxc:can_access',
+            };
+            priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[0].GenericParameterAssignment.TypeOfAccessRightsAssignmentRef.validityParameters.LineRef = getLineRefList(
+                userPeriodTicket,
+            );
+        }
+
         priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[1].id = `op:Tariff@${userPeriodTicket.productName}@eligibility`;
         priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[1].GenericParameterAssignment.id = `op:Tariff@${userPeriodTicket.productName}@eligibitity`;
         priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[2].id = `op:Tariff@${userPeriodTicket.productName}@durations@adult`;
@@ -173,11 +198,7 @@ const periodTicketNetexGenerator = (
         priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[4].GenericParameterAssignment.limitations.Transferability.id = `op:Pass@${userPeriodTicket.productName}@transferability`;
         priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[4].GenericParameterAssignment.limitations.FrequencyOfUse.id = `op:Pass@${userPeriodTicket.productName}@frequency`;
         priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[4].GenericParameterAssignment.limitations.Interchanging.id = `op:Pass@${userPeriodTicket.productName}@interchanging`;
-        priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[5] = { version: "1.0", id: `op:Tariff@${userPeriodTicket.productName}@access_lines` };
-        priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[5].TypeOfFareStructureElementRef = { version: 'fxc:v1.0', ref: 'fxc:access' };
-        priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[5].GenericParameterAssignment = { id:`Tariff@${userPeriodTicket.productName}@access_lines`, version: "1.0", order: "1"};
-        priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[5].GenericParameterAssignment.TypeOfAccessRightsAssignmentRef = { version:"fxc:v1.0", ref: "fxc:can_access" };
-        priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[5].GenericParameterAssignment.TypeOfAccessRightsAssignmentRef.validityParameters.LineRef = getLineRefList(userPeriodTicket);
+
         priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.id = `op:Pass@${userPeriodTicket.productName}`;
         priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.Name.$t = `${userPeriodTicket.productName} Pass`;
         priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.OperatorRef.ref = nocCodeNocFormat;
@@ -269,7 +290,7 @@ const periodTicketNetexGenerator = (
     };
 
     const generate = async (): Promise<string> => {
-        const netexJson = await getNetexTemplateAsJson('periodGeoZoneTicketNetexTemplate.xml');
+        const netexJson = await getNetexTemplateAsJson('period-ticket/periodTicketNetexTemplate.xml');
 
         netexJson.PublicationDelivery = updatePublicationTimeStamp(netexJson.PublicationDelivery);
         netexJson.PublicationDelivery.PublicationRequest = updatePublicationRequest(
@@ -283,10 +304,13 @@ const periodTicketNetexGenerator = (
         netexFrames.SiteFrame = updateSiteFrame(netexFrames.SiteFrame);
         netexFrames.ResourceFrame = updateResourceFrame(netexFrames.ResourceFrame);
         netexFrames.ServiceCalendarFrame = updateServiceCalendarFrame(netexFrames.ServiceCalendarFrame);
-        netexFrames.ServiceFrame = updateServiceFrame(netexFrames.ServiceFrame);
+
+        netexFrames.ServiceFrame =
+            userPeriodTicket.type === 'periodMultipleServices' ? updateServiceFrame(netexFrames.ServiceFrame) : null;
 
         // The first FareFrame is the NetworkFareFrame which relates to the FareZone given by the user on the csvZoneUpload page.
-        netexFrames.FareFrame[0] = updateNetworkFareFrame(netexFrames.FareFrame[0]);
+        netexFrames.FareFrame[0] =
+            userPeriodTicket.type === 'periodGeoZone' ? updateNetworkFareFrame(netexFrames.FareFrame[0]) : null;
 
         // The second FareFrame is the ProductFareFrame which relates to the validity/name/price of the sales offer package
         netexFrames.FareFrame[1] = updatePriceFareFrame(netexFrames.FareFrame[1]);

@@ -3,8 +3,9 @@ import AWS from 'aws-sdk';
 
 const getS3Client = (): AWS.S3 => {
     let options = {};
-
+    console.log('XXXXHELLOXXX');
     if (process.env.NODE_ENV === 'development') {
+        console.log('XXXXHELLO1XXX');
         options = {
             s3ForcePathStyle: true,
             accessKeyId: 'S3RVER',

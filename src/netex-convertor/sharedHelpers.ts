@@ -15,9 +15,9 @@ export const getCleanWebsite = (nocWebsite: string): string => {
     return '';
 };
 
-export const getNetexTemplateAsJson = async (file: string): Promise<NetexObject> => {
+export const getNetexTemplateAsJson = async (filepath: string): Promise<NetexObject> => {
     try {
-        const fileData = await fs.promises.readFile(`${__dirname}/${file}`, { encoding: 'utf8' });
+        const fileData = await fs.promises.readFile(`${__dirname}/${filepath}`, { encoding: 'utf8' });
         const json = JSON.parse(parser.toJson(fileData, { reversible: true, trim: true }));
 
         return json;

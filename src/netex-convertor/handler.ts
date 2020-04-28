@@ -3,7 +3,7 @@ import singleTicketNetexGenerator from './single-ticket/singleTicketNetexGenerat
 import periodTicketNetexGenerator from './period-ticket/periodTicketNetexGenerator';
 import * as db from './data/auroradb';
 import * as s3 from './data/s3';
-import { MatchingData, UserPeriodTicket } from './types';
+import { MatchingData, PeriodGeoZoneTicket, PeriodMultipleServicesTicket } from './types';
 
 export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
     try {
@@ -22,8 +22,8 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
                 matchingData.lineName,
             );
 
-            const netexGen = singleTicketNetexGenerator(matchingData, operatorData, serviceData);
-            const generatedNetex = await netexGen.generate();
+          else if (s3Data.type === 'periodGeoZoneTicket') {
+            const userPeriodTicket: PeriodGeoZoneTicket = s3Data;
 
             const fileName = `${matchingData.operatorShortName.replace(/\/|\s/g, '_')}_${
                 matchingData.lineName

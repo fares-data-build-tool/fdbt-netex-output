@@ -6,7 +6,7 @@ import {
     getDistanceMatrixElements,
     getFareTables,
     getFareTableElements,
-    getNetexMode
+    getNetexMode,
 } from './singleTicketNetexHelpers';
 import { NetexObject, getCleanWebsite, getNetexTemplateAsJson, convertJsonToXml } from '../sharedHelpers';
 
@@ -150,7 +150,7 @@ const singleTicketNetexGenerator = (
         fareTableFareFrameToUpdate.id = `operator@Products@Trip@prices@${lineIdName}`;
         fareTableFareFrameToUpdate.priceGroups.PriceGroup = getPriceGroups(matchingData.fareZones);
         fareTableFareFrameToUpdate.fareTables.FareTable.id = `Trip@single-SOP@p-ticket@${lineIdName}@adult`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.Name.$t = serviceData.description
+        fareTableFareFrameToUpdate.fareTables.FareTable.Name.$t = serviceData.description;
         fareTableFareFrameToUpdate.fareTables.FareTable.usedIn.TariffRef.ref = `Tariff@single@${lineIdName}`;
         fareTableFareFrameToUpdate.fareTables.FareTable.specifics.LineRef.ref = lineIdName;
         fareTableFareFrameToUpdate.fareTables.FareTable.columns.FareTableColumn = getFareTableElements(
@@ -172,7 +172,7 @@ const singleTicketNetexGenerator = (
     };
 
     const generate = async (): Promise<string> => {
-        const netexJson = await getNetexTemplateAsJson('singleTicketNetexTemplate.xml');
+        const netexJson = await getNetexTemplateAsJson('single-ticket/singleTicketNetexTemplate.xml');
 
         netexJson.PublicationDelivery = updatePublicationTimeStamp(netexJson.PublicationDelivery);
         netexJson.PublicationDelivery.PublicationRequest = updatePublicationRequest(
