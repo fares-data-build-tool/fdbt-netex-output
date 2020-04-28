@@ -8,21 +8,30 @@ import { MatchingData, UserPeriodTicket } from './types';
 export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
     try {
         const s3Data = await s3.fetchDataFromS3(event);
-        if (s3Data.type === 'pointToPoint') {
+
+        const { type } = s3Data;
+
+        console.info(`NeTEx generation starting for type: ${type}...`);
+
+        if (type === 'pointToPoint') {
             const matchingData: MatchingData = s3Data;
             const operatorData = await db.getOperatorDataByNocCode(matchingData.nocCode);
+
             const serviceData = await db.getTndsServiceDataByNocCodeAndLineName(
                 matchingData.nocCode,
                 matchingData.lineName,
             );
+
             const netexGen = singleTicketNetexGenerator(matchingData, operatorData, serviceData);
             const generatedNetex = await netexGen.generate();
+
             const fileName = `${matchingData.operatorShortName.replace(/\/|\s/g, '_')}_${
                 matchingData.lineName
             }_${new Date().toISOString()}.xml`;
+
             const fileNameWithoutSlashes = fileName.replace('/', '_');
             await s3.uploadNetexToS3(generatedNetex, fileNameWithoutSlashes);
-        } else if (s3Data.type === 'periodGeoZone' || s3Data.type === 'periodMultipleServices') {
+        } else if (type === 'periodGeoZone' || type === 'periodMultipleServices') {
             const userPeriodTicket: UserPeriodTicket = s3Data;
             const operatorData = await db.getOperatorDataByNocCode(userPeriodTicket.nocCode);
             const netexGen = periodTicketNetexGenerator(userPeriodTicket, operatorData);
@@ -30,6 +39,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
             const fileName = `${userPeriodTicket.operatorName.replace(/\/|\s/g, '_')}_${
                 userPeriodTicket.productName
             }_${new Date().toISOString()}.xml`;
+
             const fileNameWithoutSlashes = fileName.replace('/', '_');
             await s3.uploadNetexToS3(generatedNetex, fileNameWithoutSlashes);
         } else {
@@ -43,6 +53,8 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
         console.error(error.stack);
         throw new Error(error);
     }
+
+    console.info('NeTEx generation complete!');
 };
 
 export default netexConvertorHandler;
