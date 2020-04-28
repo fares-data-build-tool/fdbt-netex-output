@@ -54,7 +54,6 @@ functions:
 
 plugins:
     - serverless-plugin-typescript
-    - serverless-s3-local
     - serverless-offline
 
 package:
