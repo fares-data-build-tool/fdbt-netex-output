@@ -393,6 +393,7 @@ export const expectedScheduledStopPointsList = [
         $t: 'Arram Rail Station, -, Arram',
     },
 ];
+
 export const expectedLinesList = [
     {
         version: '1.0',
@@ -432,6 +433,21 @@ export const expectedLinesList = [
         PrivateCode: { type: 'noc', $t: 'BLAC_2C' },
         OperatorRef: { version: '1.0', ref: 'noc:BLAC' },
         LineType: { $t: 'local' }
+    },
+];
+
+export const expectedLineRefList = [
+    {
+        version: '1.0',
+        ref: 'op:4',
+    },
+    {
+        version: '1.0',
+        ref: 'op:17',
+    },
+    {
+        version: '1.0',
+        ref: 'op:2C',
     },
 ];
 
