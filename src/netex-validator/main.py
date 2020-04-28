@@ -10,24 +10,39 @@ from io import StringIO
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-sns_client = boto3.client('sns')
-
 SNS_ALERTS_ARN = os.getenv('SNS_ALERTS_ARN')
 
 
 def get_s3_client():
-    session = boto3.session.Session()
-    s3_client = session.client(
-        service_name='s3',
-        aws_access_key_id='S3RVER',
-        aws_secret_access_key='S3RVER',
-        endpoint_url='http://localhost:4572',
-    )
+    if os.getenv('ENV') == 'development':
+        s3_client = boto3.client(
+            's3',
+            aws_access_key_id='S3RVER',
+            aws_secret_access_key='S3RVER',
+            endpoint_url='http://localhost:4572',
+        )
+    else:
+        s3_client = boto3.client('s3')
 
     return s3_client
 
 
+def get_sns_client():
+    if os.getenv('ENV') == 'development':
+        sns_client = boto3.client(
+            'sns',
+            aws_access_key_id='S3RVER',
+            aws_secret_access_key='S3RVER',
+            endpoint_url='http://localhost:4575',
+        )
+    else:
+        sns_client = boto3.client('sns')
+
+    return sns_client
+
+
 s3_client = get_s3_client()
+sns_client = get_sns_client()
 
 
 def parse_netex_xml(netex):
