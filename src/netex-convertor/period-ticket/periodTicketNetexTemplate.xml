@@ -807,8 +807,6 @@
 							<LineType>local</LineType>
 						</Line>
 					</lines>
-					<!--==== STOP POINTs ==== -->
-					<scheduledStopPoints></scheduledStopPoints>
 				</ServiceFrame>
 			</frames>
 		</CompositeFrame>

@@ -61,6 +61,8 @@ export interface PeriodMultipleServicesTicket extends BasePeriodTicket {
     selectedServices: SelectedService[];
 }
 
+export type PeriodTicket = PeriodGeoZoneTicket | PeriodMultipleServicesTicket;
+
 export interface SelectedService {
     lineName: string;
     startDate: string;

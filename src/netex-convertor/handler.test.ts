@@ -10,6 +10,7 @@ jest.spyOn(s3, 'uploadNetexToS3').mockImplementation(() => Promise.resolve());
 
 describe('netexConvertorHandler', () => {
     const event: S3Event = mocks.mockS3Event('BucketThing', 'TheBigBucketName');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mockFetchDataFromS3Spy: any;
 
     beforeEach(() => {
@@ -23,7 +24,7 @@ describe('netexConvertorHandler', () => {
     it('should call the singleTicketNetexGenerator when a user uploads info for a single ticket', async () => {
         const singleTicketNetexGeneratorSpy = jest.spyOn(singleTicketNetexGenerator, 'default');
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        singleTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: () => {} }));
+        singleTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(mocks.mockSingleTicketMatchingDataUpload));
         await netexConvertorHandler(event);
         expect(singleTicketNetexGeneratorSpy).toHaveBeenCalled();
@@ -32,8 +33,10 @@ describe('netexConvertorHandler', () => {
     it('should call the periodTicketNetexGenerator when a user uploads info for a geozone period ticket', async () => {
         const periodTicketNetexGeneratorSpy = jest.spyOn(periodTicketNetexGenerator, 'default');
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: () => {} }));
-        mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(mocks.mockPeriodGeoZoneTicketMatchingDataUpload));
+        periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
+        mockFetchDataFromS3Spy.mockImplementation(() =>
+            Promise.resolve(mocks.mockPeriodGeoZoneTicketMatchingDataUpload),
+        );
         await netexConvertorHandler(event);
         expect(periodTicketNetexGeneratorSpy).toHaveBeenCalled();
     });
@@ -41,8 +44,10 @@ describe('netexConvertorHandler', () => {
     it('should call the periodTicketNetexGenerator when a user uploads info for a multiple services period ticket', async () => {
         const periodTicketNetexGeneratorSpy = jest.spyOn(periodTicketNetexGenerator, 'default');
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: () => {} }));
-        mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(mocks.mockPeriodMultiServicesTicketMatchingDataUpload));
+        periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
+        mockFetchDataFromS3Spy.mockImplementation(() =>
+            Promise.resolve(mocks.mockPeriodMultiServicesTicketMatchingDataUpload),
+        );
         await netexConvertorHandler(event);
         expect(periodTicketNetexGeneratorSpy).toHaveBeenCalled();
     });

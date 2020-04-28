@@ -402,11 +402,11 @@ export const expectedLinesList = [
             $t: 'Line 4',
         },
         Description: { $t: 'Bognor - Crawley - Horsham' },
-        Url: 'abc.com',
+        Url: { $t: 'abc.com' },
         PublicCode: { $t: '4' },
         PrivateCode: { type: 'noc', $t: 'BLAC_4' },
         OperatorRef: { version: '1.0', ref: 'noc:BLAC' },
-        LineType: { $t: 'local' }
+        LineType: { $t: 'local' },
     },
     {
         version: '1.0',
@@ -415,11 +415,11 @@ export const expectedLinesList = [
             $t: 'Line 17',
         },
         Description: { $t: 'Crewkerne - Yeovil - Sherborne' },
-        Url: 'abc.com',
+        Url: { $t: 'abc.com' },
         PublicCode: { $t: '17' },
-        PrivateCode: { type: 'noc', $t: 'BLAC _17 ' },
+        PrivateCode: { type: 'noc', $t: 'BLAC_17' },
         OperatorRef: { version: '1.0', ref: 'noc:BLAC' },
-        LineType: { $t: 'local' }
+        LineType: { $t: 'local' },
     },
     {
         version: '1.0',
@@ -428,11 +428,11 @@ export const expectedLinesList = [
             $t: 'Line 2C',
         },
         Description: { $t: 'Harrogate - Otley - Leeds' },
-        Url: 'abc.com',
+        Url: { $t: 'abc.com' },
         PublicCode: { $t: '2C' },
         PrivateCode: { type: 'noc', $t: 'BLAC_2C' },
         OperatorRef: { version: '1.0', ref: 'noc:BLAC' },
-        LineType: { $t: 'local' }
+        LineType: { $t: 'local' },
     },
 ];
 

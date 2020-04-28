@@ -10,10 +10,24 @@ from io import StringIO
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-s3_client = boto3.client('s3')
 sns_client = boto3.client('sns')
 
 SNS_ALERTS_ARN = os.getenv('SNS_ALERTS_ARN')
+
+
+def get_s3_client():
+    session = boto3.session.Session()
+    s3_client = session.client(
+        service_name='s3',
+        aws_access_key_id='S3RVER',
+        aws_secret_access_key='S3RVER',
+        endpoint_url='http://localhost:4572',
+    )
+
+    return s3_client
+
+
+s3_client = get_s3_client()
 
 
 def parse_netex_xml(netex):
