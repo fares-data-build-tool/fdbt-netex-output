@@ -45,10 +45,7 @@ export interface MatchingData {
 
 export interface BasePeriodTicket {
     operatorName: string;
-    productName: string;
-    productPrice: string;
-    daysValid: string;
-    expiryRules: string;
+    products: ProductDetails[];
     nocCode: string;
 }
 
@@ -67,4 +64,11 @@ export interface SelectedService {
     lineName: string;
     startDate: string;
     description: string;
+}
+
+export interface ProductDetails {
+    productName: string;
+    productPrice: string;
+    daysValid: string;
+    expiryRules: string;
 }
