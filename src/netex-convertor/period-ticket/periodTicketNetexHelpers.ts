@@ -20,7 +20,7 @@ export const getLinesList = (userPeriodTicket: PeriodMultipleServicesTicket, ope
         version: '1.0',
         id: `op:${service.lineName}`,
         Name: { $t: `Line ${service.lineName}` },
-        Description: { $t: service.description },
+        Description: { $t: service.serviceDescription },
         Url: { $t: getCleanWebsite(operatorData.website) },
         PublicCode: { $t: service.lineName },
         PrivateCode: { type: 'noc', $t: `${userPeriodTicket.nocCode}_${service.lineName}` },

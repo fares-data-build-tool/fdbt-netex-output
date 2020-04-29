@@ -9,17 +9,17 @@ const multiServicesPeriodData = {
         {
             lineName: '4',
             startDate: '05/04/2020',
-            description: 'Bognor - Crawley - Horsham',
+            serviceDescription: 'Bognor - Crawley - Horsham',
         },
         {
             lineName: '17',
             startDate: '05/04/2020',
-            description: 'Crewkerne - Yeovil - Sherborne',
+            serviceDescription: 'Crewkerne - Yeovil - Sherborne',
         },
         {
             lineName: '2C',
             startDate: '05/04/2020',
-            description: 'Harrogate - Otley - Leeds',
+            serviceDescription: 'Harrogate - Otley - Leeds',
         },
     ],
 };

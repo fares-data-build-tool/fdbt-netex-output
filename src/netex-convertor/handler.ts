@@ -17,12 +17,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
             const matchingData: MatchingData = s3Data;
             const operatorData = await db.getOperatorDataByNocCode(matchingData.nocCode);
 
-            const serviceData = await db.getTndsServiceDataByNocCodeAndLineName(
-                matchingData.nocCode,
-                matchingData.lineName,
-            );
-
-            const netexGen = singleTicketNetexGenerator(matchingData, operatorData, serviceData);
+            const netexGen = singleTicketNetexGenerator(matchingData, operatorData);
             const generatedNetex = await netexGen.generate();
 
             const fileName = `${matchingData.operatorShortName.replace(/\/|\s/g, '_')}_${

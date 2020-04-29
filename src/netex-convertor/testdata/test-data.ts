@@ -963,14 +963,17 @@ export const mockPeriodMultiServicesTicketMatchingDataUpload = {
         {
             lineName: '4',
             startDate: '05/04/2020',
+            serviceDescription: 'BLACKPOOL - LYTHAM'
         },
         {
             lineName: '17',
             startDate: '05/04/2020',
+            serviceDescription: 'BLACKPOOL - LYTHAM'
         },
         {
             line: '2C',
             startDate: '05/04/2020',
+            serviceDescription: 'BLACKPOOL - LYTHAM'
         },
     ],
 };

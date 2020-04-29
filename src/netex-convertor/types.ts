@@ -40,6 +40,7 @@ export interface MatchingData {
     lineName: string;
     nocCode: string;
     operatorShortName: string;
+    description: string;
     fareZones: FareZone[];
 }
 
@@ -66,5 +67,5 @@ export type PeriodTicket = PeriodGeoZoneTicket | PeriodMultipleServicesTicket;
 export interface SelectedService {
     lineName: string;
     startDate: string;
-    description: string;
+    serviceDescription: string;
 }
