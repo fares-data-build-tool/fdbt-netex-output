@@ -963,14 +963,43 @@ export const mockPeriodMultiServicesTicketMatchingDataUpload = {
         {
             lineName: '4',
             startDate: '05/04/2020',
+            serviceDescription: 'BLACKPOOL - LYTHAM'
         },
         {
             lineName: '17',
             startDate: '05/04/2020',
+            serviceDescription: 'BLACKPOOL - LYTHAM'
         },
         {
             line: '2C',
             startDate: '05/04/2020',
+            serviceDescription: 'BLACKPOOL - LYTHAM'
+        },
+    ],
+};
+
+export const multiServicesPeriodData = {
+    operatorName: 'Blackpool Transport',
+    productName: 'dfvdfvd',
+    productPrice: '123',
+    daysValid: '4',
+    expiryRules: 'endOfCalendarDay',
+    nocCode: 'BLAC',
+    selectedServices: [
+        {
+            lineName: '4',
+            startDate: '05/04/2020',
+            serviceDescription: 'Bognor - Crawley - Horsham',
+        },
+        {
+            lineName: '17',
+            startDate: '05/04/2020',
+            serviceDescription: 'Crewkerne - Yeovil - Sherborne',
+        },
+        {
+            lineName: '2C',
+            startDate: '05/04/2020',
+            serviceDescription: 'Harrogate - Otley - Leeds',
         },
     ],
 };
@@ -995,4 +1024,15 @@ export const mockMatchingDataUploadWithNoType = {
     daysValid: '31',
     expiryRules: 'endOfCalendarDay',
     nocCode: 'IW1234',
+};
+
+export const operatorData = {
+    website: 'abc.com',
+    ttrteEnq: 'info@abc.com',
+    operatorPublicName: 'ABC Ltd',
+    opId: '123123',
+    vosaPsvLicenseName: 'ABC Ltd',
+    fareEnq: 'info@abc.com',
+    complEnq: 'info@abc.com',
+    mode: 'bus'
 };

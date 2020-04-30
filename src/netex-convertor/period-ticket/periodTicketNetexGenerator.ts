@@ -14,7 +14,13 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
     const opIdNocFormat = `noc:${operatorData.opId}`;
     const nocCodeNocFormat = `noc:${userPeriodTicket.nocCode}`;
     const currentDate = new Date(Date.now());
-    const website = getCleanWebsite(operatorData.website);    
+    const website = getCleanWebsite(operatorData.website);
+
+    const isGeoZoneTicket = (ticket: PeriodTicket): ticket is PeriodGeoZoneTicket =>
+        (ticket as PeriodGeoZoneTicket).zoneName !== undefined;
+
+    const isMultiServiceTicket = (ticket: PeriodTicket): ticket is PeriodMultipleServicesTicket =>
+        (ticket as PeriodMultipleServicesTicket).selectedServices !== undefined;
 
     const isGeoZoneTicket = (ticket: PeriodTicket): ticket is PeriodGeoZoneTicket =>
         (ticket as PeriodGeoZoneTicket).zoneName !== undefined;

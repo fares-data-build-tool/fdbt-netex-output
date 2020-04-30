@@ -17,17 +17,12 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
             const matchingData: MatchingData = s3Data;
             const operatorData = await db.getOperatorDataByNocCode(matchingData.nocCode);
 
-            const serviceData = await db.getTndsServiceDataByNocCodeAndLineName(
-                matchingData.nocCode,
-                matchingData.lineName,
-            );
-
-            const netexGen = singleTicketNetexGenerator(matchingData, operatorData, serviceData);
+            const netexGen = singleTicketNetexGenerator(matchingData, operatorData);
             const generatedNetex = await netexGen.generate();
 
             const fileName = `${matchingData.operatorShortName.replace(/\/|\s/g, '_')}_${
                 matchingData.lineName
-                }_${new Date().toISOString()}.xml`;
+            }_${new Date().toISOString()}.xml`;
 
             const fileNameWithoutSlashes = fileName.replace('/', '_');
             await s3.uploadNetexToS3(generatedNetex, fileNameWithoutSlashes);
@@ -38,6 +33,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
             const generatedNetex = await netexGen.generate();
 
             let productName;
+            
             if (userPeriodTicket.products.length > 1) {
                 productName = `${userPeriodTicket.products.length}-products`;
             } else {

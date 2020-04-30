@@ -1,4 +1,4 @@
-import { MatchingData, OperatorData, ServiceData } from '../types';
+import { MatchingData, OperatorData } from '../types';
 import {
     getScheduledStopPointsList,
     getFareZoneList,
@@ -13,7 +13,6 @@ import { NetexObject, getCleanWebsite, getNetexTemplateAsJson, convertJsonToXml 
 const singleTicketNetexGenerator = (
     matchingData: MatchingData,
     operatorData: OperatorData,
-    serviceData: ServiceData,
 ): { generate: Function } => {
     const opIdNocFormat = `noc:${operatorData.opId}`;
     const nocCodeNocFormat = `noc:${matchingData.nocCode}`;
@@ -90,7 +89,7 @@ const singleTicketNetexGenerator = (
         serviceFrameToUpdate.id = `epd:UK:${matchingData.nocCode}:ServiceFrame_UK_PI_NETWORK:${lineIdName}:op`;
         serviceFrameToUpdate.lines.Line.id = matchingData.lineName;
         serviceFrameToUpdate.lines.Line.Name.$t = operatorPublicNameLineNameFormat;
-        serviceFrameToUpdate.lines.Line.Description.$t = serviceData.description;
+        serviceFrameToUpdate.lines.Line.Description.$t = matchingData.serviceDescription;
         serviceFrameToUpdate.lines.Line.PublicCode.$t = matchingData.lineName;
         serviceFrameToUpdate.lines.Line.PrivateCode.$t = noccodeLineNameFormat;
         serviceFrameToUpdate.lines.Line.OperatorRef.ref = nocCodeNocFormat;
@@ -150,7 +149,7 @@ const singleTicketNetexGenerator = (
         fareTableFareFrameToUpdate.id = `operator@Products@Trip@prices@${lineIdName}`;
         fareTableFareFrameToUpdate.priceGroups.PriceGroup = getPriceGroups(matchingData.fareZones);
         fareTableFareFrameToUpdate.fareTables.FareTable.id = `Trip@single-SOP@p-ticket@${lineIdName}@adult`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.Name.$t = serviceData.description;
+        fareTableFareFrameToUpdate.fareTables.FareTable.Name.$t = matchingData.serviceDescription;
         fareTableFareFrameToUpdate.fareTables.FareTable.usedIn.TariffRef.ref = `Tariff@single@${lineIdName}`;
         fareTableFareFrameToUpdate.fareTables.FareTable.specifics.LineRef.ref = lineIdName;
         fareTableFareFrameToUpdate.fareTables.FareTable.columns.FareTableColumn = getFareTableElements(
