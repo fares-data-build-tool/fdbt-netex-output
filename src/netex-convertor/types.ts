@@ -40,7 +40,7 @@ export interface MatchingData {
     lineName: string;
     nocCode: string;
     operatorShortName: string;
-    description: string;
+    serviceDescription: string;
     fareZones: FareZone[];
 }
 
