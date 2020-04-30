@@ -1,12 +1,12 @@
 import * as netexHelpers from './periodTicketNetexHelpers';
 import geoZonePeriodData from '../testdata/geoZonePeriodData';
-import operatorData from '../testdata/operatorData';
 import {
     expectedScheduledStopPointsList,
     expectedTopographicProjectionsList,
     expectedLinesList,
     expectedLineRefList,
-    multiServicesPeriodData
+    multiServicesPeriodData,
+    operatorData
 } from '../testdata/test-data';
 
 describe('periodTicketNetexHelpers', () => {
