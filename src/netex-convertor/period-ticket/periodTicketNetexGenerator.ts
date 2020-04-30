@@ -9,16 +9,12 @@ import {
 } from './periodTicketNetexHelpers';
 import { NetexObject, getCleanWebsite, getNetexTemplateAsJson, convertJsonToXml } from '../sharedHelpers';
 
-const periodTicketNetexGenerator = (
-    userPeriodTicket: PeriodTicket,
-    operatorData: OperatorData,
-): { generate: Function } => {
+const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData: OperatorData): { generate: Function } => {
+
     const opIdNocFormat = `noc:${operatorData.opId}`;
     const nocCodeNocFormat = `noc:${userPeriodTicket.nocCode}`;
-    const periodProductNameOpFormat = `op:Pass@${userPeriodTicket.productName}`;
-    const lineIdName = `Line_${userPeriodTicket.productName}`;
     const currentDate = new Date(Date.now());
-    const website = getCleanWebsite(operatorData.website);
+    const website = getCleanWebsite(operatorData.website);    
 
     const isGeoZoneTicket = (ticket: PeriodTicket): ticket is PeriodGeoZoneTicket =>
         (ticket as PeriodGeoZoneTicket).zoneName !== undefined;
@@ -39,7 +35,7 @@ const periodTicketNetexGenerator = (
         publicationRequestToUpdate.Description.$t = `Request for ${userPeriodTicket.nocCode} bus pass fares`;
         publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.OperatorRef.ref = nocCodeNocFormat;
         publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.OperatorRef.$t = opIdNocFormat;
-        publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.PreassignedFareProductRef.ref = periodProductNameOpFormat;
+        publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.PreassignedFareProductRef.ref = `op:Pass@${userPeriodTicket.productName}`;
 
         return publicationRequestToUpdate;
     };
@@ -101,7 +97,7 @@ const periodTicketNetexGenerator = (
     const updateServiceFrame = (serviceFrame: NetexObject): NetexObject | null => {
         if (isMultiServiceTicket(userPeriodTicket)) {
             const serviceFrameToUpdate = { ...serviceFrame };
-            serviceFrameToUpdate.id = `epd:UK:${userPeriodTicket.nocCode}:ServiceFrame_UK_PI_NETWORK:${lineIdName}:op`;
+            serviceFrameToUpdate.id = `epd:UK:${userPeriodTicket.nocCode}:ServiceFrame_UK_PI_NETWORK:Line_${userPeriodTicket.productName}:op`;
 
             serviceFrameToUpdate.lines.Line = getLinesList(userPeriodTicket, operatorData);
 
