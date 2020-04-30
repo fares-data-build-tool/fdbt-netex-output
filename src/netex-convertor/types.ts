@@ -73,22 +73,7 @@ export interface ProductDetails {
     nocCode: string;
 }
 
-export interface PeriodGeoZoneTicket extends BasePeriodTicket {
-    zoneName: string;
-    stops: Stop[];
-}
-
-export interface PeriodMultipleServicesTicket extends BasePeriodTicket {
-    selectedServices: SelectedService[];
-}
-
 export type PeriodTicket = PeriodGeoZoneTicket | PeriodMultipleServicesTicket;
-
-export interface SelectedService {
-    lineName: string;
-    startDate: string;
-    serviceDescription: string;
-}
 
 export interface ScheduledStopPoint {
     versionRef: string;
