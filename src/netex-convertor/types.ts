@@ -69,3 +69,32 @@ export interface SelectedService {
     startDate: string;
     serviceDescription: string;
 }
+
+export interface ScheduledStopPoint {
+    versionRef: string;
+    ref: string;
+    $t: string;
+}
+
+export interface TopographicProjectionRef {
+    versionRef: string;
+    ref: string;
+    $t: string;
+}
+
+export interface Line {
+    version: string;
+    id: string;
+    Name: object;
+    Description: object;
+    Url: object;
+    PublicCode: object;
+    PrivateCode: object;
+    OperatorRef: object;
+    LineType: object;
+}
+
+export interface LineRef {
+    version: string;
+    ref: string;
+}

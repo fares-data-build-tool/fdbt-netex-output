@@ -1,37 +1,51 @@
-import { Stop, OperatorData, PeriodGeoZoneTicket, PeriodMultipleServicesTicket } from '../types';
+import {
+    Stop,
+    OperatorData,
+    PeriodGeoZoneTicket,
+    PeriodMultipleServicesTicket,
+    ScheduledStopPoint,
+    TopographicProjectionRef,
+    Line,
+    LineRef
+} from '../types';
 import { NetexObject, getCleanWebsite } from '../sharedHelpers';
 
-export const getScheduledStopPointsList = (stops: Stop[]): {}[] =>
+export const getScheduledStopPointsList = (stops: Stop[]): ScheduledStopPoint[] =>
     stops.map((stop: Stop) => ({
         versionRef: 'EXTERNAL',
         ref: `naptStop:${stop.naptanCode}`,
         $t: `${stop.stopName}, ${stop.street}, ${stop.localityName}`,
     }));
 
-export const getTopographicProjectionRefList = (stops: Stop[]): {}[] =>
+export const getTopographicProjectionRefList = (stops: Stop[]): TopographicProjectionRef[] =>
     stops.map((stop: Stop) => ({
         versionRef: 'nptg:EXTERNAL',
         ref: `nptgLocality:${stop.localityCode}`,
         $t: `${stop.street}, ${stop.localityName}, ${stop.parentLocalityName}`,
     }));
 
-export const getLinesList = (userPeriodTicket: PeriodMultipleServicesTicket, operatorData: OperatorData): {}[] =>
-    userPeriodTicket.selectedServices ? userPeriodTicket.selectedServices.map(service => ({
-        version: '1.0',
-        id: `op:${service.lineName}`,
-        Name: { $t: `Line ${service.lineName}` },
-        Description: { $t: service.serviceDescription },
-        Url: { $t: getCleanWebsite(operatorData.website) },
-        PublicCode: { $t: service.lineName },
-        PrivateCode: { type: 'noc', $t: `${userPeriodTicket.nocCode}_${service.lineName}` },
-        OperatorRef: { version: '1.0', ref: `noc:${userPeriodTicket.nocCode}` },
-        LineType: { $t: 'local' },
-    })) : [];
+export const getLinesList = (userPeriodTicket: PeriodMultipleServicesTicket, operatorData: OperatorData): Line[] =>
+    userPeriodTicket.selectedServices
+        ? userPeriodTicket.selectedServices.map(service => ({
+            version: '1.0',
+            id: `op:${service.lineName}`,
+            Name: { $t: `Line ${service.lineName}` },
+            Description: { $t: service.serviceDescription },
+            Url: { $t: getCleanWebsite(operatorData.website) },
+            PublicCode: { $t: service.lineName },
+            PrivateCode: { type: 'noc', $t: `${userPeriodTicket.nocCode}_${service.lineName}` },
+            OperatorRef: { version: '1.0', ref: `noc:${userPeriodTicket.nocCode}` },
+            LineType: { $t: 'local' },
+        }))
+        : [];
 
-export const getLineRefList = (userPeriodTicket: PeriodMultipleServicesTicket): {}[] =>
-    userPeriodTicket.selectedServices ? userPeriodTicket.selectedServices.map(service => ({
-        version: '1.0',
-        ref: `op:${service.lineName}`})) : [];
+export const getLineRefList = (userPeriodTicket: PeriodMultipleServicesTicket): LineRef[] =>
+    userPeriodTicket.selectedServices
+        ? userPeriodTicket.selectedServices.map(service => ({
+            version: '1.0',
+            ref: `op:${service.lineName}`,
+        }))
+        : [];
 
 export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket, fareTable: NetexObject): NetexObject => {
     const fareTableToUpdate = fareTable;
@@ -62,9 +76,12 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket, fareT
     fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[1].ColumnRef.ref = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}@p-ticket@adult`;
 
     return fareTableToUpdate;
-}
+};
 
-export const getMultiServiceFareTable = (userPeriodTicket: PeriodMultipleServicesTicket, fareTable: NetexObject): NetexObject => {
+export const getMultiServiceFareTable = (
+    userPeriodTicket: PeriodMultipleServicesTicket,
+    fareTable: NetexObject,
+): NetexObject => {
     const fareTableToUpdate = fareTable;
     const name = `${userPeriodTicket.nocCode}-multi-service`;
 
@@ -94,4 +111,4 @@ export const getMultiServiceFareTable = (userPeriodTicket: PeriodMultipleService
     fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[1].ColumnRef.ref = `op:${userPeriodTicket.productName}@${name}@p-ticket@adult`;
 
     return fareTableToUpdate;
-}
+};
