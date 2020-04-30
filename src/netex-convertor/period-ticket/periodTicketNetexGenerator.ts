@@ -109,7 +109,6 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         return null;
     };
 
-    // to update
     const updateNetworkFareFrame = (networkFareFrame: NetexObject): NetexObject | null => {
         if (isGeoZoneTicket(userPeriodTicket)) {
             const networkFareFrameToUpdate = { ...networkFareFrame };
@@ -272,11 +271,15 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
     const updateFareTableFareFrame = (fareTableFareFrame: NetexObject): NetexObject => {
         const fareTableFareFrameToUpdate = { ...fareTableFareFrame };
 
-        fareTableFareFrameToUpdate.id = `epd:UK:${userPeriodTicket.nocCode}:FareFrame_UK_PI_FARE_PRICE:${userPeriodTicket.productName}@pass:op`;
-        fareTableFareFrameToUpdate.Name.$t = `${userPeriodTicket.productName} Prices`;
-        fareTableFareFrameToUpdate.prerequisites.FareFrameRef.ref = `epd:UK:${userPeriodTicket.nocCode}:FareFrame_UK_PI_FARE_PRODUCT:${userPeriodTicket.productName}@pass:op`;
-        fareTableFareFrameToUpdate.PricingParameterSet.id = `op:Pass@${userPeriodTicket.productName}`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.id = `op:Pass@${userPeriodTicket.productName}`;
+        fareTableFareFrameToUpdate.id = `epd:UK:${userPeriodTicket.nocCode}:FareFrame_UK_PI_FARE_PRICE:${placeHolderGroupOfProductsName}@pass:op`;
+        fareTableFareFrameToUpdate.Name.$t = `${placeHolderGroupOfProductsName} Prices`;
+        fareTableFareFrameToUpdate.prerequisites.FareFrameRef.ref = `epd:UK:${userPeriodTicket.nocCode}:FareFrame_UK_PI_FARE_PRODUCT:${placeHolderGroupOfProductsName}@pass:op`;
+        fareTableFareFrameToUpdate.PricingParameterSet.id = `op:Pass@${placeHolderGroupOfProductsName}`;
+        
+        fareTableFareFrameToUpdate.fareTables.FareTable = getFareTableList(userPeriodTicket);
+
+
+
         fareTableFareFrameToUpdate.fareTables.FareTable.Name.$t = `${userPeriodTicket.productName} Fares`;
         fareTableFareFrameToUpdate.fareTables.FareTable.pricesFor.PreassignedFareProductRef.ref = `op:Pass@${userPeriodTicket.productName}`;
         fareTableFareFrameToUpdate.fareTables.FareTable.usedIn.TariffRef.ref = `op:Tariff@${userPeriodTicket.productName}`;

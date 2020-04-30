@@ -1,12 +1,14 @@
 import {
     Stop,
     OperatorData,
+    PeriodTicket,
     PeriodGeoZoneTicket,
     PeriodMultipleServicesTicket,
     ScheduledStopPoint,
     TopographicProjectionRef,
     Line,
-    LineRef
+    LineRef,
+    FareTable
 } from '../types';
 import { NetexObject, getCleanWebsite } from '../sharedHelpers';
 
@@ -112,3 +114,18 @@ export const getMultiServiceFareTable = (
 
     return fareTableToUpdate;
 };
+
+export const getFareTableList = (userPeriodTicket: PeriodTicket): FareTable[] => userPeriodTicket.products.map(product => ({
+            version: '1.0',
+            id: `epd:UK:${userPeriodTicket.nocCode}:FareFrame_UK_PI_FARE_PRICE:${product.productName}@pass:op`,
+            Name: { $t: `${product.productName} Fares` },
+            Description: { $t: service.serviceDescription },
+            Url: { $t: getCleanWebsite(operatorData.website) },
+            PublicCode: { $t: service.lineName },
+            PrivateCode: { type: 'noc', $t: `${userPeriodTicket.nocCode}_${service.lineName}` },
+            OperatorRef: { version: '1.0', ref: `noc:${userPeriodTicket.nocCode}` },
+            LineType: { $t: 'local' },
+        }))
+        : [];
+
+
