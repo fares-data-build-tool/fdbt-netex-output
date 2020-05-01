@@ -8,9 +8,8 @@ import {
     TopographicProjectionRef,
     Line,
     LineRef,
-    FareTable
 } from '../types';
-import { NetexObject, getCleanWebsite } from '../sharedHelpers';
+import { getCleanWebsite } from '../sharedHelpers';
 
 export const getScheduledStopPointsList = (stops: Stop[]): ScheduledStopPoint[] =>
     stops.map((stop: Stop) => ({
@@ -49,83 +48,254 @@ export const getLineRefList = (userPeriodTicket: PeriodMultipleServicesTicket): 
         }))
         : [];
 
-export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket, fareTable: NetexObject): NetexObject => {
-    const fareTableToUpdate = fareTable;
+export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): {}[] =>
+    userPeriodTicket.products.map(product => ({
+        version: '1.0',
+        id: `op:${product.productName}@${userPeriodTicket.zoneName}`,
+        Name: { $t: `${userPeriodTicket.zoneName}` },
+        specifics: {
+            TariffZoneRef: {
+                version: '1.0',
+                ref: `op:${product.productName}@${userPeriodTicket.zoneName}`,
+            },
+        },
+        columns: {
+            FareTableColumn: {
+                version: '1.0',
+                id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket`,
+                Name: { $t: `${userPeriodTicket.zoneName}` },
+                representing: {
+                    TariffZoneRef: {
+                        version: '1.0',
+                        ref: `op:${product.productName}@${userPeriodTicket.zoneName}`,
+                    },
+                },
+            },
+        },
+        includes: {
+            FareTable: {
+                version: '1.0',
+                id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket`,
+                Name: { t$: `${product.productName} - Cash` },
+                pricesFor: {
+                    SalesOfferPacakgeRef: {
+                        version: '1.0',
+                        ref: `op:Pass@${product.productName}-SOP@p-ticket`,
+                    },
+                },
+                specifics: {
+                    TypeOfTravelDocumentRef: {
+                        version: '1.0',
+                        ref: 'op:p-ticket',
+                    },
+                },
+                columns: {
+                    FareTableColumn: {
+                        version: '1.0',
+                        id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket`,
+                        Name: { $t: 'Cash' },
+                        representing: {
+                            TypeOfTravelDocumentRef: {
+                                version: '1.0',
+                                ref: 'op:p-ticket',
+                            },
+                            UserProfileRef: {
+                                version: '1.0',
+                                ref: 'op:adult',
+                            },
+                        },
+                    },
+                },
+                includes: {
+                    Faretable: {
+                        version: '1.0',
+                        id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult`,
+                        Name: {$t: `${product.productName} - Cash - Adult`},
+                        limitations: {
+                            UserProfileRef: {
+                                versions: '1.0',
+                                ref: 'op:adult',
+                            },
+                        },
+                        columns: {
+                            FareTableColumn: {
+                                version: '1.0',
+                                id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult`,
+                                Name: { $t: 'Adult' },
+                                representing: {
+                                    TypeOfTravelDocumentRef: {
+                                        version: '1.0',
+                                        ref: 'op:p-tciket',
+                                    },
+                                    UserProfileRef: {
+                                        version: '1.0',
+                                        ref: 'op:adult',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                cells: {
+                    Cell: {
+                        version: '1.0',
+                        id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@1day`,
+                        order: '1',
+                        TimeIntervalPrice: {
+                            version: '1.0',
+                            id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@1day`,
+                            Amount: { t$: `${product.productPrice}` },
+                            TimeIntervalRef: {
+                                version: '1.0',
+                                ref: `op:Tariff@${product.productName}@1day`,
+                            },
+                            ColumnRef: {
+                                version: '1.0',
+                                ref: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult`,
+                            },
+                            RowRef: {
+                                version: '1.0',
+                                ref: `op:${product.productName}@1day`,
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    }));
 
-    fareTableToUpdate.id = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}`;
-    fareTableToUpdate.Name.$t = userPeriodTicket.zoneName;
-    fareTableToUpdate.specifics.TariffZoneRef.ref = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}`;
-    fareTableToUpdate.columns.FareTableColumn.id = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}@p-ticket`;
-    fareTableToUpdate.columns.FareTableColumn.Name.$t = userPeriodTicket.zoneName;
-    fareTableToUpdate.columns.FareTableColumn.representing.TariffZoneRef.ref = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}`;
-    fareTableToUpdate.includes.FareTable.id = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}@p-ticket`;
-    fareTableToUpdate.includes.FareTable.Name.$t = `${userPeriodTicket.productName} - Cash`;
-    fareTableToUpdate.includes.FareTable.pricesFor.SalesOfferPackageRef.ref = `op:Pass@${userPeriodTicket.productName}-SOP@p-ticket`;
-    fareTableToUpdate.includes.FareTable.columns.FareTableColumn.id = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}@p-ticket`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.id = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}@p-ticket@adult`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.Name.$t = `${userPeriodTicket.productName} - Cash - Adult`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.columns.FareTableColumn.id = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}@p-ticket@adult`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[0].id = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@1day`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[0].TimeIntervalPrice.id = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@1day`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[0].TimeIntervalPrice.TimeIntervalRef.ref = `op:Tariff@${userPeriodTicket.productName}@1day`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[0].ColumnRef.ref = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}@p-ticket@adult`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[0].RowRef.ref = `op:${userPeriodTicket.productName}@1day`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[1].id = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@1week`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[1].TimeIntervalPrice.id = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@1week`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[1].TimeIntervalPrice.TimeIntervalRef.ref = `op:Tariff@${userPeriodTicket.productName}@1week`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[1].RowRef.ref = `op:${userPeriodTicket.productName}@1week`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[1].ColumnRef.ref = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}@p-ticket@adult`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[1].ColumnRef.ref = `op:${userPeriodTicket.productName}@${userPeriodTicket.zoneName}@p-ticket@adult`;
-
-    return fareTableToUpdate;
-};
-
-export const getMultiServiceFareTable = (
-    userPeriodTicket: PeriodMultipleServicesTicket,
-    fareTable: NetexObject,
-): NetexObject => {
-    const fareTableToUpdate = fareTable;
+export const getMultiServiceFareTable = (userPeriodTicket: PeriodMultipleServicesTicket): {}[] => {
     const name = `${userPeriodTicket.nocCode}-multi-service`;
+    const netexObjectList = userPeriodTicket.products.map(product => ({
+        version: '1.0',
+        id: `op:${product.productName}@${name}`,
+        Name: { $t: name },
+        specifics: null,
+        columns: {
+            FareTableColumn: {
+                version: '1.0',
+                id: `op:${product.productName}@${name}@p-ticket`,
+                Name: { $t: name },
+                representing: null,
+            },
+        },
+        includes: {
+            FareTable: {
+                version: '1.0',
+                id: `op:${product.productName}@${name}@p-ticket`,
+                Name: { t$: `${product.productName} - Cash` },
+                pricesFor: {
+                    SalesOfferPacakgeRef: {
+                        version: '1.0',
+                        ref: `op:Pass@${product.productName}-SOP@p-ticket`,
+                    },
+                },
+                specifics: {
+                    TypeOfTravelDocumentRef: {
+                        version: '1.0',
+                        ref: 'op:p-ticket',
+                    },
+                },
+                columns: {
+                    FareTableColumn: {
+                        version: '1.0',
+                        id: `op:${product.productName}@${name}@p-ticket`,
+                        Name: { $t: 'Cash' },
+                        representing: {
+                            TypeOfTravelDocumentRef: {
+                                version: '1.0',
+                                ref: 'op:p-ticket',
+                            },
+                            UserProfileRef: {
+                                version: '1.0',
+                                ref: 'op:adult',
+                            },
+                        },
+                    },
+                },
+                includes: {
+                    Faretable: {
+                        version: '1.0',
+                        id: `op:${product.productName}@${name}@p-ticket@adult`,
+                        Name: {$t: `${product.productName} - Cash - Adult`},
+                        limitations: {
+                            UserProfileRef: {
+                                versions: '1.0',
+                                ref: 'op:adult',
+                            },
+                        },
+                        columns: {
+                            FareTableColumn: {
+                                version: '1.0',
+                                id: `op:${product.productName}@${name}@p-ticket@adult`,
+                                Name: { $t: 'Adult' },
+                                representing: {
+                                    TypeOfTravelDocumentRef: {
+                                        version: '1.0',
+                                        ref: 'op:p-tciket',
+                                    },
+                                    UserProfileRef: {
+                                        version: '1.0',
+                                        ref: 'op:adult',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                cells: {
+                    Cell: {
+                        version: '1.0',
+                        id: `op:${product.productName}@${name}@p-ticket@adult@1day`,
+                        order: '1',
+                        TimeIntervalPrice: {
+                            version: '1.0',
+                            id: `op:${product.productName}@${name}@p-ticket@adult@1day`,
+                            Amount: { t$: `${product.productPrice}` },
+                            TimeIntervalRef: {
+                                version: '1.0',
+                                ref: `op:Tariff@${product.productName}@1day`,
+                            },
+                            ColumnRef: {
+                                version: '1.0',
+                                ref: `op:${product.productName}@${name}@p-ticket@adult`,
+                            },
+                            RowRef: {
+                                version: '1.0',
+                                ref: `op:${product.productName}@1day`,
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    }));
+    return netexObjectList;
+}
 
-    fareTableToUpdate.id = `op:${userPeriodTicket.productName}@${name}`;
-    fareTableToUpdate.Name.$t = name;
-    fareTableToUpdate.specifics = null;
-    fareTableToUpdate.columns.FareTableColumn.id = `op:${userPeriodTicket.productName}@${name}@p-ticket`;
-    fareTableToUpdate.columns.FareTableColumn.Name.$t = name;
-    fareTableToUpdate.columns.FareTableColumn.representing = null;
-    fareTableToUpdate.includes.FareTable.id = `op:${userPeriodTicket.productName}@${name}@p-ticket`;
-    fareTableToUpdate.includes.FareTable.Name.$t = `${userPeriodTicket.productName} - Cash`;
-    fareTableToUpdate.includes.FareTable.pricesFor.SalesOfferPackageRef.ref = `op:Pass@${userPeriodTicket.productName}-SOP@p-ticket`;
-    fareTableToUpdate.includes.FareTable.columns.FareTableColumn.id = `op:${userPeriodTicket.productName}@${name}@p-ticket`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.id = `op:${userPeriodTicket.productName}@${name}@p-ticket@adult`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.Name.$t = `${userPeriodTicket.productName} - Cash - Adult`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.columns.FareTableColumn.id = `op:${userPeriodTicket.productName}@${name}@p-ticket@adult`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[0].id = `op:${userPeriodTicket.productName}@${name}@p-ticket@adult@1day`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[0].TimeIntervalPrice.id = `op:${userPeriodTicket.productName}@${name}@p-ticket@adult@1day`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[0].TimeIntervalPrice.TimeIntervalRef.ref = `op:Tariff@${userPeriodTicket.productName}@1day`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[0].ColumnRef.ref = `op:${userPeriodTicket.productName}@${name}@p-ticket@adult`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[0].RowRef.ref = `op:${userPeriodTicket.productName}@1day`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[1].id = `op:${userPeriodTicket.productName}@${name}@p-ticket@adult@1week`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[1].TimeIntervalPrice.id = `op:${userPeriodTicket.productName}@${name}@p-ticket@adult@1week`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[1].TimeIntervalPrice.TimeIntervalRef.ref = `op:Tariff@${userPeriodTicket.productName}@1week`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[1].RowRef.ref = `op:${userPeriodTicket.productName}@1week`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[1].ColumnRef.ref = `op:${userPeriodTicket.productName}@${name}@p-ticket@adult`;
-    fareTableToUpdate.includes.FareTable.includes.FareTable.cells.Cell[1].ColumnRef.ref = `op:${userPeriodTicket.productName}@${name}@p-ticket@adult`;
-
-    return fareTableToUpdate;
-};
-
-export const getFareTableList = (userPeriodTicket: PeriodTicket): FareTable[] => userPeriodTicket.products.map(product => ({
-            version: '1.0',
-            id: `epd:UK:${userPeriodTicket.nocCode}:FareFrame_UK_PI_FARE_PRICE:${product.productName}@pass:op`,
-            Name: { $t: `${product.productName} Fares` },
-            Description: { $t: service.serviceDescription },
-            Url: { $t: getCleanWebsite(operatorData.website) },
-            PublicCode: { $t: service.lineName },
-            PrivateCode: { type: 'noc', $t: `${userPeriodTicket.nocCode}_${service.lineName}` },
-            OperatorRef: { version: '1.0', ref: `noc:${userPeriodTicket.nocCode}` },
-            LineType: { $t: 'local' },
-        }))
-        : [];
-
-
+export const getFareTableList = (userPeriodTicket: PeriodTicket): {}[] =>
+    userPeriodTicket.products.map(product => ({
+        version: '1.0',
+        id: `epd:UK:${userPeriodTicket.nocCode}:FareFrame_UK_PI_FARE_PRICE:${product.productName}@pass:op`,
+        Name: { $t: `${product.productName} Fares` },
+        pricesFor: {
+            PreassignedFareProductRef: { version: '1.0', ref: `op:Pass@${product.productName}` },
+        },
+        usedIn: {
+            TariffRef: { version: '1.0', ref: `op:Tariff@${product.productName}` },
+        },
+        rows: {
+            FareTableRow: {
+                version: '1.0',
+                id: `op:${product.productName}@1day`,
+                order: '2',
+                Name: { $t: '1 day' },
+                representing: {
+                    TimeIntervalRef: {
+                        version: '1.0',
+                        ref: `op:Tariff@${product.productName}@1day`,
+                    },
+                },
+            },
+        },
+    }));

@@ -103,7 +103,3 @@ export interface LineRef {
     version: string;
     ref: string;
 }
-
-export interface FareTable {
-   
-}
