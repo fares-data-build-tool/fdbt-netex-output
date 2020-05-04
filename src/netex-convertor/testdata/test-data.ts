@@ -963,27 +963,30 @@ export const mockPeriodMultiServicesTicketMatchingDataUpload = {
         {
             lineName: '4',
             startDate: '05/04/2020',
-            serviceDescription: 'BLACKPOOL - LYTHAM'
+            serviceDescription: 'BLACKPOOL - LYTHAM',
         },
         {
             lineName: '17',
             startDate: '05/04/2020',
-            serviceDescription: 'BLACKPOOL - LYTHAM'
+            serviceDescription: 'BLACKPOOL - LYTHAM',
         },
         {
             line: '2C',
             startDate: '05/04/2020',
-            serviceDescription: 'BLACKPOOL - LYTHAM'
+            serviceDescription: 'BLACKPOOL - LYTHAM',
         },
     ],
 };
 
 export const multiServicesPeriodData = {
     operatorName: 'Blackpool Transport',
-    productName: 'dfvdfvd',
-    productPrice: '123',
-    daysValid: '4',
-    expiryRules: 'endOfCalendarDay',
+    products: [{
+        productName: 'dfvdfvd',
+        productPrice: '123',
+        daysValid: '4',
+        expiryRules: 'endOfCalendarDay',
+        nocCode: 'BLAC',
+    }],
     nocCode: 'BLAC',
     selectedServices: [
         {
@@ -1034,5 +1037,5 @@ export const operatorData = {
     vosaPsvLicenseName: 'ABC Ltd',
     fareEnq: 'info@abc.com',
     complEnq: 'info@abc.com',
-    mode: 'bus'
+    mode: 'bus',
 };

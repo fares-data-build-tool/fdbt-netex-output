@@ -6,6 +6,8 @@ import {
     getLineRefList,
     getGeoZoneFareTable,
     getMultiServiceFareTable,
+    getFareTableList,
+    getFareTableRowList
 } from './periodTicketNetexHelpers';
 import { NetexObject, getCleanWebsite, getNetexTemplateAsJson, convertJsonToXml } from '../sharedHelpers';
 
@@ -111,7 +113,6 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         return null;
     };
 
-    // to update
     const updateNetworkFareFrame = (networkFareFrame: NetexObject): NetexObject | null => {
         if (isGeoZoneTicket(userPeriodTicket)) {
             const networkFareFrameToUpdate = { ...networkFareFrame };
@@ -284,43 +285,23 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         return priceFareFrameToUpdate;
     };
 
-    // to update 
     const updateFareTableFareFrame = (fareTableFareFrame: NetexObject): NetexObject => {
         const fareTableFareFrameToUpdate = { ...fareTableFareFrame };
 
-        fareTableFareFrameToUpdate.id = `epd:UK:${userPeriodTicket.nocCode}:FareFrame_UK_PI_FARE_PRICE:${userPeriodTicket.productName}@pass:op`;
-        fareTableFareFrameToUpdate.Name.$t = `${userPeriodTicket.productName} Prices`;
-        fareTableFareFrameToUpdate.prerequisites.FareFrameRef.ref = `epd:UK:${userPeriodTicket.nocCode}:FareFrame_UK_PI_FARE_PRODUCT:${userPeriodTicket.productName}@pass:op`;
-        fareTableFareFrameToUpdate.PricingParameterSet.id = `op:Pass@${userPeriodTicket.productName}`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.id = `op:Pass@${userPeriodTicket.productName}`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.Name.$t = `${userPeriodTicket.productName} Fares`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.pricesFor.PreassignedFareProductRef.ref = `op:Pass@${userPeriodTicket.productName}`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.usedIn.TariffRef.ref = `op:Tariff@${userPeriodTicket.productName}`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow[0].id = `op:${userPeriodTicket.productName}@1day`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow[0].representing.TimeIntervalRef.ref = `op:Tariff@${userPeriodTicket.productName}@1day`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow[1].id = `op:${userPeriodTicket.productName}@1week`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow[1].representing.TimeIntervalRef.ref = `op:Tariff@${userPeriodTicket.productName}@1week`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow[2].id = `op:${userPeriodTicket.productName}@4week`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow[2].representing.TimeIntervalRef.ref = `op:Tariff@${userPeriodTicket.productName}@4week`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow[3].id = `op:${userPeriodTicket.productName}@4week-Unlimited`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow[3].representing.TimeIntervalRef.ref = `op:Tariff@${userPeriodTicket.productName}@4week`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow[4].id = `op:${userPeriodTicket.productName}@1year`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow[4].representing.TimeIntervalRef.ref = `op:Tariff@${userPeriodTicket.productName}@1year`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow[5].id = `op:${userPeriodTicket.productName}@1term`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow[5].representing.TimeIntervalRef.ref = `op:Tariff@${userPeriodTicket.productName}@1term`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow[6].id = `op:${userPeriodTicket.productName}@1academic_year`;
-        fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow[6].representing.TimeIntervalRef.ref = `op:Tariff@${userPeriodTicket.productName}@1academic_year`;
+        fareTableFareFrameToUpdate.id = `epd:UK:${userPeriodTicket.nocCode}:FareFrame_UK_PI_FARE_PRICE:${placeHolderGroupOfProductsName}@pass:op`;
+        fareTableFareFrameToUpdate.Name.$t = `${placeHolderGroupOfProductsName} Prices`;
+        fareTableFareFrameToUpdate.prerequisites.FareFrameRef.ref = `epd:UK:${userPeriodTicket.nocCode}:FareFrame_UK_PI_FARE_PRODUCT:${placeHolderGroupOfProductsName}@pass:op`;
+        fareTableFareFrameToUpdate.PricingParameterSet.id = `op:Pass@${placeHolderGroupOfProductsName}`;
+        
+        fareTableFareFrameToUpdate.fareTables.FareTable = getFareTableList(userPeriodTicket);
+        fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow = getFareTableRowList(userPeriodTicket);
 
         if (isGeoZoneTicket(userPeriodTicket)) {
             fareTableFareFrameToUpdate.fareTables.FareTable.includes.FareTable = getGeoZoneFareTable(
-                userPeriodTicket,
-                fareTableFareFrameToUpdate.fareTables.FareTable.includes.FareTable,
-            );
+                userPeriodTicket);
         } else if (isMultiServiceTicket(userPeriodTicket)) {
             fareTableFareFrameToUpdate.fareTables.FareTable.includes.FareTable = getMultiServiceFareTable(
-                userPeriodTicket,
-                fareTableFareFrameToUpdate.fareTables.FareTable.includes.FareTable,
-            );
+                userPeriodTicket);
         }
 
         return fareTableFareFrameToUpdate;
