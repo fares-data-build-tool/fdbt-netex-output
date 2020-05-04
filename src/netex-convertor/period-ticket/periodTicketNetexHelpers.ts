@@ -1,4 +1,3 @@
-import { FareStructureElement } from './../types';
 import {
     Stop,
     OperatorData,
@@ -9,6 +8,7 @@ import {
     TopographicProjectionRef,
     Line,
     LineRef,
+    FareStructureElement
 } from '../types';
 import { getCleanWebsite } from '../sharedHelpers';
 
@@ -288,15 +288,15 @@ export const getFareTableList = (userPeriodTicket: PeriodTicket): {}[] =>
             TariffRef: { version: '1.0', ref: `op:Tariff@${product.productName}` },
         },
         rows: { FareTableRow: { version: '1.0',
-        id: `op:${product.productName}@${product.daysValid}day`,
-        order: '2',
-        Name: { $t: `${product.daysValid} day` },
-        representing: {
-            TimeIntervalRef: {
-                version: '1.0',
-                ref: `op:Tariff@${product.productName}@${product.daysValid}day`,
-            },
-        }}}
+            id: `op:${product.productName}@${product.daysValid}day`,
+            order: '2',
+            Name: { $t: `${product.daysValid} day` },
+            representing: {
+                TimeIntervalRef: {
+                    version: '1.0',
+                    ref: `op:Tariff@${product.productName}@${product.daysValid}day`,
+                },
+            }}}
     }));
 
 
@@ -380,7 +380,7 @@ export const getEligibilityFareStructureElement = (): FareStructureElement => {
     }
 }
 
-export const getDurationFareStructureElement = () => {
+export const getDurationFareStructureElement = (): {} => {
     return {
         version: "1.0",
         id: "",
@@ -421,7 +421,7 @@ export const getDurationFareStructureElement = () => {
     };
 }
 
-export const getConditionsOfTravelFareStructureElement = () => {
+export const getConditionsOfTravelFareStructureElement = (): {} => {
     return {
         id: "",
         version: "1.0",

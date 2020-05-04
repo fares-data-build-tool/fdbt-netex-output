@@ -46,7 +46,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
         } else {
             throw new Error(
                 `The JSON object '${decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '))}' in the '${
-                event.Records[0].s3.bucket.name
+                    event.Records[0].s3.bucket.name
                 }' bucket does not contain a 'type' attribute to distinguish product type.`,
             );
         }

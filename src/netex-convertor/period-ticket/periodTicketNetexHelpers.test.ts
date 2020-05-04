@@ -8,8 +8,6 @@ import {
     multiServicesPeriodData,
     operatorData
 } from '../testdata/test-data';
-import { getFareStructureElement } from './periodTicketNetexHelpers';
-import { convertJsonToXml } from '../sharedHelpers';
 
 describe('periodTicketNetexHelpers', () => {
     const { stops } = geoZonePeriodData;
@@ -48,20 +46,4 @@ describe('periodTicketNetexHelpers', () => {
         });
     });
 
-    describe('getFareStructureElement', () => {
-        it('returns a fare structure element according to which number provided', () => {
-            const fareStructureElementOne = convertJsonToXml(getFareStructureElement(1));
-            const fareStructureElementTwo = convertJsonToXml(getFareStructureElement(2));
-            const fareStructureElementThree = convertJsonToXml(getFareStructureElement(3));
-            const fareStructureElementFour = convertJsonToXml(getFareStructureElement(4));
-            const fareStructureElementFive = convertJsonToXml(getFareStructureElement(5));
-
-            expect(fareStructureElementOne).toBe();
-            expect(fareStructureElementTwo).toBe();
-            expect(fareStructureElementThree).toBe();
-            expect(fareStructureElementFour).toBe();
-            expect(fareStructureElementFive).toBe();
-
-        })
-    })
 });
