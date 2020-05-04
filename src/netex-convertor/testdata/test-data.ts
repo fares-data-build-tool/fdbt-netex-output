@@ -984,8 +984,7 @@ export const multiServicesPeriodData = {
         productName: 'dfvdfvd',
         productPrice: '123',
         daysValid: '4',
-        expiryRules: 'endOfCalendarDay',
-        nocCode: 'BLAC',
+        expiryRules: 'endOfCalendarDay'
     }],
     nocCode: 'BLAC',
     selectedServices: [
