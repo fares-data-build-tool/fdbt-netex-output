@@ -62,7 +62,7 @@ export interface PeriodMultipleServicesTicket extends BasePeriodTicket {
 export interface SelectedService {
     lineName: string;
     startDate: string;
-    description: string;
+    serviceDescription: string;
 }
 
 export interface ProductDetails {
@@ -102,4 +102,13 @@ export interface Line {
 export interface LineRef {
     version: string;
     ref: string;
+}
+
+export interface FareStructureElement {
+    version: string;
+    id: string;
+    Name: object;
+    Description?: object;
+    TypeOfFareStructureElementRef: object;
+    GenericParameterAssignment: object;
 }

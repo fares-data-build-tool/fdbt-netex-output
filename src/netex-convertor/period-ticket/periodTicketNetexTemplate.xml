@@ -244,28 +244,8 @@
 							<timeIntervals>
 								<TimeInterval version="1.0" id="">
 									<Name>1 day</Name>
-									<StartTime>00:00:00</StartTime>
-									<EndTime>24:00:00</EndTime>
 									<Duration>P1D</Duration>
-								</TimeInterval>
-								<TimeInterval version="1.0" id="">
-									<Name>1 week</Name>
-									<Duration>P7D</Duration>
-								</TimeInterval>
-								<TimeInterval version="1.0" id="">
-									<Name>4 week</Name>
-									<Duration>P28D</Duration>
-								</TimeInterval>
-								<TimeInterval version="1.0" id="">
-									<Name>Annual</Name>
-									<Duration>P1Y</Duration>
-								</TimeInterval>
-								<TimeInterval version="1.0" id="">
-									<Name>1 term</Name>
-								</TimeInterval>
-								<TimeInterval version="1.0" id="">
-									<Name>1 term</Name>
-								</TimeInterval>
+								</TimeInterval>								
 							</timeIntervals>
 							<!-- ==FARE STRUCTURE ELEMENTS -->
 							<fareStructureElements>

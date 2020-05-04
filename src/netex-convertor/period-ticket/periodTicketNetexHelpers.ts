@@ -1,3 +1,4 @@
+import { FareStructureElement } from './../types';
 import {
     Stop,
     OperatorData,
@@ -112,3 +113,145 @@ export const getMultiServiceFareTable = (
 
     return fareTableToUpdate;
 };
+
+export const getFareStructureElement = (elementNumber: number): FareStructureElement => {
+    switch (elementNumber) {
+        case 1:
+            return {
+                version: "1.0",
+                id: "",
+                Name: { $t: "Available zones" },
+                Description: { $t: "single zone." },
+                TypeOfFareStructureElementRef: {
+                    version: "fxc:v1.0",
+                    ref: "fxc:access"
+                },
+                GenericParameterAssignment: {
+                    id: "",
+                    version: "1.0",
+                    order: "1",
+                    TypeOfAccessAssignmentRef: {
+                        $t: {
+                            version: "fxc:v1.0",
+                            ref: "fxc:can_access"
+                        }
+                    },
+                    ValidityParameterGroupingType: { $t: "XOR" },
+                    validityParameters: {
+                        $t: {
+                            FareZoneRef: {
+                                version: "1.0",
+                                ref: ""
+                            }
+                        }
+                    }
+                }
+            };
+        case 2:
+            return {
+                version: "1.0",
+                id: "",
+                Name: { $t: "Eligible user types" },
+                TypeOfFareStructureElementRef: {
+                    version: "fxc:v1.0",
+                    ref: "fxc:eligibility"
+                },
+                GenericParameterAssignment: {
+                    id: "",
+                    version: "1.0",
+                    order: "1",
+                    TypeOfAccessAssignmentRef: {
+                        $t: {
+                            version: "fxc:v1.0",
+                            ref: "fxc:eligible"
+                        }
+                    },
+                    LimitationGroupingType: { $t: "XOR" },
+                    limitations: {
+                        $t: {
+                            UserProfile: {
+                                version: "1.0",
+                                id: "op:adult",
+                                Name: {
+                                    $t: "Adult"
+                                },
+                                prices: {
+                                    $t: {
+                                        UsageParameterPrice: {
+                                            version: "1.0",
+                                            id: "op:adult"
+                                        }
+                                    }
+                                },
+                                TypeOfConcessionRef: {
+                                    version: "fxc:v1.0",
+                                    ref: "fxc:none"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+    };
+        case 3:
+return {
+    version: "1.0",
+    id: "",
+    Name: { $t: "Available duration combination" },
+    Description: { $t: "All periods allowed, 60 mins, but no evening - used in for some mticket, single zone." },
+    TypeOfFareStructureElementRef: {
+        version: "fxc:v1.0",
+        ref: "fxc:durations"
+    },
+    timeIntervals: {
+        $t: {
+            TimeIntervalRef: {
+                version: "1.0",
+                ref: ""
+            }
+        }
+    },
+    GenericParameterAssignment: {
+        id: "",
+        version: "1.0",
+        order: "1",
+        Description: {
+            $t: "Adult/Child Cash ticket Only available for 1 Day or 1week"
+        },
+        TypeOfAccessAssignmentRef: {
+            version: "fxc:v1.0",
+            ref: "fxc:eligible"
+        },
+        LimitationGroupingType: { $t: "XOR" },
+        limitations: {
+            $t: {
+                UserProfileRef: {
+                    version: "1.0",
+                    id: "op:adult",
+                }
+            }
+        }
+    }
+};
+
+        case 4:
+return {
+
+};
+
+        case 5:
+return {
+
+};
+
+        default:
+return {
+    version: "",
+    id: "",
+    Name: {},
+    Description: {},
+    TypeOfFareStructureElementRef: {},
+    GenericParameterAssignment: {}
+};
+    }
+}
