@@ -6,7 +6,8 @@ import {
     getLineRefList,
     getGeoZoneFareTable,
     getMultiServiceFareTable,
-    getFareTableList
+    getFareTableList,
+    getFareTableRowList
 } from './periodTicketNetexHelpers';
 import { NetexObject, getCleanWebsite, getNetexTemplateAsJson, convertJsonToXml } from '../sharedHelpers';
 
@@ -268,7 +269,6 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         return priceFareFrameToUpdate;
     };
 
-    // to update 
     const updateFareTableFareFrame = (fareTableFareFrame: NetexObject): NetexObject => {
         const fareTableFareFrameToUpdate = { ...fareTableFareFrame };
 
@@ -278,6 +278,7 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         fareTableFareFrameToUpdate.PricingParameterSet.id = `op:Pass@${placeHolderGroupOfProductsName}`;
         
         fareTableFareFrameToUpdate.fareTables.FareTable = getFareTableList(userPeriodTicket);
+        fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow = getFareTableRowList(userPeriodTicket);
 
         if (isGeoZoneTicket(userPeriodTicket)) {
             fareTableFareFrameToUpdate.fareTables.FareTable.includes.FareTable = getGeoZoneFareTable(

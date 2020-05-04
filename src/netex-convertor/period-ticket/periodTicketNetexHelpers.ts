@@ -110,7 +110,7 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): {}[]
                     Faretable: {
                         version: '1.0',
                         id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult`,
-                        Name: {$t: `${product.productName} - Cash - Adult`},
+                        Name: { $t: `${product.productName} - Cash - Adult` },
                         limitations: {
                             UserProfileRef: {
                                 versions: '1.0',
@@ -217,7 +217,7 @@ export const getMultiServiceFareTable = (userPeriodTicket: PeriodMultipleService
                     Faretable: {
                         version: '1.0',
                         id: `op:${product.productName}@${name}@p-ticket@adult`,
-                        Name: {$t: `${product.productName} - Cash - Adult`},
+                        Name: { $t: `${product.productName} - Cash - Adult` },
                         limitations: {
                             UserProfileRef: {
                                 versions: '1.0',
@@ -271,7 +271,7 @@ export const getMultiServiceFareTable = (userPeriodTicket: PeriodMultipleService
         },
     }));
     return netexObjectList;
-}
+};
 
 export const getFareTableList = (userPeriodTicket: PeriodTicket): {}[] =>
     userPeriodTicket.products.map(product => ({
@@ -284,18 +284,18 @@ export const getFareTableList = (userPeriodTicket: PeriodTicket): {}[] =>
         usedIn: {
             TariffRef: { version: '1.0', ref: `op:Tariff@${product.productName}` },
         },
-        rows: {
-            FareTableRow: {
+    }));
+
+export const getFareTableRowList = (userPeriodTicket: PeriodTicket): {}[] =>
+    userPeriodTicket.products.map(product => ({
+        version: '1.0',
+        id: `op:${product.productName}@${product.daysValid}day`,
+        order: '2',
+        Name: { $t: `${product.daysValid} day` },
+        representing: {
+            TimeIntervalRef: {
                 version: '1.0',
-                id: `op:${product.productName}@1day`,
-                order: '2',
-                Name: { $t: '1 day' },
-                representing: {
-                    TimeIntervalRef: {
-                        version: '1.0',
-                        ref: `op:Tariff@${product.productName}@1day`,
-                    },
-                },
+                ref: `op:Tariff@${product.productName}@{product.daysValid}day`,
             },
         },
     }));
