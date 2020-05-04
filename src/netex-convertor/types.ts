@@ -108,6 +108,7 @@ export interface FareStructureElement {
     id: string;
     Name: object;
     Description?: object;
-    TypeOfFareStructureElementRef: object;
+    TypeOfFareStructureElementRef?: object;
     GenericParameterAssignment: object;
+    timeIntervals?: object;
 }
