@@ -70,7 +70,6 @@ export interface ProductDetails {
     productPrice: string;
     daysValid: string;
     expiryRules: string;
-    nocCode: string;
 }
 
 export type PeriodTicket = PeriodGeoZoneTicket | PeriodMultipleServicesTicket;

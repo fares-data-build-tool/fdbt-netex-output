@@ -12,6 +12,8 @@ import {
 } from '../types';
 import { getCleanWebsite } from '../sharedHelpers';
 
+const placeHolderGroupOfProductsName = "PLACEHOLDER";
+
 export const getScheduledStopPointsList = (stops: Stop[]): ScheduledStopPoint[] =>
     stops.map((stop: Stop) => ({
         versionRef: 'EXTERNAL',
@@ -280,11 +282,21 @@ export const getFareTableList = (userPeriodTicket: PeriodTicket): {}[] =>
         id: `epd:UK:${userPeriodTicket.nocCode}:FareFrame_UK_PI_FARE_PRICE:${product.productName}@pass:op`,
         Name: { $t: `${product.productName} Fares` },
         pricesFor: {
-            PreassignedFareProductRef: { version: '1.0', ref: `op:Pass@${product.productName}` },
+            PreassignedFareProductRef: { version: '1.0', ref: `op:Pass@${placeHolderGroupOfProductsName}` },
         },
         usedIn: {
             TariffRef: { version: '1.0', ref: `op:Tariff@${product.productName}` },
         },
+        rows: { FareTableRow: { version: '1.0',
+        id: `op:${product.productName}@${product.daysValid}day`,
+        order: '2',
+        Name: { $t: `${product.daysValid} day` },
+        representing: {
+            TimeIntervalRef: {
+                version: '1.0',
+                ref: `op:Tariff@${product.productName}@${product.daysValid}day`,
+            },
+        }}}
     }));
 
 export const getFareStructureElement = (elementNumber: number): FareStructureElement => {
@@ -428,17 +440,45 @@ return {
     }
 }
 
-
-export const getFareTableRowList = (userPeriodTicket: PeriodTicket): {}[] =>
+export const getSalesOfferPackageList = (userPeriodTicket: PeriodTicket): {}[] =>
     userPeriodTicket.products.map(product => ({
         version: '1.0',
-        id: `op:${product.productName}@${product.daysValid}day`,
-        order: '2',
-        Name: { $t: `${product.daysValid} day` },
-        representing: {
-            TimeIntervalRef: {
-                version: '1.0',
-                ref: `op:Tariff@${product.productName}@{product.daysValid}day`,
+        id: `op:Pass@${product.productName}-SOP@p-ticket`,
+        BrandingRef : { version: '1.0', ref: `op:${userPeriodTicket.operatorName}@brand`},
+        Name: {$t: `${placeHolderGroupOfProductsName} - paper ticket`},
+        Description: { $t: 'Unlimited Travel in a given zone'},
+        distributionAssignments: {
+            DistributionAssignment: {
+                version: '1.0', 
+                id: `op:Pass@${product.productName}-GSOP@p-ticket@on_board`,
+                order: '1',
+                Name: { $t: 'Onboard'},
+                Description: { $t: 'Pay for ticket onboard.'},
+                DistributionChannelRef :{
+                    version: 'fxc:v1.0',
+                    ref: 'fxc:on_board'
+                },
+                DistributionChannelType: { $t: 'onBoard'},
+                PaymentMethods: { $t: 'Cash ContactlessPaymentCard'},
+                FulfilmentMethodRef: {
+                    ref: 'fxc:collect_on_board',
+                    version: 'fxc:v1.0'
+                }
             },
-        },
+            salesOfferPackageElements: {
+                SalesOfferPackageElement: {
+                    version: '1.0',
+                    id: `op:Pass@${product.productName}-SOP@p-ticket`,
+                    order: '3',
+                    TypeOfTravelDocumentRef: {
+                        versions: '1.0',
+                        ref: 'op:p-ticket'
+                    },
+                    PreassignedFareProductRef: {
+                        version: '1.0',
+                        ref: `op:Pass@${product.productName}`
+                    },
+                }
+            }
+        }
     }));

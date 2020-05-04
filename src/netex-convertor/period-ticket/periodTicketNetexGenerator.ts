@@ -7,7 +7,7 @@ import {
     getGeoZoneFareTable,
     getMultiServiceFareTable,
     getFareTableList,
-    getFareTableRowList
+    getSalesOfferPackageList
 } from './periodTicketNetexHelpers';
 import { NetexObject, getCleanWebsite, getNetexTemplateAsJson, convertJsonToXml } from '../sharedHelpers';
 
@@ -260,27 +260,7 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.validableElements.ValidableElement.fareStructureElements.FareStructureElementRef[4].ref = `op:Tariff@${userPeriodTicket.productName}@conditions_of_travel`;
         priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.accessRightsInProduct.AccessRightInProduct.id = `op:Pass@${userPeriodTicket.productName}@travel`;
         priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.accessRightsInProduct.AccessRightInProduct.ValidableElementRef.ref = `op:Pass@${userPeriodTicket.productName}@travel`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[0].id = `op:Pass@${userPeriodTicket.productName}-SOP@p-ticket`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[0].BrandingRef.ref = `op:${userPeriodTicket.operatorName}@brand`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[0].Name.$t = `${userPeriodTicket.productName} - paper ticket`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[0].distributionAssignments.DistributionAssignment[0].id = `op:Pass@${userPeriodTicket.productName}-GSOP@p-ticket@on_board`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[0].distributionAssignments.DistributionAssignment[1].id = `op:Pass@${userPeriodTicket.productName}-GSOP@p-ticket@travel_shop`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[0].salesOfferPackageElements.SalesOfferPackageElement.id = `op:Pass@${userPeriodTicket.productName}-SOP@p-ticket`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[0].salesOfferPackageElements.SalesOfferPackageElement.PreassignedFareProductRef.ref = `op:Pass@${userPeriodTicket.productName}`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[1].id = `op:Pass@${userPeriodTicket.productName}-SOP@m-ticket`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[1].BrandingRef.ref = `op:${userPeriodTicket.operatorName}@brand`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[1].Name.$t = `${userPeriodTicket.productName} - mobile app`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[1].distributionAssignments.DistributionAssignment.id = `op:Pass@${userPeriodTicket.productName}-GSOP@m-ticket@mobile_app`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[1].salesOfferPackageElements.SalesOfferPackageElement.id = `op:Pass@${userPeriodTicket.productName}Pass-SOP@m-ticket`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[1].salesOfferPackageElements.SalesOfferPackageElement.PreassignedFareProductRef.ref = `op:Pass@${userPeriodTicket.productName}`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[2].id = `op:Pass@${userPeriodTicket.productName}-SOP@subscription`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[2].Name.$t = `${operatorData.operatorPublicName} Unlimited`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[2].validityParameterAssignments.GenericParameterAssignment.id = `op:Pass@${userPeriodTicket.productName}-SOP@subscription@subscribing`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[2].validityParameterAssignments.GenericParameterAssignment.limitations.Subscribing.id = `op:Pass@${userPeriodTicket.productName}-SOP@subscription@subscribing`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[2].validityParameterAssignments.GenericParameterAssignment.limitations.Subscribing.possibleInstallmenttIntervals.TimeIntervalRef.ref = `op:Tariff@${userPeriodTicket.productName}@4week`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[2].distributionAssignments.DistributionAssignment.id = `op:Pass@${userPeriodTicket.productName}-GSOP@subscription@online`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[2].salesOfferPackageElements.SalesOfferPackageElement.id = `op:Pass@${userPeriodTicket.productName}-SOP@subscription`;
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[2].salesOfferPackageElements.SalesOfferPackageElement.PreassignedFareProductRef.ref = `op:Pass@${userPeriodTicket.productName}`;
+        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage = getSalesOfferPackageList(userPeriodTicket);
 
         return priceFareFrameToUpdate;
     };
@@ -294,7 +274,6 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         fareTableFareFrameToUpdate.PricingParameterSet.id = `op:Pass@${placeHolderGroupOfProductsName}`;
         
         fareTableFareFrameToUpdate.fareTables.FareTable = getFareTableList(userPeriodTicket);
-        fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow = getFareTableRowList(userPeriodTicket);
 
         if (isGeoZoneTicket(userPeriodTicket)) {
             fareTableFareFrameToUpdate.fareTables.FareTable.includes.FareTable = getGeoZoneFareTable(
