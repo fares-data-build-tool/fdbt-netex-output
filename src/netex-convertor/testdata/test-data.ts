@@ -944,20 +944,14 @@ export const mockPeriodGeoZoneTicketMatchingDataUpload = {
             street: 'Chester Road West',
         },
     ],
-    productName: 'Test Product',
-    productPrice: '1000',
-    daysValid: '31',
-    expiryRules: 'endOfCalendarDay',
+    products: [{ productName: 'Test Product', productPrice: '1000', daysValid: '31', expiryRules: 'endOfCalendarDay' }],
     nocCode: 'NWBT',
 };
 
 export const mockPeriodMultiServicesTicketMatchingDataUpload = {
     operatorName: 'Blackpool Transport',
     type: 'periodMultipleServices',
-    productName: 'dfvdfvd',
-    productPrice: '123',
-    daysValid: '4',
-    expiryRules: 'endOfCalendarDay',
+    products: [{ productName: 'dfvdfvd', productPrice: '123', daysValid: '4', expiryRules: 'endOfCalendarDay' }],
     nocCode: 'BLAC',
     selectedServices: [
         {
@@ -980,12 +974,14 @@ export const mockPeriodMultiServicesTicketMatchingDataUpload = {
 
 export const multiServicesPeriodData = {
     operatorName: 'Blackpool Transport',
-    products: [{
-        productName: 'dfvdfvd',
-        productPrice: '123',
-        daysValid: '4',
-        expiryRules: 'endOfCalendarDay'
-    }],
+    products: [
+        {
+            productName: 'dfvdfvd',
+            productPrice: '123',
+            daysValid: '4',
+            expiryRules: 'endOfCalendarDay',
+        },
+    ],
     nocCode: 'BLAC',
     selectedServices: [
         {
