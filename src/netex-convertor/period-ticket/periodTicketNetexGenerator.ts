@@ -181,9 +181,7 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
 
             const dayOrDays = product.daysValid === '1' ? "day" : "days";
 
-            priceFareFrameToUpdate.tariffs.Tariff.timeIntervals.TimeInterval[index].id = `op:Tariff@${product.productName}@${product.daysValid}${dayOrDays}`;
-            priceFareFrameToUpdate.tariffs.Tariff.timeIntervals.TimeInterval[index].Name.$t = `${product.daysValid} ${dayOrDays}`;
-            priceFareFrameToUpdate.tariffs.Tariff.timeIntervals.TimeInterval[index].Duration.$t = `P${product.daysValid}D`;
+            priceFareFrameToUpdate.tariffs.Tariff.timeIntervals.TimeInterval[index] = ({id: `op:Tariff@${product.productName}@${product.daysValid}${dayOrDays}`, Name: {$t: `${product.daysValid} ${dayOrDays}`}, Description: {$t:`P${product.daysValid}D`}});
 
             // FareStructureElement 1 - availability
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount] = getAvailabilityFareStructureElement();
