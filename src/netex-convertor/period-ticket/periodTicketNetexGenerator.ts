@@ -7,15 +7,18 @@ import {
     getGeoZoneFareTable,
     getMultiServiceFareTable,
     getFareTableList,
-    getFareTableRowList
+    getFareTableRowList,
+    getAvailabilityFareStructureElement,
+    getEligibilityFareStructureElement,
+    getDurationFareStructureElement,
+    getConditionsOfTravelFareStructureElement,
+    getPreassignedFareProduct
 } from './periodTicketNetexHelpers';
 import { NetexObject, getCleanWebsite, getNetexTemplateAsJson, convertJsonToXml } from '../sharedHelpers';
 
 const placeHolderGroupOfProductsName = "PLACEHOLDER";
 
 const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData: OperatorData): { generate: Function } => {
-
-    const numberOfProducts = userPeriodTicket.products.length;
 
     const opIdNocFormat = `noc:${operatorData.opId}`;
     const nocCodeNocFormat = `noc:${userPeriodTicket.nocCode}`;
@@ -149,7 +152,6 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         return null;
     };
 
-    // to update
     const updatePriceFareFrame = (priceFareFrame: NetexObject): NetexObject => {
         const priceFareFrameToUpdate = { ...priceFareFrame };
 
@@ -183,7 +185,9 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
             priceFareFrameToUpdate.tariffs.Tariff.timeIntervals.TimeInterval[index].Name.$t = `${product.daysValid} ${dayOrDays}`;
             priceFareFrameToUpdate.tariffs.Tariff.timeIntervals.TimeInterval[index].Duration.$t = `P${product.daysValid}D`;
 
-            // FareStructureElement 1
+            // FareStructureElement 1 - availability
+            priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount] = getAvailabilityFareStructureElement();
+
             if (isGeoZoneTicket(userPeriodTicket)) {
                 priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount].id = `op:Tariff@${product.productName}@access_zones`;
                 priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount].GenericParameterAssignment.id = `op:Tariff@${product.productName}@access_zones`;
@@ -215,25 +219,24 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
                     LineRef: getLineRefList(userPeriodTicket),
                 };
             };
-            // FareStructureElement 2
+            // FareStructureElement 2 - eligibility
             fareStructureElementCount++;
+            priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount] = getEligibilityFareStructureElement();
 
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount].id = `op:Tariff@${product.productName}@eligibility`;
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount].GenericParameterAssignment.id = `op:Tariff@${product.productName}@eligibility`;
-            // FareStructureElement 3
+
+            // FareStructureElement 3 - duration
             fareStructureElementCount++;
+            priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount] = getDurationFareStructureElement();
 
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount].id = `op:Tariff@${product.productName}@durations@adult`;
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount].timeIntervals.TimeIntervalRef[0].ref = `op:Tariff@${product.productName}@${product.daysValid}${dayOrDays}`;
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount].GenericParameterAssignment.id = `op:Tariff@${product.productName}@adult_or_child`;
-            // FareStructureElement 4
-            fareStructureElementCount++;
 
-            priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount].id = `op:Tariff@${product.productName}@durations@adult_cash`;
-            priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount].timeIntervals.TimeIntervalRef[0].ref = `op:Tariff@${product.productName}@${product.daysValid}${dayOrDays}`;
-            priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount].GenericParameterAssignment.id = `op:Pass@${product.productName}@duration@${product.daysValid}D`;
-            // FareStructureElement 5
+            // FareStructureElement 4 - conditions of travel
             fareStructureElementCount++;
+            priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount] = getConditionsOfTravelFareStructureElement();
 
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount].id = `op:Tariff@${product.productName}@conditions_of_travel`;
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount].GenericParameterAssignment.id = `op:Tariff@${product.productName}@conditions_of_travel`;
@@ -241,25 +244,29 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount].GenericParameterAssignment.limitations.FrequencyOfUse.id = `op:Pass@${product.productName}@frequency`;
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[fareStructureElementCount].GenericParameterAssignment.limitations.Interchanging.id = `op:Pass@${product.productName}@interchanging`;
 
+            // Preassigned Fare Product
+            priceFareFrameToUpdate.fareProducts.PreassignedFareProduct[index] = getPreassignedFareProduct();
+
+            priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.id = `op:Pass@${product.productName}`;
+            priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.Name.$t = `${product.productName} Pass`;
+            priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.OperatorRef.ref = nocCodeNocFormat;
+            priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.OperatorRef.$t = opIdNocFormat;
+            priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.validableElements.ValidableElement.id = `op:Pass@${product.productName}@travel`;
+
+            if (isGeoZoneTicket(userPeriodTicket)) {
+                priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.validableElements.ValidableElement.fareStructureElements.FareStructureElementRef[0].ref = `op:Tariff@${product.productName}@access_zones`;
+            } else if (isMultiServiceTicket(userPeriodTicket)) {
+                priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.validableElements.ValidableElement.fareStructureElements.FareStructureElementRef[0].ref = `op:Tariff@${product.productName}@access_lines`;
+            }
+            priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.validableElements.ValidableElement.fareStructureElements.FareStructureElementRef[1].ref = `op:Tariff@${product.productName}@eligibility`;
+            priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.validableElements.ValidableElement.fareStructureElements.FareStructureElementRef[2].ref = `op:Tariff@${product.productName}@durations@adult`;
+            priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.validableElements.ValidableElement.fareStructureElements.FareStructureElementRef[3].ref = `op:Tariff@${product.productName}@durations@adult_cash`;
+            priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.validableElements.ValidableElement.fareStructureElements.FareStructureElementRef[4].ref = `op:Tariff@${product.productName}@conditions_of_travel`;
+            priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.accessRightsInProduct.AccessRightInProduct.id = `op:Pass@${product.productName}@travel`;
+            priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.accessRightsInProduct.AccessRightInProduct.ValidableElementRef.ref = `op:Pass@${product.productName}@travel`;
+
         });
 
-        priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.id = `op:Pass@${userPeriodTicket.productName}`;
-        priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.Name.$t = `${userPeriodTicket.productName} Pass`;
-        priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.OperatorRef.ref = nocCodeNocFormat;
-        priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.OperatorRef.$t = opIdNocFormat;
-        priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.validableElements.ValidableElement.id = `op:Pass@${userPeriodTicket.productName}@travel`;
-
-        if (isGeoZoneTicket(userPeriodTicket)) {
-            priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.validableElements.ValidableElement.fareStructureElements.FareStructureElementRef[0].ref = `op:Tariff@${userPeriodTicket.productName}@access_zones`;
-        } else if (isMultiServiceTicket(userPeriodTicket)) {
-            priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.validableElements.ValidableElement.fareStructureElements.FareStructureElementRef[0].ref = `op:Tariff@${userPeriodTicket.productName}@access_lines`;
-        }
-        priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.validableElements.ValidableElement.fareStructureElements.FareStructureElementRef[1].ref = `op:Tariff@${userPeriodTicket.productName}@eligibility`;
-        priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.validableElements.ValidableElement.fareStructureElements.FareStructureElementRef[2].ref = `op:Tariff@${userPeriodTicket.productName}@durations@adult`;
-        priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.validableElements.ValidableElement.fareStructureElements.FareStructureElementRef[3].ref = `op:Tariff@${userPeriodTicket.productName}@durations@adult_cash`;
-        priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.validableElements.ValidableElement.fareStructureElements.FareStructureElementRef[4].ref = `op:Tariff@${userPeriodTicket.productName}@conditions_of_travel`;
-        priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.accessRightsInProduct.AccessRightInProduct.id = `op:Pass@${userPeriodTicket.productName}@travel`;
-        priceFareFrameToUpdate.fareProducts.PreassignedFareProduct.accessRightsInProduct.AccessRightInProduct.ValidableElementRef.ref = `op:Pass@${userPeriodTicket.productName}@travel`;
         priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[0].id = `op:Pass@${userPeriodTicket.productName}-SOP@p-ticket`;
         priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[0].BrandingRef.ref = `op:${userPeriodTicket.operatorName}@brand`;
         priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage[0].Name.$t = `${userPeriodTicket.productName} - paper ticket`;
@@ -292,7 +299,7 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         fareTableFareFrameToUpdate.Name.$t = `${placeHolderGroupOfProductsName} Prices`;
         fareTableFareFrameToUpdate.prerequisites.FareFrameRef.ref = `epd:UK:${userPeriodTicket.nocCode}:FareFrame_UK_PI_FARE_PRODUCT:${placeHolderGroupOfProductsName}@pass:op`;
         fareTableFareFrameToUpdate.PricingParameterSet.id = `op:Pass@${placeHolderGroupOfProductsName}`;
-        
+
         fareTableFareFrameToUpdate.fareTables.FareTable = getFareTableList(userPeriodTicket);
         fareTableFareFrameToUpdate.fareTables.FareTable.rows.FareTableRow = getFareTableRowList(userPeriodTicket);
 

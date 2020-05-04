@@ -70,7 +70,6 @@ export interface ProductDetails {
     productPrice: string;
     daysValid: string;
     expiryRules: string;
-    nocCode: string;
 }
 
 export type PeriodTicket = PeriodGeoZoneTicket | PeriodMultipleServicesTicket;
@@ -109,6 +108,7 @@ export interface FareStructureElement {
     id: string;
     Name: object;
     Description?: object;
-    TypeOfFareStructureElementRef: object;
+    TypeOfFareStructureElementRef?: object;
     GenericParameterAssignment: object;
+    timeIntervals?: object;
 }
