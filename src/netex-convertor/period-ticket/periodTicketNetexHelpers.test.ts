@@ -45,4 +45,5 @@ describe('periodTicketNetexHelpers', () => {
             expect(lineRefList).toEqual(expectedLineRefList);
         });
     });
+
 });
