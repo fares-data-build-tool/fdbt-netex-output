@@ -2,6 +2,7 @@ import {
     Stop,
     OperatorData,
     PeriodTicket,
+    ProductTicket,
     PeriodGeoZoneTicket,
     PeriodMultipleServicesTicket,
     ScheduledStopPoint,
@@ -459,7 +460,7 @@ export const getConditionsOfTravelFareStructureElement = (): {} => {
     }
 }
 
-export const getSalesOfferPackageList = (userPeriodTicket: PeriodTicket): {}[] =>
+export const getSalesOfferPackageList = (userPeriodTicket: ProductTicket): {}[] =>
     userPeriodTicket.products.map(product => ({
         version: '1.0',
         id: `op:Pass@${product.productName}-SOP@p-ticket`,
