@@ -2,14 +2,13 @@ import {
     Stop,
     OperatorData,
     PeriodTicket,
-    ProductTicket,
+    MultipleServicesTicket,
     PeriodGeoZoneTicket,
-    PeriodMultipleServicesTicket,
     ScheduledStopPoint,
     TopographicProjectionRef,
     Line,
     LineRef,
-    FareStructureElement
+    FareStructureElement,
 } from '../types';
 import { getCleanWebsite } from '../sharedHelpers';
 
@@ -29,7 +28,7 @@ export const getTopographicProjectionRefList = (stops: Stop[]): TopographicProje
         $t: `${stop.street}, ${stop.localityName}, ${stop.parentLocalityName}`,
     }));
 
-export const getLinesList = (userPeriodTicket: PeriodMultipleServicesTicket, operatorData: OperatorData): Line[] =>
+export const getLinesList = (userPeriodTicket: MultipleServicesTicket, operatorData: OperatorData): Line[] =>
     userPeriodTicket.selectedServices
         ? userPeriodTicket.selectedServices.map(service => ({
             version: '1.0',
@@ -44,7 +43,7 @@ export const getLinesList = (userPeriodTicket: PeriodMultipleServicesTicket, ope
         }))
         : [];
 
-export const getLineRefList = (userPeriodTicket: PeriodMultipleServicesTicket): LineRef[] =>
+export const getLineRefList = (userPeriodTicket: MultipleServicesTicket): LineRef[] =>
     userPeriodTicket.selectedServices
         ? userPeriodTicket.selectedServices.map(service => ({
             version: '1.0',
@@ -168,7 +167,7 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): {}[]
         },
     }));
 
-export const getMultiServiceFareTable = (userPeriodTicket: PeriodMultipleServicesTicket): {}[] => {
+export const getMultiServiceFareTable = (userPeriodTicket: MultipleServicesTicket): {}[] => {
     const name = `${userPeriodTicket.nocCode}-multi-service`;
     const netexObjectList = userPeriodTicket.products.map(product => ({
         version: '1.0',
@@ -460,7 +459,7 @@ export const getConditionsOfTravelFareStructureElement = (): {} => {
     }
 }
 
-export const getSalesOfferPackageList = (userPeriodTicket: ProductTicket): {}[] =>
+export const getSalesOfferPackageList = (userPeriodTicket: PeriodTicket): {}[] =>
     userPeriodTicket.products.map(product => ({
         version: '1.0',
         id: `op:Pass@${product.productName}-SOP@p-ticket`,

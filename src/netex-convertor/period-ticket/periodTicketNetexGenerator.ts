@@ -1,4 +1,4 @@
-import { OperatorData, PeriodTicket, PeriodGeoZoneTicket, PeriodMultipleServicesTicket } from '../types';
+import { OperatorData, PeriodTicket, PeriodGeoZoneTicket, MultipleServicesTicket } from '../types';
 import {
     getScheduledStopPointsList,
     getTopographicProjectionRefList,
@@ -28,8 +28,8 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
     const isGeoZoneTicket = (ticket: PeriodTicket): ticket is PeriodGeoZoneTicket =>
         (ticket as PeriodGeoZoneTicket).zoneName !== undefined;
 
-    const isMultiServiceTicket = (ticket: PeriodTicket): ticket is PeriodMultipleServicesTicket =>
-        (ticket as PeriodMultipleServicesTicket).selectedServices !== undefined;
+    const isMultiServiceTicket = (ticket: PeriodTicket): ticket is MultipleServicesTicket =>
+        (ticket as MultipleServicesTicket).selectedServices !== undefined;
 
     const updatePublicationTimeStamp = (publicationTimeStamp: NetexObject): NetexObject => {
         const publicationTimeStampToUpdate = { ...publicationTimeStamp };
