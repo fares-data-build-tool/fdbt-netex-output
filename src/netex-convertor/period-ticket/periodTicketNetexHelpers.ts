@@ -7,8 +7,7 @@ import {
     ScheduledStopPoint,
     TopographicProjectionRef,
     Line,
-    LineRef,
-    FareStructureElement,
+    LineRef
 } from '../types';
 import { getCleanWebsite } from '../sharedHelpers';
 
@@ -116,7 +115,7 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): {}[]
                         Name: { $t: `${product.productName} - Cash - Adult` },
                         limitations: {
                             UserProfileRef: {
-                                versions: '1.0',
+                                version: '1.0',
                                 ref: 'op:adult',
                             },
                         },
@@ -142,15 +141,15 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): {}[]
                 cells: {
                     Cell: {
                         version: '1.0',
-                        id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@1day`,
+                        id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@${product.daysValid}${product.daysValid.length > 1 ? "days" : "day"}`,
                         order: '1',
                         TimeIntervalPrice: {
                             version: '1.0',
-                            id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@1day`,
+                            id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@${product.daysValid}${product.daysValid.length > 1 ? "days" : "day"}`,
                             Amount: { t$: `${product.productPrice}` },
                             TimeIntervalRef: {
                                 version: '1.0',
-                                ref: `op:Tariff@${product.productName}@1day`,
+                                ref: `op:Tariff@${product.productName}@${product.daysValid}${product.daysValid.length > 1 ? "days" : "day"}`,
                             },
                             ColumnRef: {
                                 version: '1.0',
@@ -158,7 +157,7 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): {}[]
                             },
                             RowRef: {
                                 version: '1.0',
-                                ref: `op:${product.productName}@1day`,
+                                ref: `op:${product.productName}@${product.daysValid}${product.daysValid.length > 1 ? "days" : "day"}`,
                             },
                         },
                     },
@@ -223,7 +222,7 @@ export const getMultiServiceFareTable = (userPeriodTicket: MultipleServicesTicke
                         Name: { $t: `${product.productName} - Cash - Adult` },
                         limitations: {
                             UserProfileRef: {
-                                versions: '1.0',
+                                version: '1.0',
                                 ref: 'op:adult',
                             },
                         },
@@ -249,15 +248,15 @@ export const getMultiServiceFareTable = (userPeriodTicket: MultipleServicesTicke
                 cells: {
                     Cell: {
                         version: '1.0',
-                        id: `op:${product.productName}@${name}@p-ticket@adult@1day`,
+                        id: `op:${product.productName}@${name}@p-ticket@adult@${product.daysValid}${product.daysValid.length > 1 ? "days" : "day"}`,
                         order: '1',
                         TimeIntervalPrice: {
                             version: '1.0',
-                            id: `op:${product.productName}@${name}@p-ticket@adult@1day`,
+                            id: `op:${product.productName}@${name}@p-ticket@adult@${product.daysValid}${product.daysValid.length > 1 ? "days" : "day"}`,
                             Amount: { t$: `${product.productPrice}` },
                             TimeIntervalRef: {
                                 version: '1.0',
-                                ref: `op:Tariff@${product.productName}@1day`,
+                                ref: `op:Tariff@${product.productName}@${product.daysValid}${product.daysValid.length > 1 ? "days" : "day"}`,
                             },
                             ColumnRef: {
                                 version: '1.0',
@@ -265,7 +264,7 @@ export const getMultiServiceFareTable = (userPeriodTicket: MultipleServicesTicke
                             },
                             RowRef: {
                                 version: '1.0',
-                                ref: `op:${product.productName}@1day`,
+                                ref: `op:${product.productName}@${product.daysValid}${product.daysValid.length > 1 ? "days" : "day"}`,
                             },
                         },
                     },
@@ -287,290 +286,284 @@ export const getFareTableList = (userPeriodTicket: PeriodTicket): {}[] =>
         usedIn: {
             TariffRef: { version: '1.0', ref: `op:Tariff@${product.productName}` },
         },
-        rows: { FareTableRow: { version: '1.0',
-            id: `op:${product.productName}@${product.daysValid}day`,
-            order: '2',
-            Name: { $t: `${product.daysValid} day` },
-            representing: {
-                TimeIntervalRef: {
-                    version: '1.0',
-                    ref: `op:Tariff@${product.productName}@${product.daysValid}day`,
-                },
-            }}}
+        rows: {
+            FareTableRow: {
+                version: '1.0',
+                id: `op:${product.productName}@${product.daysValid}${product.daysValid.length > 1 ? "days" : "day"}`,
+                order: '2',
+                Name: { $t: `${product.daysValid} ${product.daysValid.length > 1 ? "days" : "day"}` },
+                representing: {
+                    TimeIntervalRef: {
+                        version: '1.0',
+                        ref: `op:Tariff@${product.productName}@${product.daysValid}${product.daysValid.length > 1 ? "days" : "day"}`,
+                    },
+                }
+            }
+        }
     }));
-
-
-export const getAvailabilityFareStructureElement = (): FareStructureElement => {
-    return {
-        version: "1.0",
-        id: "",
-        Name: { $t: "Available zones" },
-        Description: { $t: "single zone." },
-        TypeOfFareStructureElementRef: {
-            version: "fxc:v1.0",
-            ref: "fxc:access"
-        },
-        GenericParameterAssignment: {
-            id: "",
-            version: "1.0",
-            order: "1",
-            TypeOfAccessAssignmentRef: {
-                $t: {
-                    version: "fxc:v1.0",
-                    ref: "fxc:can_access"
-                }
-            },
-            ValidityParameterGroupingType: { $t: "XOR" },
-            validityParameters: {
-                $t: {
-                    FareZoneRef: {
-                        version: "1.0",
-                        ref: ""
-                    }
-                }
-            }
-        }
-    }
-}
-
-export const getEligibilityFareStructureElement = (): FareStructureElement => {
-    return {
-        version: "1.0",
-        id: "",
-        Name: { $t: "Eligible user types" },
-        TypeOfFareStructureElementRef: {
-            version: "fxc:v1.0",
-            ref: "fxc:eligibility"
-        },
-        GenericParameterAssignment: {
-            id: "",
-            version: "1.0",
-            order: "1",
-            TypeOfAccessAssignmentRef: {
-                $t: {
-                    version: "fxc:v1.0",
-                    ref: "fxc:eligible"
-                }
-            },
-            LimitationGroupingType: { $t: "XOR" },
-            limitations: {
-                $t: {
-                    UserProfile: {
-                        version: "1.0",
-                        id: "op:adult",
-                        Name: {
-                            $t: "Adult"
-                        },
-                        prices: {
-                            $t: {
-                                UsageParameterPrice: {
-                                    version: "1.0",
-                                    id: "op:adult"
-                                }
-                            }
-                        },
-                        TypeOfConcessionRef: {
-                            version: "fxc:v1.0",
-                            ref: "fxc:none"
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-export const getDurationFareStructureElement = (): {} => {
-    return {
-        version: "1.0",
-        id: "",
-        Name: { $t: "Available duration combination" },
-        Description: { $t: "All periods allowed, 60 mins, but no evening - used in for some mticket, single zone." },
-        TypeOfFareStructureElementRef: {
-            version: "fxc:v1.0",
-            ref: "fxc:durations"
-        },
-        timeIntervals: {
-            TimeIntervalRef:
-                [
-                ]
-        },
-        GenericParameterAssignment: {
-            id: "",
-            version: "1.0",
-            order: "1",
-            Description: {
-                $t: "Adult/Child Cash ticket Only available for 1 Day or 1week"
-            },
-            TypeOfAccessAssignmentRef: {
-                $t: {
-                    version: "fxc:v1.0",
-                    ref: "fxc:eligible"
-                }
-            },
-            LimitationGroupingType: { $t: "XOR" },
-            limitations: {
-                $t: {
-                    UserProfileRef: {
-                        version: "1.0",
-                        id: "op:adult",
-                    }
-                }
-            }
-        }
-    };
-}
-
-export const getConditionsOfTravelFareStructureElement = (): {} => {
-    return {
-        id: "",
-        version: "1.0",
-        Name: { $t: "Conditions of travel" },
-        GenericParameterAssignment: {
-            version: "1.0",
-            order: "1",
-            id: "",
-            TypeOfAccessRightAssignmentRef: {
-                $t: {
-                    version: "fxc:v1.0",
-                    ref: "fxc:condition_of_use"
-                }
-            },
-            LimitationGroupingType: { $t: "AND" },
-            limitations: {
-                Transferability: {
-                    version: "1.0",
-                    id: "",
-                    Name: { $t: "Ticket is not transferable" },
-                    CanTransfer: { $t: "false" }
-                },
-                FrequencyOfUse: {
-                    version: "1.0",
-                    id: "",
-                    FrequencyOfUseType: { $t: "unlimited" }
-                },
-                Interchanging: {
-                    version: "1.0",
-                    id: "",
-                    CanInterchange: { $t: "true" }
-                }
-            }
-        }
-    }
-}
 
 export const getSalesOfferPackageList = (userPeriodTicket: PeriodTicket): {}[] =>
     userPeriodTicket.products.map(product => ({
         version: '1.0',
         id: `op:Pass@${product.productName}-SOP@p-ticket`,
-        BrandingRef : { version: '1.0', ref: `op:${userPeriodTicket.operatorName}@brand`},
-        Name: {$t: `${placeHolderGroupOfProductsName} - paper ticket`},
-        Description: { $t: 'Unlimited Travel in a given zone'},
+        BrandingRef: { version: '1.0', ref: `op:${userPeriodTicket.operatorName}@brand` },
+        Name: { $t: `${placeHolderGroupOfProductsName} - paper ticket` },
+        Description: { $t: 'Unlimited Travel in a given zone' },
         distributionAssignments: {
             DistributionAssignment: {
-                version: '1.0', 
+                version: '1.0',
                 id: `op:Pass@${product.productName}-GSOP@p-ticket@on_board`,
                 order: '1',
-                Name: { $t: 'Onboard'},
-                Description: { $t: 'Pay for ticket onboard.'},
-                DistributionChannelRef :{
+                Name: { $t: 'Onboard' },
+                Description: { $t: 'Pay for ticket onboard.' },
+                DistributionChannelRef: {
                     version: 'fxc:v1.0',
                     ref: 'fxc:on_board'
                 },
-                DistributionChannelType: { $t: 'onBoard'},
-                PaymentMethods: { $t: 'Cash ContactlessPaymentCard'},
+                DistributionChannelType: { $t: 'onBoard' },
+                PaymentMethods: { $t: 'cash contactlessPaymentCard' },
                 FulfilmentMethodRef: {
                     ref: 'fxc:collect_on_board',
                     version: 'fxc:v1.0'
                 }
-            },
-            salesOfferPackageElements: {
-                SalesOfferPackageElement: {
+            }
+        },
+        salesOfferPackageElements: {
+            SalesOfferPackageElement: {
+                version: '1.0',
+                id: `op:Pass@${product.productName}-SOP@p-ticket`,
+                order: '3',
+                TypeOfTravelDocumentRef: {
                     version: '1.0',
-                    id: `op:Pass@${product.productName}-SOP@p-ticket`,
-                    order: '3',
-                    TypeOfTravelDocumentRef: {
-                        versions: '1.0',
-                        ref: 'op:p-ticket'
-                    },
-                    PreassignedFareProductRef: {
-                        version: '1.0',
-                        ref: `op:Pass@${product.productName}`
-                    },
-                }
+                    ref: 'op:p-ticket'
+                },
+                PreassignedFareProductRef: {
+                    version: '1.0',
+                    ref: `op:Pass@${product.productName}`
+                },
             }
         }
     }));
 
-export const getPreassignedFareProduct = (): {} => {
-    return {
-        version: "1.0",
-        id: "",
-        Name: {
-            $t: ""
-        },
-        ChargingMomentType: {
-            $t: "beforeTravel"
-        },
-        typesOfFareProduct: {
-            TypeOfFareProductRef: {
-                version: "fxc:v1.0",
-                ref: "fxc:standard_product@pass@period"
-            }
-        },
-        OperatorRef: {
+export const getPreassignedFareProduct = (userPeriodTicket: PeriodTicket, nocCodeNocFormat: string, opIdNocFormat: string, isGeoZoneTicket: boolean, isMultiServiceTicket: boolean): {}[] => {
+    return userPeriodTicket.products.map(product => {
+
+        let elementZeroRef: string;
+
+        if (isGeoZoneTicket) {
+            elementZeroRef = `op:Tariff@${product.productName}@access_zones`;
+        } else if (isMultiServiceTicket) {
+            elementZeroRef = `op:Tariff@${product.productName}@access_lines`
+        } else {
+            elementZeroRef = "";
+        }
+
+        return {
             version: "1.0",
-            ref: "",
-            $t: ""
-        },
-        validableElements: {
-            ValidableElement: {
+            id: `op:Pass@${product.productName}`,
+            Name: {
+                $t: `${product.productName} Pass`
+            },
+            ChargingMomentType: {
+                $t: "beforeTravel"
+            },
+            typesOfFareProduct: {
+                TypeOfFareProductRef: {
+                    version: "fxc:v1.0",
+                    ref: "fxc:standard_product@pass@period"
+                }
+            },
+            OperatorRef: {
                 version: "1.0",
-                id: "",
-                Name: {
-                    $t: "Unlimited rides available for specified durations"
-                },
-                fareStructureElements: [
-                    {
-                        FareStructureElementRef: {
-                            version: "1.0",
-                            ref: ""
-                        }
-                    },
-                    {
-                        FareStructureElementRef: {
-                            version: "1.0",
-                            ref: ""
-                        }
-                    },
-                    {
-                        FareStructureElementRef: {
-                            version: "1.0",
-                            ref: ""
-                        }
-                    },
-                    {
-                        FareStructureElementRef: {
-                            version: "1.0",
-                            ref: ""
-                        }
-                    }
-                ]
-            }
-        },
-        accessRightsInProduct: {
-            AccessRightInProduct: {
-                version: "1.0",
-                id: "",
-                order: "1",
-                ValidableElementRef: {
+                ref: nocCodeNocFormat,
+                $t: opIdNocFormat
+            },
+            validableElements: {
+                ValidableElement: {
                     version: "1.0",
-                    ref: ""
+                    id: `op:Pass@${product.productName}@travel`,
+                    Name: {
+                        $t: "Unlimited rides available for specified durations"
+                    },
+                    fareStructureElements:
+                    {
+                        FareStructureElementRef: [
+                            {
+                                version: "1.0",
+                                ref: elementZeroRef
+                            },
+                            {
+                                version: "1.0",
+                                ref: `op:Tariff@eligibility`
+                            },
+                            {
+                                version: "1.0",
+                                ref: `op:Tariff@${product.productName}@durations@adult`
+                            },
+                            {
+                                version: "1.0",
+                                ref: `op:Tariff@${product.productName}@conditions_of_travel`
+                            }
+                        ]
+                    }
+                }
+            },
+            accessRightsInProduct: {
+                AccessRightInProduct: {
+                    version: "1.0",
+                    id: `op:Pass@${product.productName}@travel`,
+                    order: "1",
+                    ValidableElementRef: {
+                        version: "1.0",
+                        ref: `op:Pass@${product.productName}@travel`
+                    }
+                }
+            },
+            ProductType: {
+                $t: "periodPass"
+            }
+        }
+    });
+}
+
+export const getTimeIntervals = (userPeriodTicket: PeriodTicket): {}[] => {
+    const timeIntervals = userPeriodTicket.products.map((product) => {
+        const dayOrDays = product.daysValid === '1' ? "day" : "days";
+        return (
+            {
+                version: "1.0",
+                id: `op:Tariff@${product.productName}@${product.daysValid}${dayOrDays}`,
+                Name: { $t: `${product.daysValid} ${dayOrDays}` },
+                Description: { $t: `P${product.daysValid}D` }
+            }
+        );
+    });
+
+    return timeIntervals.flatMap((item) => item);
+}
+
+export const getFareStructuresElements = (userPeriodTicket: any, isGeoZoneTicket: boolean, isMultiServiceTicket: boolean): {}[] => {
+
+    const arrayOfArraysOfFareStructureElements: [] = userPeriodTicket.products.map((product: any) => {
+
+        // FareStructureElement 1 - availability
+        let id: string = '';
+        let genericParameterAssignmentId: string = '';
+        let validityParametersObject: {} = {};
+        let validityParameterGroupingType: string = '';
+        if (isGeoZoneTicket) {
+            id = `op:Tariff@${product.productName}@access_zones`;
+            genericParameterAssignmentId = `op:Tariff@${product.productName}@access_zones`;
+            validityParameterGroupingType = "XOR";
+            validityParametersObject = {
+                FareZoneRef: {
+                    version: "1.0",
+                    ref: `op:${product.productName}@${userPeriodTicket.zoneName}`
+                }
+            };
+        } else if (isMultiServiceTicket) {
+            id = `op:Tariff@${product.productName}@access_lines`;
+            genericParameterAssignmentId = `Tariff@${product.productName}@access_lines`;
+            validityParameterGroupingType = "OR";
+            validityParametersObject = { LineRef: getLineRefList(userPeriodTicket) };
+        };
+
+        const availabilityElement = {
+            version: "1.0",
+            id: id,
+            Name: { $t: "Available zones" },
+            Description: { $t: "single zone." },
+            TypeOfFareStructureElementRef: {
+                version: "fxc:v1.0",
+                ref: "fxc:access"
+            },
+            GenericParameterAssignment: {
+                id: genericParameterAssignmentId,
+                version: "1.0",
+                order: "1",
+                TypeOfAccessRightAssignmentRef: {
+                    version: "fxc:v1.0",
+                    ref: "fxc:can_access"
+                },
+                ValidityParameterGroupingType: { $t: validityParameterGroupingType },
+                validityParameters: validityParametersObject
+            }
+        };
+
+        // FareStructureElement 2 - duration
+        const durationElement = {
+            version: "1.0",
+            id: `op:Tariff@${product.productName}@durations@adult`,
+            Name: { $t: "Available duration combination" },
+            Description: { $t: "All periods allowed, 60 mins, but no evening - used in for some mticket, single zone." },
+            TypeOfFareStructureElementRef: {
+                version: "fxc:v1.0",
+                ref: "fxc:durations"
+            },
+            timeIntervals: {
+                TimeIntervalRef:
+                    [
+                        { ref: `op:Tariff@${product.productName}@${product.daysValid}${product.daysValid.length > 1 ? "days" : "day"}` }
+                    ]
+            },
+            GenericParameterAssignment: {
+                id: `op:Tariff@${product.productName}@adult_or_child`,
+                version: "1.0",
+                order: "1",
+                Description: {
+                    // should the below line use the actual daysValid?
+                    $t: "Adult/Child Cash ticket Only available for 1 Day or 1week"
+                },
+                TypeOfAccessRightAssignmentRef: {
+                    version: "fxc:v1.0",
+                    ref: "fxc:eligible"
+                },
+                LimitationGroupingType: { $t: "XOR" },
+                limitations: {
+                    UserProfileRef: {
+                        version: "1.0",
+                        ref: "op:adult",
+                    }
                 }
             }
-        },
-        ProductType: {
-            $t: "periodPass"
+        };
+
+        // FareStructureElement 3 - conditions of travel
+        const conditionsElement = {
+            id: `op:Tariff@${product.productName}@conditions_of_travel`,
+            version: "1.0",
+            Name: { $t: "Conditions of travel" },
+            GenericParameterAssignment: {
+                version: "1.0",
+                order: "1",
+                id: `op:Tariff@${product.productName}@conditions_of_travel`,
+                TypeOfAccessRightAssignmentRef: {
+                    version: "fxc:v1.0",
+                    ref: "fxc:condition_of_use"
+                },
+                LimitationGroupingType: { $t: "AND" },
+                limitations: {
+                    Transferability: {
+                        version: "1.0",
+                        id: `op:Pass@${product.productName}@transferability`,
+                        Name: { $t: "Ticket is not transferable" },
+                        CanTransfer: { $t: "false" }
+                    },
+                    FrequencyOfUse: {
+                        version: "1.0",
+                        id: `op:Pass@${product.productName}@frequency`,
+                        FrequencyOfUseType: { $t: "unlimited" }
+                    },
+                    Interchanging: {
+                        version: "1.0",
+                        id: `op:Pass@${product.productName}@interchanging`,
+                        CanInterchange: { $t: "true" }
+                    }
+                }
+            }
         }
-    }
+        return [availabilityElement, durationElement, conditionsElement];
+    });
+
+    return arrayOfArraysOfFareStructureElements.flatMap((item) => item);
 }
