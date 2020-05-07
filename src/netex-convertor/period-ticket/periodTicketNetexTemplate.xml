@@ -241,11 +241,7 @@
 									<IntervalType>tariffZone</IntervalType>
 								</GeographicalInterval>
 							</geographicalIntervals>
-							<timeIntervals>
-								<TimeInterval version="1.0" id="">
-									<Name>1 day</Name>
-									<Duration>P1D</Duration>
-								</TimeInterval>								
+							<timeIntervals>					
 							</timeIntervals>
 							<!-- ==FARE STRUCTURE ELEMENTS -->
 							<fareStructureElements>
