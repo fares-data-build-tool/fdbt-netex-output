@@ -174,7 +174,9 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         priceFareFrameToUpdate.tariffs.Tariff.geographicalIntervals.GeographicalInterval.id = `op:Tariff@${placeHolderGroupOfProductsName}@1zone`;
 
         // Time intervals
-        priceFareFrameToUpdate.tariffs.Tariff.timeIntervals.TimeInterval = getTimeIntervals(userPeriodTicket);
+        if (isGeoZoneTicket(userPeriodTicket) || isMultiServiceTicket(userPeriodTicket) && userPeriodTicket.products[0].daysValid) {
+            priceFareFrameToUpdate.tariffs.Tariff.timeIntervals.TimeInterval = getTimeIntervals(userPeriodTicket);
+        };
 
         // Fare structure elements
         priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement = getFareStructuresElements(userPeriodTicket, isGeoZoneTicket(userPeriodTicket), isMultiServiceTicket(userPeriodTicket), placeHolderGroupOfProductsName);
@@ -243,7 +245,6 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
             fareTableFareFrameToUpdate.fareTables.FareTable.includes.FareTable = getMultiServiceFareTable(
                 userPeriodTicket);
         }
-
         return fareTableFareFrameToUpdate;
     };
 
