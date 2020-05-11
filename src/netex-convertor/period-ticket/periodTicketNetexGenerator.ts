@@ -41,7 +41,8 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         publicationRequestToUpdate.Description.$t = `Request for ${userPeriodTicket.nocCode} bus pass fares`;
         publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.OperatorRef.ref = nocCodeNocFormat;
         publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.OperatorRef.$t = opIdNocFormat;
-        publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.PreassignedFareProductRef.ref = `op:Pass@${placeHolderGroupOfProductsName}`;
+        // below ref is being set to the first product name, so the ID can be found.
+        publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.PreassignedFareProductRef.ref = `op:Pass@${userPeriodTicket.products[0].productName}`;
 
         return publicationRequestToUpdate;
     };
@@ -220,7 +221,7 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         priceFareFrameToUpdate.fareProducts.PreassignedFareProduct = getPreassignedFareProduct(userPeriodTicket, nocCodeNocFormat, opIdNocFormat, isGeoZoneTicket(userPeriodTicket), isMultiServiceTicket(userPeriodTicket));
 
         // Sales Offer Package
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage = getSalesOfferPackageList(userPeriodTicket);
+        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage = getSalesOfferPackageList(userPeriodTicket, placeHolderGroupOfProductsName);
 
         return priceFareFrameToUpdate;
     };
@@ -233,7 +234,7 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         fareTableFareFrameToUpdate.prerequisites.FareFrameRef.ref = `epd:UK:${userPeriodTicket.nocCode}:FareFrame_UK_PI_FARE_PRODUCT:${placeHolderGroupOfProductsName}@pass:op`;
         fareTableFareFrameToUpdate.PricingParameterSet.id = `op:Pass@${placeHolderGroupOfProductsName}`;
 
-        fareTableFareFrameToUpdate.fareTables.FareTable = getFareTableList(userPeriodTicket);
+        fareTableFareFrameToUpdate.fareTables.FareTable = getFareTableList(userPeriodTicket, placeHolderGroupOfProductsName);
 
         if (isGeoZoneTicket(userPeriodTicket)) {
             fareTableFareFrameToUpdate.fareTables.FareTable.includes.FareTable = getGeoZoneFareTable(
