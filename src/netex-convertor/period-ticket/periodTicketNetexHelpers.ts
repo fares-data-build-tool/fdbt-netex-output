@@ -11,8 +11,6 @@ import {
 } from '../types';
 import { getCleanWebsite } from '../sharedHelpers';
 
-const placeHolderGroupOfProductsName = "PLACEHOLDER";
-
 export const getScheduledStopPointsList = (stops: Stop[]): ScheduledStopPoint[] =>
     stops.map((stop: Stop) => ({
         versionRef: 'EXTERNAL',
@@ -275,16 +273,16 @@ export const getMultiServiceFareTable = (userPeriodTicket: MultipleServicesTicke
     return netexObjectList;
 };
 
-export const getFareTableList = (userPeriodTicket: PeriodTicket): {}[] =>
+export const getFareTableList = (userPeriodTicket: PeriodTicket, placeHolderGroupOfProductsName: string): {}[] =>
     userPeriodTicket.products.map(product => ({
         version: '1.0',
         id: `epd:UK:${userPeriodTicket.nocCode}:FareFrame_UK_PI_FARE_PRICE:${product.productName}@pass:op`,
         Name: { $t: `${product.productName} Fares` },
         pricesFor: {
-            PreassignedFareProductRef: { version: '1.0', ref: `op:Pass@${placeHolderGroupOfProductsName}` },
+            PreassignedFareProductRef: { version: '1.0', ref: `op:Pass@${product.productName}` },
         },
         usedIn: {
-            TariffRef: { version: '1.0', ref: `op:Tariff@${product.productName}` },
+            TariffRef: { version: '1.0', ref: `op:Tariff@${placeHolderGroupOfProductsName}` },
         },
         rows: {
             FareTableRow: {
@@ -302,7 +300,7 @@ export const getFareTableList = (userPeriodTicket: PeriodTicket): {}[] =>
         }
     }));
 
-export const getSalesOfferPackageList = (userPeriodTicket: PeriodTicket): {}[] =>
+export const getSalesOfferPackageList = (userPeriodTicket: PeriodTicket, placeHolderGroupOfProductsName: string): {}[] =>
     userPeriodTicket.products.map(product => ({
         version: '1.0',
         id: `op:Pass@${product.productName}-SOP@p-ticket`,
