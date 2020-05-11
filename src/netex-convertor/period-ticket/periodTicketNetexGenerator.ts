@@ -176,7 +176,7 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         priceFareFrameToUpdate.tariffs.Tariff.timeIntervals.TimeInterval = getTimeIntervals(userPeriodTicket);
 
         // Fare structure elements
-        priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement = getFareStructuresElements(userPeriodTicket, isGeoZoneTicket(userPeriodTicket), isMultiServiceTicket(userPeriodTicket));
+        priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement = getFareStructuresElements(userPeriodTicket, isGeoZoneTicket(userPeriodTicket), isMultiServiceTicket(userPeriodTicket), placeHolderGroupOfProductsName);
         priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement.push({
             version: "1.0",
             id: `op:Tariff@eligibility`,
