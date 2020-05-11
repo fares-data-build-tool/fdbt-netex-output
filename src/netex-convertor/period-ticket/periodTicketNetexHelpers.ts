@@ -141,15 +141,15 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): {}[]
                 cells: {
                     Cell: {
                         version: '1.0',
-                        id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@${product.daysValid}`,
+                        id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@${product.daysValid}${product.daysValid === '1' ? "day" : "days"}`,
                         order: '1',
                         TimeIntervalPrice: {
                             version: '1.0',
-                            id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@${product.daysValid}`,
+                            id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@${product.daysValid}${product.daysValid === '1' ? "day" : "days"}`,
                             Amount: { t$: `${product.productPrice}` },
                             TimeIntervalRef: {
                                 version: '1.0',
-                                ref: `op:Tariff@${product.productName}@${product.daysValid}`,
+                                ref: `op:Tariff@${product.productName}@${product.daysValid}${product.daysValid === '1' ? "day" : "days"}`,
                             },
                             ColumnRef: {
                                 version: '1.0',
@@ -157,7 +157,7 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): {}[]
                             },
                             RowRef: {
                                 version: '1.0',
-                                ref: `op:${product.productName}@${product.daysValid}`,
+                                ref: `op:${product.productName}@${product.daysValid}${product.daysValid === '1' ? "day" : "days"}`,
                             },
                         },
                     },
@@ -248,15 +248,15 @@ export const getMultiServiceFareTable = (userPeriodTicket: MultipleServicesTicke
                 cells: {
                     Cell: {
                         version: '1.0',
-                        id: `op:${product.productName}@${name}@p-ticket@adult@${product.daysValid}`,
+                        id: `op:${product.productName}@${name}@p-ticket@adult@${product.daysValid}${product.daysValid === '1' ? "day" : "days"}`,
                         order: '1',
                         TimeIntervalPrice: {
                             version: '1.0',
-                            id: `op:${product.productName}@${name}@p-ticket@adult@${product.daysValid}`,
+                            id: `op:${product.productName}@${name}@p-ticket@adult@${product.daysValid}${product.daysValid === '1' ? "day" : "days"}`,
                             Amount: { t$: `${product.productPrice}` },
                             TimeIntervalRef: {
                                 version: '1.0',
-                                ref: `op:Tariff@${product.productName}@${product.daysValid}`,
+                                ref: `op:Tariff@${product.productName}@${product.daysValid}${product.daysValid === '1' ? "day" : "days"}`,
                             },
                             ColumnRef: {
                                 version: '1.0',
@@ -264,7 +264,7 @@ export const getMultiServiceFareTable = (userPeriodTicket: MultipleServicesTicke
                             },
                             RowRef: {
                                 version: '1.0',
-                                ref: `op:${product.productName}@${product.daysValid}`,
+                                ref: `op:${product.productName}@${product.daysValid}${product.daysValid === '1' ? "day" : "days"}`,
                             },
                         },
                     },
@@ -289,13 +289,13 @@ export const getFareTableList = (userPeriodTicket: PeriodTicket): {}[] =>
         rows: {
             FareTableRow: {
                 version: '1.0',
-                id: `op:${product.productName}@${product.daysValid}`,
+                id: `op:${product.productName}@${product.daysValid}${product.daysValid === '1' ? "day" : "days"}`,
                 order: '2',
-                Name: { $t: `${product.daysValid}` },
+                Name: { $t: `${product.daysValid} ${product.daysValid === '1' ? "day" : "days"}` },
                 representing: {
                     TimeIntervalRef: {
                         version: '1.0',
-                        ref: `op:Tariff@${product.productName}@${product.daysValid}`,
+                        ref: `op:Tariff@${product.productName}@${product.daysValid}${product.daysValid === '1' ? "day" : "days"}`,
                     },
                 }
             }
@@ -442,7 +442,7 @@ export const getTimeIntervals = (userPeriodTicket: PeriodTicket): {}[] => {
     return timeIntervals.flatMap((item) => item);
 }
 
-export const getFareStructuresElements = (userPeriodTicket: any, isGeoZoneTicket: boolean, isMultiServiceTicket: boolean): {}[] => {
+export const getFareStructuresElements = (userPeriodTicket: any, isGeoZoneTicket: boolean, isMultiServiceTicket: boolean, placeHolderGroupOfProductsName: string): {}[] => {
 
     const arrayOfArraysOfFareStructureElements: [] = userPeriodTicket.products.map((product: any) => {
 
@@ -458,7 +458,7 @@ export const getFareStructuresElements = (userPeriodTicket: any, isGeoZoneTicket
             validityParametersObject = {
                 FareZoneRef: {
                     version: "1.0",
-                    ref: `op:${product.productName}@${userPeriodTicket.zoneName}`
+                    ref: `op:${placeHolderGroupOfProductsName}@${userPeriodTicket.zoneName}`
                 }
             };
         } else if (isMultiServiceTicket) {
@@ -503,7 +503,7 @@ export const getFareStructuresElements = (userPeriodTicket: any, isGeoZoneTicket
             timeIntervals: {
                 TimeIntervalRef:
                     [
-                        { ref: `op:Tariff@${product.productName}@${product.daysValid}${product.daysValid.length > 1 ? "days" : "day"}` }
+                        { ref: `op:Tariff@${product.productName}@${product.daysValid}${product.daysValid === '1' ? "day" : "days"}` }
                     ]
             },
             GenericParameterAssignment: {
