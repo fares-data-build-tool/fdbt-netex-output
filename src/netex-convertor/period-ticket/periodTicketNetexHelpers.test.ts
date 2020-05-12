@@ -1,5 +1,4 @@
-import { expectedMultiServiceFareTables, expectedMultipleFareTables, expectedSalesOfferPackages, expectedGeoZonePreassignedFareProducts, expectedMultiServicesPreassignedFareProducts, expectedTimeIntervals, expectedMultiServiceFareStructureElements, expectedGeoZoneFareStructureElements } from './../testdata/test-data';
-import { PeriodGeoZoneTicket } from './../types';
+import { PeriodGeoZoneTicket } from '../types';
 import * as netexHelpers from './periodTicketNetexHelpers';
 import geoZonePeriodData from '../testdata/geoZonePeriodData';
 import {
@@ -9,7 +8,7 @@ import {
     expectedLineRefList,
     multiServicesPeriodData,
     operatorData,
-    expectedGeoZoneFareTables
+    expectedGeoZoneFareTables, expectedMultiServiceFareTables, expectedMultipleFareTables, expectedSalesOfferPackages, expectedGeoZonePreassignedFareProducts, expectedMultiServicesPreassignedFareProducts, expectedTimeIntervals, expectedMultiServiceFareStructureElements, expectedGeoZoneFareStructureElements
 } from '../testdata/test-data';
 
 describe('periodTicketNetexHelpers', () => {

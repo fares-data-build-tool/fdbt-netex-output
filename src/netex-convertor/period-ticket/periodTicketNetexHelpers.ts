@@ -445,10 +445,10 @@ export const getFareStructuresElements = (userPeriodTicket: any, isGeoZoneTicket
     const arrayOfArraysOfFareStructureElements: [] = userPeriodTicket.products.map((product: any) => {
 
         // FareStructureElement 1 - availability
-        let id: string = '';
-        let genericParameterAssignmentId: string = '';
-        let validityParametersObject: {} = {};
-        let validityParameterGroupingType: string = '';
+        let id = '';
+        let genericParameterAssignmentId = '';
+        let validityParametersObject = {};
+        let validityParameterGroupingType = '';
         if (isGeoZoneTicket) {
             id = `op:Tariff@${product.productName}@access_zones`;
             genericParameterAssignmentId = `op:Tariff@${product.productName}@access_zones`;
@@ -468,7 +468,7 @@ export const getFareStructuresElements = (userPeriodTicket: any, isGeoZoneTicket
 
         const availabilityElement = {
             version: "1.0",
-            id: id,
+            id,
             Name: { $t: "Available zones" },
             Description: { $t: "single zone." },
             TypeOfFareStructureElementRef: {
