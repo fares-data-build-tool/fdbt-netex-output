@@ -15,7 +15,7 @@ import {
 } from './singleTicketNetexHelpers';
 import { NetexObject, getCleanWebsite, getNetexTemplateAsJson, convertJsonToXml } from '../sharedHelpers';
 
-const isReturnTicket = (ticket: MatchingData): ticket is MatchingReturnData => (ticket as MatchingReturnData).inboundFareZones !== undefined && (ticket as MatchingReturnData).inboundFareZones.length > 0 &&
+const isReturnTicket = (ticket: MatchingData): ticket is MatchingReturnData => (ticket as MatchingReturnData).inboundFareZones !== undefined && (ticket as MatchingReturnData).inboundFareZones.length > 0 ||
     (ticket as MatchingReturnData).outboundFareZones.length > 0;
 
 
