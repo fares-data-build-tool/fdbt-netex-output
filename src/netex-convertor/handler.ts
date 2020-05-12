@@ -3,7 +3,7 @@ import singleTicketNetexGenerator from './single-ticket/singleTicketNetexGenerat
 import periodTicketNetexGenerator from './period-ticket/periodTicketNetexGenerator';
 import * as db from './data/auroradb';
 import * as s3 from './data/s3';
-import { MatchingData, PeriodTicket } from './types';
+import {MatchingData, MatchingReturnData, PeriodTicket} from './types';
 
 export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
     try {
@@ -37,6 +37,19 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
 
             const fileNameWithoutSlashes = fileName.replace('/', '_');
             await s3.uploadNetexToS3(generatedNetex, fileNameWithoutSlashes);
+        } else if (type === 'return') {
+            const matchingData: MatchingReturnData = s3Data;
+            const operatorData = await db.getOperatorDataByNocCode(matchingData.nocCode);
+
+            const netexGen = singleTicketNetexGenerator(matchingData, operatorData);
+            const generatedNetex = await netexGen.generate('return');
+            const fileName = `${matchingData.operatorShortName.replace(/\/|\s/g, '_')}_${
+                matchingData.lineName
+            }_${new Date().toISOString()}.xml`;
+
+            const fileNameWithoutSlashes = fileName.replace('/', '_');
+            await s3.uploadNetexToS3(generatedNetex, fileNameWithoutSlashes);
+
         } else {
             throw new Error(
                 `The JSON object '${decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '))}' in the '${

@@ -73,19 +73,19 @@ export const getDistanceMatrixElements = (fareZones: FareZone[]): {}[] =>
         ),
     );
 
-export const getFareTableElements = (fareZones: FareZone[], lineIdName: string, elementPrefix: string): {}[] =>
+export const getFareTableElements = (fareZones: FareZone[], lineIdName: string, elementPrefix: string, type: string): {}[] =>
     fareZones.slice(0, -1).map((zone, index) => ({
         version: '1.0',
-        id: `Trip@single-SOP@p-ticket@${lineIdName}@adult@${elementPrefix}${index + 1}@${getIdName(zone.name)}`,
+        id: `Trip@${type}-SOP@p-ticket@${lineIdName}@adult@${elementPrefix}${index + 1}@${getIdName(zone.name)}`,
         order: index + 1,
         Name: { $t: zone.name },
     }));
 
-export const getFareTables = (columns: FareZone[], lineIdName: string): {}[] =>
+export const getFareTables = (columns: FareZone[], lineIdName: string, type: string): {}[] =>
     columns.flatMap((zone, columnNum) => {
         let rowCount = columns.length - columnNum;
         let order = 0;
-        const columnRef = `Trip@single-SOP@p-ticket@${lineIdName}@adult@c${columnNum + 1}@${getIdName(zone.name)}`;
+        const columnRef = `Trip@${type}-SOP@p-ticket@${lineIdName}@adult@c${columnNum + 1}@${getIdName(zone.name)}`;
 
         return {
             id: columnRef,
@@ -100,11 +100,11 @@ export const getFareTables = (columns: FareZone[], lineIdName: string): {}[] =>
 
                         return {
                             version: '1.0',
-                            id: `Trip@single-SOP@p-ticket@${lineIdName}@adult@${getIdName(zone.name)}`,
+                            id: `Trip@${type}-SOP@p-ticket@${lineIdName}@adult@${getIdName(zone.name)}`,
                             order,
                             DistanceMatrixElementPrice: {
                                 version: '1.0',
-                                id: `Trip@single-SOP@p-ticket@${lineIdName}@adult@${getIdName(zone.name)}+${getIdName(
+                                id: `Trip@${type}-SOP@p-ticket@${lineIdName}@adult@${getIdName(zone.name)}+${getIdName(
                                     secondZone,
                                 )}`,
                                 GeographicalIntervalPriceRef: {
@@ -122,7 +122,7 @@ export const getFareTables = (columns: FareZone[], lineIdName: string): {}[] =>
                             },
                             RowRef: {
                                 versionRef: '1',
-                                ref: `Trip@single-SOP@p-ticket@${lineIdName}@adult@r${rowCount + 1}@${getIdName(
+                                ref: `Trip@${type}-SOP@p-ticket@${lineIdName}@adult@r${rowCount + 1}@${getIdName(
                                     secondZone,
                                 )}`,
                             },
