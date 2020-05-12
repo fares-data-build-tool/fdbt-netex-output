@@ -1,3 +1,4 @@
+import util from 'util';
 import { OperatorData, PeriodTicket, PeriodGeoZoneTicket, MultipleServicesTicket } from '../types';
 import {
     getScheduledStopPointsList,
@@ -9,14 +10,16 @@ import {
     getPreassignedFareProduct,
     getSalesOfferPackageList,
     getTimeIntervals,
-    getFareStructuresElements
+    getFareStructuresElements,
 } from './periodTicketNetexHelpers';
 import { NetexObject, getCleanWebsite, getNetexTemplateAsJson, convertJsonToXml } from '../sharedHelpers';
 
-const placeHolderGroupOfProductsName = "PLACEHOLDER";
+const placeHolderGroupOfProductsName = 'PLACEHOLDER';
 
-const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData: OperatorData): { generate: Function } => {
-
+const periodTicketNetexGenerator = (
+    userPeriodTicket: PeriodTicket,
+    operatorData: OperatorData,
+): { generate: Function } => {
     const opIdNocFormat = `noc:${operatorData.opId}`;
     const nocCodeNocFormat = `noc:${userPeriodTicket.nocCode}`;
     const currentDate = new Date(Date.now());
@@ -174,56 +177,75 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         priceFareFrameToUpdate.tariffs.Tariff.geographicalIntervals.GeographicalInterval.id = `op:Tariff@${placeHolderGroupOfProductsName}@1zone`;
 
         // Time intervals
-        if (isGeoZoneTicket(userPeriodTicket) || isMultiServiceTicket(userPeriodTicket) && userPeriodTicket.products[0].daysValid) {
+        if (
+            isGeoZoneTicket(userPeriodTicket) ||
+            (isMultiServiceTicket(userPeriodTicket) && userPeriodTicket.products[0].daysValid)
+        ) {
             priceFareFrameToUpdate.tariffs.Tariff.timeIntervals.TimeInterval = getTimeIntervals(userPeriodTicket);
-        };
+        } else {
+            priceFareFrameToUpdate.tariffs.Tariff.timeIntervals = null;
+        }
 
         // Fare structure elements
-        priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement = getFareStructuresElements(userPeriodTicket, isGeoZoneTicket(userPeriodTicket), isMultiServiceTicket(userPeriodTicket), placeHolderGroupOfProductsName);
+        priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement = getFareStructuresElements(
+            userPeriodTicket,
+            isGeoZoneTicket(userPeriodTicket),
+            isMultiServiceTicket(userPeriodTicket),
+            placeHolderGroupOfProductsName,
+        );
         priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement.push({
-            version: "1.0",
+            version: '1.0',
             id: `op:Tariff@eligibility`,
-            Name: { $t: "Eligible user types" },
+            Name: { $t: 'Eligible user types' },
             TypeOfFareStructureElementRef: {
-                version: "fxc:v1.0",
-                ref: "fxc:eligibility"
+                version: 'fxc:v1.0',
+                ref: 'fxc:eligibility',
             },
             GenericParameterAssignment: {
                 id: `op:Tariff@eligibility`,
-                version: "1.0",
-                order: "1",
+                version: '1.0',
+                order: '1',
                 TypeOfAccessRightAssignmentRef: {
-                    version: "fxc:v1.0",
-                    ref: "fxc:eligible"
+                    version: 'fxc:v1.0',
+                    ref: 'fxc:eligible',
                 },
-                LimitationGroupingType: { $t: "XOR" },
+                LimitationGroupingType: { $t: 'XOR' },
                 limitations: {
                     UserProfile: {
-                        version: "1.0",
-                        id: "op:adult",
+                        version: '1.0',
+                        id: 'op:adult',
                         Name: {
-                            $t: "Adult"
+                            $t: 'Adult',
                         },
                         prices: {
                             UsageParameterPrice: {
-                                version: "1.0",
-                                id: "op:adult"
-                            }
+                                version: '1.0',
+                                id: 'op:adult',
+                            },
                         },
                         TypeOfConcessionRef: {
-                            version: "fxc:v1.0",
-                            ref: "fxc:none"
-                        }
-                    }
-                }
-            }
+                            version: 'fxc:v1.0',
+                            ref: 'fxc:none',
+                        },
+                    },
+                },
+            },
         });
 
         // Preassigned Fare Product
-        priceFareFrameToUpdate.fareProducts.PreassignedFareProduct = getPreassignedFareProduct(userPeriodTicket, nocCodeNocFormat, opIdNocFormat, isGeoZoneTicket(userPeriodTicket), isMultiServiceTicket(userPeriodTicket));
+        priceFareFrameToUpdate.fareProducts.PreassignedFareProduct = getPreassignedFareProduct(
+            userPeriodTicket,
+            nocCodeNocFormat,
+            opIdNocFormat,
+            isGeoZoneTicket(userPeriodTicket),
+            isMultiServiceTicket(userPeriodTicket),
+        );
 
         // Sales Offer Package
-        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage = getSalesOfferPackageList(userPeriodTicket, placeHolderGroupOfProductsName);
+        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage = getSalesOfferPackageList(
+            userPeriodTicket,
+            placeHolderGroupOfProductsName,
+        );
 
         return priceFareFrameToUpdate;
     };
@@ -236,14 +258,30 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         fareTableFareFrameToUpdate.prerequisites.FareFrameRef.ref = `epd:UK:${userPeriodTicket.nocCode}:FareFrame_UK_PI_FARE_PRODUCT:${placeHolderGroupOfProductsName}@pass:op`;
         fareTableFareFrameToUpdate.PricingParameterSet.id = `op:Pass@${placeHolderGroupOfProductsName}`;
 
-        fareTableFareFrameToUpdate.fareTables.FareTable = getFareTableList(userPeriodTicket, placeHolderGroupOfProductsName);
+        fareTableFareFrameToUpdate.fareTables.FareTable = getFareTableList(
+            userPeriodTicket,
+            placeHolderGroupOfProductsName,
+        );
 
         if (isGeoZoneTicket(userPeriodTicket)) {
-            fareTableFareFrameToUpdate.fareTables.FareTable.includes.FareTable = getGeoZoneFareTable(
-                userPeriodTicket);
+            fareTableFareFrameToUpdate.fareTables.FareTable = fareTableFareFrameToUpdate.fareTables.FareTable.map(
+                (table: NetexObject) => ({
+                    ...table,
+                    includes: {
+                        FareTable: getGeoZoneFareTable(userPeriodTicket),
+                    },
+                }),
+            );
         } else if (isMultiServiceTicket(userPeriodTicket)) {
-            fareTableFareFrameToUpdate.fareTables.FareTable.includes.FareTable = getMultiServiceFareTable(
-                userPeriodTicket);
+            fareTableFareFrameToUpdate.fareTables.FareTable = fareTableFareFrameToUpdate.fareTables.FareTable.map(
+                (table: NetexObject) => ({
+                    ...table,
+                    includes: {
+                        FareTable: getMultiServiceFareTable(userPeriodTicket),
+                    },
+                }),
+            );
+            console.log(util.inspect(fareTableFareFrameToUpdate.fareTables.FareTable, false, null, true));
         }
         return fareTableFareFrameToUpdate;
     };
@@ -279,7 +317,7 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
                 updateFareTableFareFrame(netexFrames.FareFrame[2]),
             ];
         }
-
+        // console.log(util.inspect(netexJson, false, null, true));
         return convertJsonToXml(netexJson);
     };
 
