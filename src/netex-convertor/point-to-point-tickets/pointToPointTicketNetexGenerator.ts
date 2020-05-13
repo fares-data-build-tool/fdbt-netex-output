@@ -26,7 +26,10 @@ const isReturnTicket = (ticket: MatchingData): ticket is MatchingReturnData =>
 const isSingleTicket = (ticket: MatchingData): ticket is MatchingSingleData =>
     (ticket as MatchingSingleData).fareZones !== undefined && (ticket as MatchingSingleData).fareZones.length > 0;
 
-const pointToPointGenerator = (matchingData: MatchingData, operatorData: OperatorData): { generate: Function } => {
+const pointToPointTicketNetexGenerator = (
+    matchingData: MatchingData,
+    operatorData: OperatorData,
+): { generate: Function } => {
     const opIdNocFormat = `noc:${operatorData.opId}`;
     const nocCodeNocFormat = `noc:${matchingData.nocCode}`;
     const opIdBrandFormat = `${operatorData.opId}@brand`;
@@ -342,4 +345,4 @@ const pointToPointGenerator = (matchingData: MatchingData, operatorData: Operato
     return { generate };
 };
 
-export default pointToPointGenerator;
+export default pointToPointTicketNetexGenerator;

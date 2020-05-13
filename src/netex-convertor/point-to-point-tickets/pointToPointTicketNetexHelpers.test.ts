@@ -1,6 +1,6 @@
 import * as netexHelpers from './pointToPointTicketNetexHelpers';
 import { FareZone } from '../types';
-import { fareZoneList, expectedFareTables } from '../testdata/test-data';
+import { fareZoneList, expectedFareTables } from '../test-data/testData';
 
 describe('Netex Helpers', () => {
     let fareZones: FareZone[];

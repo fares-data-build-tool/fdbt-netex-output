@@ -1,9 +1,9 @@
 import { S3Event } from 'aws-lambda';
 import { netexConvertorHandler } from './handler';
-import * as mocks from './testdata/test-data';
+import * as mocks from './test-data/testData';
 import * as s3 from './data/s3';
-import * as pointToPointTicketNetexGenerator from './pointToPoint-ticket/pointToPointGenerator';
-import * as periodTicketNetexGenerator from './period-ticket/periodTicketNetexGenerator';
+import * as pointToPointTicketNetexGenerator from './point-to-point-tickets/pointToPointTicketNetexGenerator';
+import * as periodTicketNetexGenerator from './period-tickets/periodTicketNetexGenerator';
 
 jest.mock('./data/auroradb.ts');
 jest.spyOn(s3, 'uploadNetexToS3').mockImplementation(() => Promise.resolve());
