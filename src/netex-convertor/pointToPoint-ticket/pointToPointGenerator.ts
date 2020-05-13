@@ -14,7 +14,7 @@ import {
     getNetexMode,
     getPriceGroups,
     getScheduledStopPointsList,
-} from './singleTicketNetexHelpers';
+} from './pointToPointTicketNetexHelpers';
 import { convertJsonToXml, getCleanWebsite, getNetexTemplateAsJson, NetexObject } from '../sharedHelpers';
 
 const isReturnTicket = (ticket: MatchingData): ticket is MatchingReturnData =>
@@ -26,7 +26,7 @@ const isReturnTicket = (ticket: MatchingData): ticket is MatchingReturnData =>
 const isSingleTicket = (ticket: MatchingData): ticket is MatchingSingleData =>
     (ticket as MatchingSingleData).fareZones !== undefined && (ticket as MatchingSingleData).fareZones.length > 0;
 
-const singleTicketNetexGenerator = (matchingData: MatchingData, operatorData: OperatorData): { generate: Function } => {
+const pointToPointGenerator = (matchingData: MatchingData, operatorData: OperatorData): { generate: Function } => {
     const opIdNocFormat = `noc:${operatorData.opId}`;
     const nocCodeNocFormat = `noc:${matchingData.nocCode}`;
     const opIdBrandFormat = `${operatorData.opId}@brand`;
@@ -316,7 +316,9 @@ const singleTicketNetexGenerator = (matchingData: MatchingData, operatorData: Op
     };
 
     const generate = async (): Promise<string> => {
-        const netexJson: NetexObject = await getNetexTemplateAsJson('single-ticket/singleTicketNetexTemplate.xml');
+        const netexJson: NetexObject = await getNetexTemplateAsJson(
+            'pointToPoint-ticket/pointToPointTicketNetexTemplate.xml',
+        );
 
         netexJson.PublicationDelivery = updatePublicationTimeStamp(netexJson.PublicationDelivery);
         netexJson.PublicationDelivery.PublicationRequest = updatePublicationRequest(
@@ -340,4 +342,4 @@ const singleTicketNetexGenerator = (matchingData: MatchingData, operatorData: Op
     return { generate };
 };
 
-export default singleTicketNetexGenerator;
+export default pointToPointGenerator;

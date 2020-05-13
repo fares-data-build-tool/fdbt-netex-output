@@ -1,5 +1,5 @@
 import { S3Event } from 'aws-lambda';
-import singleTicketNetexGenerator from './single-ticket/singleTicketNetexGenerator';
+import pointToPointGenerator from './pointToPoint-ticket/pointToPointGenerator';
 import periodTicketNetexGenerator from './period-ticket/periodTicketNetexGenerator';
 import * as db from './data/auroradb';
 import * as s3 from './data/s3';
@@ -17,7 +17,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
             const matchingData: MatchingData = s3Data;
             const operatorData = await db.getOperatorDataByNocCode(matchingData.nocCode);
 
-            const netexGen = singleTicketNetexGenerator(matchingData, operatorData);
+            const netexGen = pointToPointGenerator(matchingData, operatorData);
             const generatedNetex = await netexGen.generate();
 
             const fileName = `${matchingData.operatorShortName.replace(/\/|\s/g, '_')}_${
@@ -50,7 +50,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
             const matchingData: MatchingReturnData = s3Data;
             const operatorData = await db.getOperatorDataByNocCode(matchingData.nocCode);
 
-            const netexGen = singleTicketNetexGenerator(matchingData, operatorData);
+            const netexGen = pointToPointGenerator(matchingData, operatorData);
             const generatedNetex = await netexGen.generate('return');
             const fileName = `${matchingData.operatorShortName.replace(/\/|\s/g, '_')}_${
                 matchingData.lineName

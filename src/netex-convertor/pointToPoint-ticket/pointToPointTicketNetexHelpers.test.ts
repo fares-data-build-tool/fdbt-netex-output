@@ -1,4 +1,4 @@
-import * as netexHelpers from './singleTicketNetexHelpers';
+import * as netexHelpers from './pointToPointTicketNetexHelpers';
 import { FareZone } from '../types';
 import { fareZoneList, expectedFareTables } from '../testdata/test-data';
 

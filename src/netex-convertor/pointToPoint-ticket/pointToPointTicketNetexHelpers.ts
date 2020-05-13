@@ -1,4 +1,4 @@
-import {FareZone, FareZoneList, ScheduledStopPoints, Stop} from '../types';
+import { FareZone, FareZoneList, ScheduledStopPoints, Stop } from '../types';
 
 export const getStops = (fareZones: FareZone[]): Stop[] => fareZones.flatMap(zone => zone.stops);
 
@@ -73,7 +73,12 @@ export const getDistanceMatrixElements = (fareZones: FareZone[]): {}[] =>
         ),
     );
 
-export const getFareTableElements = (fareZones: FareZone[], lineIdName: string, elementPrefix: string, type: string): {}[] =>
+export const getFareTableElements = (
+    fareZones: FareZone[],
+    lineIdName: string,
+    elementPrefix: string,
+    type: string,
+): {}[] =>
     fareZones.slice(0, -1).map((zone, index) => ({
         version: '1.0',
         id: `Trip@${type}-SOP@p-ticket@${lineIdName}@adult@${elementPrefix}${index + 1}@${getIdName(zone.name)}`,
