@@ -110,3 +110,17 @@ export interface LineRef {
     version: string;
     ref: string;
 }
+
+export interface ScheduledStopPoints {
+    version: string;
+    id: string;
+    Name: object;
+    TopographicPlaceView: object;
+}
+
+export interface FareZoneList {
+    version: string;
+    id: string;
+    Name: object;
+    members: object;
+}

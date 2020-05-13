@@ -1,4 +1,4 @@
-import { FareZone, Stop } from '../types';
+import {FareZone, FareZoneList, ScheduledStopPoints, Stop} from '../types';
 
 export const getStops = (fareZones: FareZone[]): Stop[] => fareZones.flatMap(zone => zone.stops);
 
@@ -8,7 +8,7 @@ export const getUniquePriceGroups = (fareZones: FareZone[]): string[] => [
 
 export const getIdName = (name: string): string => name.replace(/(\s)+/g, '_');
 
-export const getScheduledStopPointsList = (fareZones: FareZone[]): {}[] =>
+export const getScheduledStopPointsList = (fareZones: FareZone[]): ScheduledStopPoints[] =>
     getStops(fareZones).map(stop => ({
         version: 'any',
         id: `naptan:${stop.atcoCode}`,
@@ -35,7 +35,7 @@ export const getPriceGroups = (fareZones: FareZone[]): {}[] =>
         ],
     }));
 
-export const getFareZoneList = (fareZones: FareZone[]): {}[] =>
+export const getFareZoneList = (fareZones: FareZone[]): FareZoneList[] =>
     fareZones.map(zone => ({
         version: '1.0',
         id: `fs@${getIdName(zone.name)}`,
