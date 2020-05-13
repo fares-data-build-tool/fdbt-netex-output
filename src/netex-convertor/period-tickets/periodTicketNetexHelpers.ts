@@ -34,24 +34,24 @@ export const getTopographicProjectionRefList = (stops: Stop[]): TopographicProje
 export const getLinesList = (userPeriodTicket: PeriodMultipleServicesTicket, operatorData: OperatorData): Line[] =>
     userPeriodTicket.selectedServices
         ? userPeriodTicket.selectedServices.map(service => ({
-              version: '1.0',
-              id: `op:${service.lineName}`,
-              Name: { $t: `Line ${service.lineName}` },
-              Description: { $t: service.serviceDescription },
-              Url: { $t: getCleanWebsite(operatorData.website) },
-              PublicCode: { $t: service.lineName },
-              PrivateCode: { type: 'noc', $t: `${userPeriodTicket.nocCode}_${service.lineName}` },
-              OperatorRef: { version: '1.0', ref: `noc:${userPeriodTicket.nocCode}` },
-              LineType: { $t: 'local' },
-          }))
+            version: '1.0',
+            id: `op:${service.lineName}`,
+            Name: { $t: `Line ${service.lineName}` },
+            Description: { $t: service.serviceDescription },
+            Url: { $t: getCleanWebsite(operatorData.website) },
+            PublicCode: { $t: service.lineName },
+            PrivateCode: { type: 'noc', $t: `${userPeriodTicket.nocCode}_${service.lineName}` },
+            OperatorRef: { version: '1.0', ref: `noc:${userPeriodTicket.nocCode}` },
+            LineType: { $t: 'local' },
+        }))
         : [];
 
 export const getLineRefList = (userPeriodTicket: PeriodMultipleServicesTicket): LineRef[] =>
     userPeriodTicket.selectedServices
         ? userPeriodTicket.selectedServices.map(service => ({
-              version: '1.0',
-              ref: `op:${service.lineName}`,
-          }))
+            version: '1.0',
+            ref: `op:${service.lineName}`,
+        }))
         : [];
 
 export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): {}[] =>
