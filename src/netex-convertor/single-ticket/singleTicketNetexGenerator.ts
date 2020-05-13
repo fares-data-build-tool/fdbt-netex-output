@@ -189,8 +189,6 @@ const singleTicketNetexGenerator = (matchingData: MatchingData, operatorData: Op
 
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[2].id =
                 'Trip@return@conditions_of_travel';
-            priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[2].Name.$t =
-                'Conditions of travel';
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[2].GenericParameterAssignment.id =
                 'Trip@return@conditions_of_travel';
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[2].GenericParameterAssignment.limitations.RoundTrip.id =
@@ -318,9 +316,7 @@ const singleTicketNetexGenerator = (matchingData: MatchingData, operatorData: Op
     };
 
     const generate = async (): Promise<string> => {
-        let netexJson: NetexObject = {};
-
-        netexJson = await getNetexTemplateAsJson('single-ticket/singleTicketNetexTemplate.xml');
+        const netexJson: NetexObject = await getNetexTemplateAsJson('single-ticket/singleTicketNetexTemplate.xml');
 
         netexJson.PublicationDelivery = updatePublicationTimeStamp(netexJson.PublicationDelivery);
         netexJson.PublicationDelivery.PublicationRequest = updatePublicationRequest(
