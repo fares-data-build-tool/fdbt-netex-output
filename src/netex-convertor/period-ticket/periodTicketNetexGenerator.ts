@@ -1,4 +1,3 @@
-import util from 'util';
 import { OperatorData, PeriodTicket, PeriodGeoZoneTicket, MultipleServicesTicket } from '../types';
 import {
     getScheduledStopPointsList,
@@ -281,7 +280,6 @@ const periodTicketNetexGenerator = (
                     },
                 }),
             );
-            console.log(util.inspect(fareTableFareFrameToUpdate.fareTables.FareTable, false, null, true));
         }
         return fareTableFareFrameToUpdate;
     };

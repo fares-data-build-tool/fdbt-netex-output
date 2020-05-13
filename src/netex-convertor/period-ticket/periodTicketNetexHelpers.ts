@@ -77,7 +77,7 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): Nete
             FareTable: {
                 version: '1.0',
                 id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket`,
-                Name: { t$: `${product.productName} - Cash` },
+                Name: { $t: `${product.productName} - Cash` },
                 pricesFor: {
                     SalesOfferPackageRef: {
                         version: '1.0',
@@ -149,7 +149,7 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): Nete
                             id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@${
                                 product.daysValid
                             }${product.daysValid === '1' ? 'day' : 'days'}`,
-                            Amount: { t$: `${product.productPrice}` },
+                            Amount: { $t: `${product.productPrice}` },
                             TimeIntervalRef: {
                                 version: '1.0',
                                 ref: `op:Tariff@${product.productName}@${product.daysValid}${
@@ -193,7 +193,7 @@ const getMultiServiceList = (userPeriodTicket: MultipleServicesTicket): NetexObj
             FareTable: {
                 version: '1.0',
                 id: `op:${product.productName}@${name}@p-ticket`,
-                Name: { t$: `${product.productName} - Cash` },
+                Name: { $t: `${product.productName} - Cash` },
                 pricesFor: {
                     SalesOfferPackageRef: {
                         version: '1.0',
@@ -265,7 +265,7 @@ const getMultiServiceList = (userPeriodTicket: MultipleServicesTicket): NetexObj
                             id: `op:${product.productName}@${name}@p-ticket@adult@${product.daysValid}${
                                 product.daysValid === '1' ? 'day' : 'days'
                             }`,
-                            Amount: { t$: `${product.productPrice}` },
+                            Amount: { $t: `${product.productPrice}` },
                             TimeIntervalRef: {
                                 version: '1.0',
                                 ref: `op:Tariff@${product.productName}@${product.daysValid}${
@@ -295,12 +295,6 @@ const getFlatFareList = (userPeriodTicket: MultipleServicesTicket): NetexObject[
         version: '1.0',
         id: `op:${product.productName}`,
         Name: { $t: `${product.productName}` },
-        specifics: {
-            TariffZoneRef: {
-                version: '1.0',
-                ref: `op:${product.productName}`,
-            },
-        },
         includes: {
             FareTable: {
                 version: '1.0',
@@ -323,10 +317,6 @@ const getFlatFareList = (userPeriodTicket: MultipleServicesTicket): NetexObject[
                         version: '1.0',
                         id: `op:${product.productName}@p-ticket@adult`,
                         Amount: { $t: `${product.productPrice}` },
-                        DistanceMatrixElementRef: {
-                            version: '1.0',
-                            ref: `op:${product.productName}@p-ticket@adult`,
-                        },
                     },
                 },
             },
@@ -446,41 +436,43 @@ export const getSalesOfferPackageList = (
         },
     }));
 
-// const getFareStructureElementRef = (product: ProductDetails): NetexObject => product.daysValid ? => ({
-//     FareStructureElementRef: [
-//         {
-//             version: '1.0',
-//             ref: elementZeroRef,
-//         },
-//         {
-//             version: '1.0',
-//             ref: `op:Tariff@eligibility`,
-//         },
-//         {
-//             version: '1.0',
-//             ref: `op:Tariff@${product.productName}@durations@adult`,
-//         },
-//         {
-//             version: '1.0',
-//             ref: `op:Tariff@${product.productName}@conditions_of_travel`,
-//         },
-//     ],
-// }) : ({
-//     FareStructureElementRef: [
-//         {
-//             version: '1.0',
-//             ref: elementZeroRef,
-//         },
-//         {
-//             version: '1.0',
-//             ref: `op:Tariff@eligibility`,
-//         },
-//         {
-//             version: '1.0',
-//             ref: `op:Tariff@${product.productName}@conditions_of_travel`,
-//         },
-//     ],
-// });
+const getMultiServiceFareStructureElementRefs = (elementZeroRef: string, product: ProductDetails): NetexObject => ({
+    FareStructureElementRef: [
+        {
+            version: '1.0',
+            ref: elementZeroRef,
+        },
+        {
+            version: '1.0',
+            ref: `op:Tariff@eligibility`,
+        },
+        {
+            version: '1.0',
+            ref: `op:Tariff@${product.productName}@durations@adult`,
+        },
+        {
+            version: '1.0',
+            ref: `op:Tariff@${product.productName}@conditions_of_travel`,
+        },
+    ],
+});
+
+const getFlatFareFareStructureElementRefs = (elementZeroRef: string, product: ProductDetails): NetexObject => ({
+    FareStructureElementRef: [
+        {
+            version: '1.0',
+            ref: elementZeroRef,
+        },
+        {
+            version: '1.0',
+            ref: `op:Tariff@eligibility`,
+        },
+        {
+            version: '1.0',
+            ref: `op:Tariff@${product.productName}@conditions_of_travel`,
+        },
+    ],
+});
 
 export const getPreassignedFareProduct = (
     userPeriodTicket: PeriodTicket,
@@ -491,6 +483,7 @@ export const getPreassignedFareProduct = (
 ): NetexObject[] => {
     return userPeriodTicket.products.map(product => {
         let elementZeroRef: string;
+        let fareStructureElementRefs: NetexObject;
 
         if (isGeoZoneTicket) {
             elementZeroRef = `op:Tariff@${product.productName}@access_zones`;
@@ -499,6 +492,14 @@ export const getPreassignedFareProduct = (
         } else {
             elementZeroRef = '';
         }
+
+        if (userPeriodTicket.products[0].daysValid) {
+            fareStructureElementRefs = getMultiServiceFareStructureElementRefs(elementZeroRef, product);
+        }
+        else {
+            fareStructureElementRefs = getFlatFareFareStructureElementRefs(elementZeroRef, product);
+        }
+
 
         return {
             version: '1.0',
@@ -527,26 +528,7 @@ export const getPreassignedFareProduct = (
                     Name: {
                         $t: 'Unlimited rides available for specified durations',
                     },
-                    fareStructureElements: {
-                        FareStructureElementRef: [
-                            {
-                                version: '1.0',
-                                ref: elementZeroRef,
-                            },
-                            {
-                                version: '1.0',
-                                ref: `op:Tariff@eligibility`,
-                            },
-                            {
-                                version: '1.0',
-                                ref: `op:Tariff@${product.productName}@durations@adult`,
-                            },
-                            {
-                                version: '1.0',
-                                ref: `op:Tariff@${product.productName}@conditions_of_travel`,
-                            },
-                        ],
-                    },
+                    fareStructureElements: fareStructureElementRefs,
                 },
             },
             accessRightsInProduct: {
