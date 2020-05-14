@@ -115,32 +115,20 @@ const periodTicketNetexGenerator = (
     const updateNetworkFareFrame = (networkFareFrame: NetexObject): NetexObject | null => {
         if (isGeoZoneTicket(userPeriodTicket)) {
             const networkFareFrameToUpdate = { ...networkFareFrame };
-            const parentFareZoneLocality =
-                userPeriodTicket.stops[0].parentLocalityName !== ''
-                    ? userPeriodTicket.stops[0].parentLocalityName
-                    : userPeriodTicket.stops[0].localityName;
 
             networkFareFrameToUpdate.id = `epd:UK:${userPeriodTicket.nocCode}:FareFrame_UK_PI_FARE_NETWORK:${placeHolderGroupOfProductsName}@pass:op`;
             networkFareFrameToUpdate.Name.$t = `${placeHolderGroupOfProductsName} Network`;
             networkFareFrameToUpdate.prerequisites.ResourceFrameRef.ref = `epd:UK:${userPeriodTicket.nocCode}:ResourceFrame_UK_PI_COMMON:${userPeriodTicket.nocCode}:op`;
 
-            networkFareFrameToUpdate.fareZones.FareZone[0].id = `op:${placeHolderGroupOfProductsName}@${parentFareZoneLocality}`;
-            networkFareFrameToUpdate.fareZones.FareZone[0].Name.$t = parentFareZoneLocality;
-            networkFareFrameToUpdate.fareZones.FareZone[0].Description.$t = `${parentFareZoneLocality} ${placeHolderGroupOfProductsName} Parent Fare Zone`;
-            networkFareFrameToUpdate.fareZones.FareZone[0].projections.TopographicProjectionRef = getTopographicProjectionRefList(
+            networkFareFrameToUpdate.fareZones.FareZone.id = `op:${placeHolderGroupOfProductsName}@${userPeriodTicket.zoneName}`;
+            networkFareFrameToUpdate.fareZones.FareZone.Name.$t = `${userPeriodTicket.zoneName}`;
+            networkFareFrameToUpdate.fareZones.FareZone.Description.$t = `${userPeriodTicket.zoneName} ${placeHolderGroupOfProductsName} Zone`;
+            networkFareFrameToUpdate.fareZones.FareZone.members.ScheduledStopPointRef = getScheduledStopPointsList(
                 userPeriodTicket.stops,
             );
-
-            networkFareFrameToUpdate.fareZones.FareZone[1].id = `op:${placeHolderGroupOfProductsName}@${userPeriodTicket.zoneName}`;
-            networkFareFrameToUpdate.fareZones.FareZone[1].Name.$t = `${userPeriodTicket.zoneName}`;
-            networkFareFrameToUpdate.fareZones.FareZone[1].Description.$t = `${userPeriodTicket.zoneName} ${placeHolderGroupOfProductsName} Zone`;
-            networkFareFrameToUpdate.fareZones.FareZone[1].members.ScheduledStopPointRef = getScheduledStopPointsList(
+            networkFareFrameToUpdate.fareZones.FareZone.projections.TopographicProjectionRef = getTopographicProjectionRefList(
                 userPeriodTicket.stops,
             );
-            networkFareFrameToUpdate.fareZones.FareZone[1].projections.TopographicProjectionRef = getTopographicProjectionRefList(
-                userPeriodTicket.stops,
-            );
-            networkFareFrameToUpdate.fareZones.FareZone[1].ParentFareZoneRef.ref = `op:${parentFareZoneLocality}`;
 
             return networkFareFrameToUpdate;
         }
