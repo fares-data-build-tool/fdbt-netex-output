@@ -1,4 +1,4 @@
-import { OperatorData, PeriodTicket, PeriodGeoZoneTicket, MultipleServicesTicket } from '../types';
+import { OperatorData, PeriodTicket } from '../types';
 import {
     getScheduledStopPointsList,
     getTopographicProjectionRefList,
@@ -10,6 +10,8 @@ import {
     getSalesOfferPackageList,
     getTimeIntervals,
     getFareStructuresElements,
+    isMultiServiceTicket,
+    isGeoZoneTicket,
 } from './periodTicketNetexHelpers';
 import { NetexObject, getCleanWebsite, getNetexTemplateAsJson, convertJsonToXml } from '../sharedHelpers';
 
@@ -23,12 +25,6 @@ const periodTicketNetexGenerator = (
     const nocCodeNocFormat = `noc:${userPeriodTicket.nocCode}`;
     const currentDate = new Date(Date.now());
     const website = getCleanWebsite(operatorData.website);
-
-    const isGeoZoneTicket = (ticket: PeriodTicket): ticket is PeriodGeoZoneTicket =>
-        (ticket as PeriodGeoZoneTicket).zoneName !== undefined;
-
-    const isMultiServiceTicket = (ticket: PeriodTicket): ticket is MultipleServicesTicket =>
-        (ticket as MultipleServicesTicket).selectedServices !== undefined;
 
     const updatePublicationTimeStamp = (publicationTimeStamp: NetexObject): NetexObject => {
         const publicationTimeStampToUpdate = { ...publicationTimeStamp };
@@ -188,8 +184,6 @@ const periodTicketNetexGenerator = (
         // Fare structure elements
         priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement = getFareStructuresElements(
             userPeriodTicket,
-            isGeoZoneTicket(userPeriodTicket),
-            isMultiServiceTicket(userPeriodTicket),
             placeHolderGroupOfProductsName,
         );
         priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement.push({
@@ -236,8 +230,6 @@ const periodTicketNetexGenerator = (
             userPeriodTicket,
             nocCodeNocFormat,
             opIdNocFormat,
-            isGeoZoneTicket(userPeriodTicket),
-            isMultiServiceTicket(userPeriodTicket),
         );
 
         // Sales Offer Package

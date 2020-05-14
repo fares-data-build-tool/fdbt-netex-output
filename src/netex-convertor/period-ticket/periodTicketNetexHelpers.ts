@@ -12,6 +12,12 @@ import {
 } from '../types';
 import { getCleanWebsite, NetexObject } from '../sharedHelpers';
 
+export const isGeoZoneTicket = (ticket: PeriodTicket): ticket is PeriodGeoZoneTicket =>
+    (ticket as PeriodGeoZoneTicket).zoneName !== undefined;
+
+export const isMultiServiceTicket = (ticket: PeriodTicket): ticket is MultipleServicesTicket =>
+    (ticket as MultipleServicesTicket).selectedServices !== undefined;
+
 export const getScheduledStopPointsList = (stops: Stop[]): ScheduledStopPoint[] =>
     stops.map((stop: Stop) => ({
         versionRef: 'EXTERNAL',
@@ -29,24 +35,24 @@ export const getTopographicProjectionRefList = (stops: Stop[]): TopographicProje
 export const getLinesList = (userPeriodTicket: MultipleServicesTicket, operatorData: OperatorData): Line[] =>
     userPeriodTicket.selectedServices
         ? userPeriodTicket.selectedServices.map(service => ({
-            version: '1.0',
-            id: `op:${service.lineName}`,
-            Name: { $t: `Line ${service.lineName}` },
-            Description: { $t: service.serviceDescription },
-            Url: { $t: getCleanWebsite(operatorData.website) },
-            PublicCode: { $t: service.lineName },
-            PrivateCode: { type: 'noc', $t: `${userPeriodTicket.nocCode}_${service.lineName}` },
-            OperatorRef: { version: '1.0', ref: `noc:${userPeriodTicket.nocCode}` },
-            LineType: { $t: 'local' },
-        }))
+              version: '1.0',
+              id: `op:${service.lineName}`,
+              Name: { $t: `Line ${service.lineName}` },
+              Description: { $t: service.serviceDescription },
+              Url: { $t: getCleanWebsite(operatorData.website) },
+              PublicCode: { $t: service.lineName },
+              PrivateCode: { type: 'noc', $t: `${userPeriodTicket.nocCode}_${service.lineName}` },
+              OperatorRef: { version: '1.0', ref: `noc:${userPeriodTicket.nocCode}` },
+              LineType: { $t: 'local' },
+          }))
         : [];
 
 export const getLineRefList = (userPeriodTicket: MultipleServicesTicket): LineRef[] =>
     userPeriodTicket.selectedServices
         ? userPeriodTicket.selectedServices.map(service => ({
-            version: '1.0',
-            ref: `op:${service.lineName}`,
-        }))
+              version: '1.0',
+              ref: `op:${service.lineName}`,
+          }))
         : [];
 
 export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): NetexObject[] =>
@@ -284,7 +290,7 @@ const getMultiServiceList = (userPeriodTicket: MultipleServicesTicket): NetexObj
                             },
                         },
                     },
-                },          
+                },
             },
         },
     }));
@@ -478,16 +484,14 @@ export const getPreassignedFareProduct = (
     userPeriodTicket: PeriodTicket,
     nocCodeNocFormat: string,
     opIdNocFormat: string,
-    isGeoZoneTicket: boolean,
-    isMultiServiceTicket: boolean,
 ): NetexObject[] => {
     return userPeriodTicket.products.map(product => {
         let elementZeroRef: string;
         let fareStructureElementRefs: NetexObject;
 
-        if (isGeoZoneTicket) {
+        if (isGeoZoneTicket(userPeriodTicket)) {
             elementZeroRef = `op:Tariff@${product.productName}@access_zones`;
-        } else if (isMultiServiceTicket) {
+        } else if (isMultiServiceTicket(userPeriodTicket)) {
             elementZeroRef = `op:Tariff@${product.productName}@access_lines`;
         } else {
             elementZeroRef = '';
@@ -495,11 +499,9 @@ export const getPreassignedFareProduct = (
 
         if (userPeriodTicket.products[0].daysValid) {
             fareStructureElementRefs = getMultiServiceFareStructureElementRefs(elementZeroRef, product);
-        }
-        else {
+        } else {
             fareStructureElementRefs = getFlatFareFareStructureElementRefs(elementZeroRef, product);
         }
-
 
         return {
             version: '1.0',
@@ -667,18 +669,16 @@ const getConditionsElement = (product: ProductDetails): NetexObject => ({
 });
 
 export const getFareStructuresElements = (
-    userPeriodTicket: any,
-    isGeoZoneTicket: boolean,
-    isMultiServiceTicket: boolean,
+    userPeriodTicket: PeriodTicket,
     placeHolderGroupOfProductsName: string,
 ): NetexObject[] => {
-    const arrayOfArraysOfFareStructureElements: [] = userPeriodTicket.products.map((product: any) => {
+    const arrayOfArraysOfFareStructureElements = userPeriodTicket.products.map((product: ProductDetails) => {
         // FareStructureElement 1 - availability
         let id = '';
         let genericParameterAssignmentId = '';
         let validityParametersObject: {} = {};
         let validityParameterGroupingType = '';
-        if (isGeoZoneTicket) {
+        if (isGeoZoneTicket(userPeriodTicket)) {
             id = `op:Tariff@${product.productName}@access_zones`;
             genericParameterAssignmentId = `op:Tariff@${product.productName}@access_zones`;
             validityParameterGroupingType = 'XOR';
@@ -688,7 +688,7 @@ export const getFareStructuresElements = (
                     ref: `op:${placeHolderGroupOfProductsName}@${userPeriodTicket.zoneName}`,
                 },
             };
-        } else if (isMultiServiceTicket) {
+        } else if (isMultiServiceTicket(userPeriodTicket)) {
             id = `op:Tariff@${product.productName}@access_lines`;
             genericParameterAssignmentId = `Tariff@${product.productName}@access_lines`;
             validityParameterGroupingType = 'OR';
