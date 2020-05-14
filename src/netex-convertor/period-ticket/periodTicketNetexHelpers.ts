@@ -155,7 +155,7 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): Nete
                             id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@${
                                 product.daysValid
                             }${product.daysValid === '1' ? 'day' : 'days'}`,
-                            Amount: { t$: `${product.productPrice}` },
+                            Amount: { $t: `${product.productPrice}` },
                             TimeIntervalRef: {
                                 version: '1.0',
                                 ref: `op:Tariff@${product.productName}@${product.daysValid}${
@@ -271,7 +271,7 @@ const getMultiServiceList = (userPeriodTicket: MultipleServicesTicket): NetexObj
                             id: `op:${product.productName}@${name}@p-ticket@adult@${product.daysValid}${
                                 product.daysValid === '1' ? 'day' : 'days'
                             }`,
-                            Amount: { t$: `${product.productPrice}` },
+                            Amount: { $t: `${product.productPrice}` },
                             TimeIntervalRef: {
                                 version: '1.0',
                                 ref: `op:Tariff@${product.productName}@${product.daysValid}${
