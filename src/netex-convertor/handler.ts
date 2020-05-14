@@ -3,7 +3,7 @@ import pointToPointTicketNetexGenerator from './point-to-point-tickets/pointToPo
 import periodTicketNetexGenerator from './period-tickets/periodTicketNetexGenerator';
 import * as db from './data/auroradb';
 import * as s3 from './data/s3';
-import { MatchingData, MatchingReturnData, PeriodTicket } from './types';
+import { MatchingData, PeriodTicket } from './types';
 
 export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
     try {
@@ -13,7 +13,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
 
         console.info(`NeTEx generation starting for type: ${type}...`);
 
-        if (type === 'pointToPoint') {
+        if (type === 'pointToPoint' || type === 'return') {
             const matchingData: MatchingData = s3Data;
             const operatorData = await db.getOperatorDataByNocCode(matchingData.nocCode);
 
@@ -43,18 +43,6 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
                 /\/|\s/g,
                 '_',
             )}_${productName}_${new Date().toISOString()}.xml`;
-
-            const fileNameWithoutSlashes = fileName.replace('/', '_');
-            await s3.uploadNetexToS3(generatedNetex, fileNameWithoutSlashes);
-        } else if (type === 'return') {
-            const matchingData: MatchingReturnData = s3Data;
-            const operatorData = await db.getOperatorDataByNocCode(matchingData.nocCode);
-
-            const netexGen = pointToPointTicketNetexGenerator(matchingData, operatorData);
-            const generatedNetex = await netexGen.generate('return');
-            const fileName = `${matchingData.operatorShortName.replace(/\/|\s/g, '_')}_${
-                matchingData.lineName
-            }_${new Date().toISOString()}.xml`;
 
             const fileNameWithoutSlashes = fileName.replace('/', '_');
             await s3.uploadNetexToS3(generatedNetex, fileNameWithoutSlashes);
