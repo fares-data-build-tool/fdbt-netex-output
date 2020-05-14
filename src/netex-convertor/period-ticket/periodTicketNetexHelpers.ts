@@ -256,7 +256,7 @@ const getMultiServiceList = (userPeriodTicket: MultipleServicesTicket): NetexObj
                                 version: '1.0',
                                 id: `op:${product.productName}@${name}@p-ticket@adult@${product.daysValid}${
                                     product.daysValid === '1' ? 'day' : 'days'
-                                }TEST`,
+                                }`,
                                 order: '1',
                                 TimeIntervalPrice: {
                                     version: '1.0',
