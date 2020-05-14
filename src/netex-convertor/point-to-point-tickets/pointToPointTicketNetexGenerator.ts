@@ -320,7 +320,7 @@ const pointToPointTicketNetexGenerator = (
 
     const generate = async (): Promise<string> => {
         const netexJson: NetexObject = await getNetexTemplateAsJson(
-            'pointToPoint-ticket/pointToPointTicketNetexTemplate.xml',
+            'point-to-point-tickets/pointToPointTicketNetexTemplate.xml',
         );
 
         netexJson.PublicationDelivery = updatePublicationTimeStamp(netexJson.PublicationDelivery);
