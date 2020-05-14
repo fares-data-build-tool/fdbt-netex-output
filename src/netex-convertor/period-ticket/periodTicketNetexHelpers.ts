@@ -63,7 +63,7 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): Nete
         specifics: {
             TariffZoneRef: {
                 version: '1.0',
-                ref: `op:${product.productName}@${userPeriodTicket.zoneName}`,
+                ref: `op:PLACEHOLDER@${userPeriodTicket.zoneName}`,
             },
         },
         columns: {
@@ -74,7 +74,7 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): Nete
                 representing: {
                     TariffZoneRef: {
                         version: '1.0',
-                        ref: `op:${product.productName}@${userPeriodTicket.zoneName}`,
+                        ref: `op:PLACEHOLDER@${userPeriodTicket.zoneName}`,
                     },
                 },
             },
@@ -114,7 +114,7 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): Nete
                     },
                 },
                 includes: {
-                    Faretable: {
+                    FareTable: {
                         version: '1.0',
                         id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult`,
                         Name: { $t: `${product.productName} - Cash - Adult` },
@@ -132,7 +132,7 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): Nete
                                 representing: {
                                     TypeOfTravelDocumentRef: {
                                         version: '1.0',
-                                        ref: 'op:p-tciket',
+                                        ref: 'op:p-ticket',
                                     },
                                     UserProfileRef: {
                                         version: '1.0',
@@ -141,36 +141,36 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): Nete
                                 },
                             },
                         },
-                    },
-                },
-                cells: {
-                    Cell: {
-                        version: '1.0',
-                        id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@${
-                            product.daysValid
-                        }${product.daysValid === '1' ? 'day' : 'days'}`,
-                        order: '1',
-                        TimeIntervalPrice: {
-                            version: '1.0',
-                            id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@${
-                                product.daysValid
-                            }${product.daysValid === '1' ? 'day' : 'days'}`,
-                            Amount: { $t: `${product.productPrice}` },
-                            TimeIntervalRef: {
+                        cells: {
+                            Cell: {
                                 version: '1.0',
-                                ref: `op:Tariff@${product.productName}@${product.daysValid}${
-                                    product.daysValid === '1' ? 'day' : 'days'
-                                }`,
-                            },
-                            ColumnRef: {
-                                version: '1.0',
-                                ref: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult`,
-                            },
-                            RowRef: {
-                                version: '1.0',
-                                ref: `op:${product.productName}@${product.daysValid}${
-                                    product.daysValid === '1' ? 'day' : 'days'
-                                }`,
+                                id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@${
+                                    product.daysValid
+                                }${product.daysValid === '1' ? 'day' : 'days'}`,
+                                order: '1',
+                                TimeIntervalPrice: {
+                                    version: '1.0',
+                                    id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@${
+                                        product.daysValid
+                                    }${product.daysValid === '1' ? 'day' : 'days'}`,
+                                    Amount: { $t: `${product.productPrice}` },
+                                    TimeIntervalRef: {
+                                        version: '1.0',
+                                        ref: `op:Tariff@${product.productName}@${product.daysValid}${
+                                            product.daysValid === '1' ? 'day' : 'days'
+                                        }`,
+                                    },
+                                },
+                                ColumnRef: {
+                                    version: '1.0',
+                                    ref: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult`,
+                                },
+                                RowRef: {
+                                    version: '1.0',
+                                    ref: `op:${product.productName}@${product.daysValid}${
+                                        product.daysValid === '1' ? 'day' : 'days'
+                                    }`,
+                                },
                             },
                         },
                     },
@@ -230,7 +230,7 @@ const getMultiServiceList = (userPeriodTicket: MultipleServicesTicket): NetexObj
                     },
                 },
                 includes: {
-                    Faretable: {
+                    FareTable: {
                         version: '1.0',
                         id: `op:${product.productName}@${name}@p-ticket@adult`,
                         Name: { $t: `${product.productName} - Cash - Adult` },
@@ -248,7 +248,7 @@ const getMultiServiceList = (userPeriodTicket: MultipleServicesTicket): NetexObj
                                 representing: {
                                     TypeOfTravelDocumentRef: {
                                         version: '1.0',
-                                        ref: 'op:p-tciket',
+                                        ref: 'op:p-ticket',
                                     },
                                     UserProfileRef: {
                                         version: '1.0',
@@ -257,36 +257,36 @@ const getMultiServiceList = (userPeriodTicket: MultipleServicesTicket): NetexObj
                                 },
                             },
                         },
-                    },
-                },
-                cells: {
-                    Cell: {
-                        version: '1.0',
-                        id: `op:${product.productName}@${name}@p-ticket@adult@${product.daysValid}${
-                            product.daysValid === '1' ? 'day' : 'days'
-                        }`,
-                        order: '1',
-                        TimeIntervalPrice: {
-                            version: '1.0',
-                            id: `op:${product.productName}@${name}@p-ticket@adult@${product.daysValid}${
-                                product.daysValid === '1' ? 'day' : 'days'
-                            }`,
-                            Amount: { $t: `${product.productPrice}` },
-                            TimeIntervalRef: {
+                        cells: {
+                            Cell: {
                                 version: '1.0',
-                                ref: `op:Tariff@${product.productName}@${product.daysValid}${
+                                id: `op:${product.productName}@${name}@p-ticket@adult@${product.daysValid}${
                                     product.daysValid === '1' ? 'day' : 'days'
                                 }`,
-                            },
-                            ColumnRef: {
-                                version: '1.0',
-                                ref: `op:${product.productName}@${name}@p-ticket@adult`,
-                            },
-                            RowRef: {
-                                version: '1.0',
-                                ref: `op:${product.productName}@${product.daysValid}${
-                                    product.daysValid === '1' ? 'day' : 'days'
-                                }`,
+                                order: '1',
+                                TimeIntervalPrice: {
+                                    version: '1.0',
+                                    id: `op:${product.productName}@${name}@p-ticket@adult@${product.daysValid}${
+                                        product.daysValid === '1' ? 'day' : 'days'
+                                    }`,
+                                    Amount: { $t: `${product.productPrice}` },
+                                    TimeIntervalRef: {
+                                        version: '1.0',
+                                        ref: `op:Tariff@${product.productName}@${product.daysValid}${
+                                            product.daysValid === '1' ? 'day' : 'days'
+                                        }`,
+                                    },
+                                },
+                                ColumnRef: {
+                                    version: '1.0',
+                                    ref: `op:${product.productName}@${name}@p-ticket@adult`,
+                                },
+                                RowRef: {
+                                    version: '1.0',
+                                    ref: `op:${product.productName}@${product.daysValid}${
+                                        product.daysValid === '1' ? 'day' : 'days'
+                                    }`,
+                                },
                             },
                         },
                     },

@@ -243,23 +243,9 @@ const periodTicketNetexGenerator = (
         );
 
         if (isGeoZoneTicket(userPeriodTicket)) {
-            fareTableFareFrameToUpdate.fareTables.FareTable = fareTableFareFrameToUpdate.fareTables.FareTable.map(
-                (table: NetexObject) => ({
-                    ...table,
-                    includes: {
-                        FareTable: getGeoZoneFareTable(userPeriodTicket),
-                    },
-                }),
-            );
+            fareTableFareFrameToUpdate.fareTables.FareTable = getGeoZoneFareTable(userPeriodTicket);
         } else if (isMultiServiceTicket(userPeriodTicket)) {
-            fareTableFareFrameToUpdate.fareTables.FareTable = fareTableFareFrameToUpdate.fareTables.FareTable.map(
-                (table: NetexObject) => ({
-                    ...table,
-                    includes: {
-                        FareTable: getMultiServiceFareTable(userPeriodTicket),
-                    },
-                }),
-            );
+            fareTableFareFrameToUpdate.fareTables.FareTable = getMultiServiceFareTable(userPeriodTicket);
         }
         return fareTableFareFrameToUpdate;
     };

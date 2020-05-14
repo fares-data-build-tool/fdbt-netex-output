@@ -1055,11 +1055,11 @@ export const expectedGeoZoneFareTables = [
         id: 'op:IW Product@IW Village',
         includes: {
             FareTable: {
-                Name: { t$: 'IW Product - Cash' },
+                Name: { $t: 'IW Product - Cash' },
                 cells: {
                     Cell: {
                         TimeIntervalPrice: {
-                            Amount: { t$: '1000' },
+                            Amount: { $t: '1000' },
                             ColumnRef: { ref: 'op:IW Product@IW Village@p-ticket@adult', version: '1.0' },
                             RowRef: { ref: 'op:IW Product@24days', version: '1.0' },
                             TimeIntervalRef: { ref: 'op:Tariff@IW Product@24days', version: '1.0' },
@@ -1091,7 +1091,7 @@ export const expectedGeoZoneFareTables = [
                                 Name: { $t: 'Adult' },
                                 id: 'op:IW Product@IW Village@p-ticket@adult',
                                 representing: {
-                                    TypeOfTravelDocumentRef: { ref: 'op:p-tciket', version: '1.0' },
+                                    TypeOfTravelDocumentRef: { ref: 'op:p-ticket', version: '1.0' },
                                     UserProfileRef: { ref: 'op:adult', version: '1.0' },
                                 },
                                 version: '1.0',
@@ -1102,7 +1102,7 @@ export const expectedGeoZoneFareTables = [
                         version: '1.0',
                     },
                 },
-                pricesFor: { SalesOfferPacakgeRef: { ref: 'op:Pass@IW Product-SOP@p-ticket', version: '1.0' } },
+                pricesFor: { SalesOfferPackageRef: { ref: 'op:Pass@IW Product-SOP@p-ticket', version: '1.0' } },
                 specifics: { TypeOfTravelDocumentRef: { ref: 'op:p-ticket', version: '1.0' } },
                 version: '1.0',
             },
@@ -1123,11 +1123,11 @@ export const expectedGeoZoneFareTables = [
         id: 'op:Super Product@IW Village',
         includes: {
             FareTable: {
-                Name: { t$: 'Super Product - Cash' },
+                Name: { $t: 'Super Product - Cash' },
                 cells: {
                     Cell: {
                         TimeIntervalPrice: {
-                            Amount: { t$: '1230' },
+                            Amount: { $t: '1230' },
                             ColumnRef: { ref: 'op:Super Product@IW Village@p-ticket@adult', version: '1.0' },
                             RowRef: { ref: 'op:Super Product@4days', version: '1.0' },
                             TimeIntervalRef: { ref: 'op:Tariff@Super Product@4days', version: '1.0' },
@@ -1159,7 +1159,7 @@ export const expectedGeoZoneFareTables = [
                                 Name: { $t: 'Adult' },
                                 id: 'op:Super Product@IW Village@p-ticket@adult',
                                 representing: {
-                                    TypeOfTravelDocumentRef: { ref: 'op:p-tciket', version: '1.0' },
+                                    TypeOfTravelDocumentRef: { ref: 'op:p-ticket', version: '1.0' },
                                     UserProfileRef: { ref: 'op:adult', version: '1.0' },
                                 },
                                 version: '1.0',
@@ -1170,7 +1170,7 @@ export const expectedGeoZoneFareTables = [
                         version: '1.0',
                     },
                 },
-                pricesFor: { SalesOfferPacakgeRef: { ref: 'op:Pass@Super Product-SOP@p-ticket', version: '1.0' } },
+                pricesFor: { SalesOfferPackageRef: { ref: 'op:Pass@Super Product-SOP@p-ticket', version: '1.0' } },
                 specifics: { TypeOfTravelDocumentRef: { ref: 'op:p-ticket', version: '1.0' } },
                 version: '1.0',
             },
@@ -1194,11 +1194,11 @@ export const expectedMultiServiceFareTables = [
         id: 'op:a product@BLAC-multi-service',
         includes: {
             FareTable: {
-                Name: { t$: 'a product - Cash' },
+                Name: { $t: 'a product - Cash' },
                 cells: {
                     Cell: {
                         TimeIntervalPrice: {
-                            Amount: { t$: '123' },
+                            Amount: { $t: '123' },
                             ColumnRef: { ref: 'op:a product@BLAC-multi-service@p-ticket@adult', version: '1.0' },
                             RowRef: { ref: 'op:a product@4days', version: '1.0' },
                             TimeIntervalRef: { ref: 'op:Tariff@a product@4days', version: '1.0' },
@@ -1230,7 +1230,7 @@ export const expectedMultiServiceFareTables = [
                                 Name: { $t: 'Adult' },
                                 id: 'op:a product@BLAC-multi-service@p-ticket@adult',
                                 representing: {
-                                    TypeOfTravelDocumentRef: { ref: 'op:p-tciket', version: '1.0' },
+                                    TypeOfTravelDocumentRef: { ref: 'op:p-ticket', version: '1.0' },
                                     UserProfileRef: { ref: 'op:adult', version: '1.0' },
                                 },
                                 version: '1.0',
@@ -1241,7 +1241,7 @@ export const expectedMultiServiceFareTables = [
                         version: '1.0',
                     },
                 },
-                pricesFor: { SalesOfferPacakgeRef: { ref: 'op:Pass@a product-SOP@p-ticket', version: '1.0' } },
+                pricesFor: { SalesOfferPackageRef: { ref: 'op:Pass@a product-SOP@p-ticket', version: '1.0' } },
                 specifics: { TypeOfTravelDocumentRef: { ref: 'op:p-ticket', version: '1.0' } },
                 version: '1.0',
             },
@@ -1262,11 +1262,11 @@ export const expectedMultiServiceFareTables = [
         id: 'op:best product@BLAC-multi-service',
         includes: {
             FareTable: {
-                Name: { t$: 'best product - Cash' },
+                Name: { $t: 'best product - Cash' },
                 cells: {
                     Cell: {
                         TimeIntervalPrice: {
-                            Amount: { t$: '132' },
+                            Amount: { $t: '132' },
                             ColumnRef: { ref: 'op:best product@BLAC-multi-service@p-ticket@adult', version: '1.0' },
                             RowRef: { ref: 'op:best product@3days', version: '1.0' },
                             TimeIntervalRef: { ref: 'op:Tariff@best product@3days', version: '1.0' },
@@ -1298,7 +1298,7 @@ export const expectedMultiServiceFareTables = [
                                 Name: { $t: 'Adult' },
                                 id: 'op:best product@BLAC-multi-service@p-ticket@adult',
                                 representing: {
-                                    TypeOfTravelDocumentRef: { ref: 'op:p-tciket', version: '1.0' },
+                                    TypeOfTravelDocumentRef: { ref: 'op:p-ticket', version: '1.0' },
                                     UserProfileRef: { ref: 'op:adult', version: '1.0' },
                                 },
                                 version: '1.0',
@@ -1309,7 +1309,7 @@ export const expectedMultiServiceFareTables = [
                         version: '1.0',
                     },
                 },
-                pricesFor: { SalesOfferPacakgeRef: { ref: 'op:Pass@best product-SOP@p-ticket', version: '1.0' } },
+                pricesFor: { SalesOfferPackageRef: { ref: 'op:Pass@best product-SOP@p-ticket', version: '1.0' } },
                 specifics: { TypeOfTravelDocumentRef: { ref: 'op:p-ticket', version: '1.0' } },
                 version: '1.0',
             },
