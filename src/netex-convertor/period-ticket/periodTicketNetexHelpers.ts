@@ -141,36 +141,36 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): Nete
                                 },
                             },
                         },
-                        cells: {
-                            Cell: {
+                    },
+                },
+                cells: {
+                    Cell: {
+                        version: '1.0',
+                        id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@${
+                            product.daysValid
+                        }${product.daysValid === '1' ? 'day' : 'days'}`,
+                        order: '1',
+                        TimeIntervalPrice: {
+                            version: '1.0',
+                            id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@${
+                                product.daysValid
+                            }${product.daysValid === '1' ? 'day' : 'days'}`,
+                            Amount: { t$: `${product.productPrice}` },
+                            TimeIntervalRef: {
                                 version: '1.0',
-                                id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@${
-                                    product.daysValid
-                                }${product.daysValid === '1' ? 'day' : 'days'}`,
-                                order: '1',
-                                TimeIntervalPrice: {
-                                    version: '1.0',
-                                    id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult@${
-                                        product.daysValid
-                                    }${product.daysValid === '1' ? 'day' : 'days'}`,
-                                    Amount: { $t: `${product.productPrice}` },
-                                    TimeIntervalRef: {
-                                        version: '1.0',
-                                        ref: `op:Tariff@${product.productName}@${product.daysValid}${
-                                            product.daysValid === '1' ? 'day' : 'days'
-                                        }`,
-                                    },
-                                    ColumnRef: {
-                                        version: '1.0',
-                                        ref: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult`,
-                                    },
-                                    RowRef: {
-                                        version: '1.0',
-                                        ref: `op:${product.productName}@${product.daysValid}${
-                                            product.daysValid === '1' ? 'day' : 'days'
-                                        }`,
-                                    },
-                                },
+                                ref: `op:Tariff@${product.productName}@${product.daysValid}${
+                                    product.daysValid === '1' ? 'day' : 'days'
+                                }`,
+                            },
+                            ColumnRef: {
+                                version: '1.0',
+                                ref: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@adult`,
+                            },
+                            RowRef: {
+                                version: '1.0',
+                                ref: `op:${product.productName}@${product.daysValid}${
+                                    product.daysValid === '1' ? 'day' : 'days'
+                                }`,
                             },
                         },
                     },
@@ -257,36 +257,36 @@ const getMultiServiceList = (userPeriodTicket: MultipleServicesTicket): NetexObj
                                 },
                             },
                         },
-                        cells: {
-                            Cell: {
+                    },
+                },
+                cells: {
+                    Cell: {
+                        version: '1.0',
+                        id: `op:${product.productName}@${name}@p-ticket@adult@${product.daysValid}${
+                            product.daysValid === '1' ? 'day' : 'days'
+                        }`,
+                        order: '1',
+                        TimeIntervalPrice: {
+                            version: '1.0',
+                            id: `op:${product.productName}@${name}@p-ticket@adult@${product.daysValid}${
+                                product.daysValid === '1' ? 'day' : 'days'
+                            }`,
+                            Amount: { t$: `${product.productPrice}` },
+                            TimeIntervalRef: {
                                 version: '1.0',
-                                id: `op:${product.productName}@${name}@p-ticket@adult@${product.daysValid}${
+                                ref: `op:Tariff@${product.productName}@${product.daysValid}${
                                     product.daysValid === '1' ? 'day' : 'days'
                                 }`,
-                                order: '1',
-                                TimeIntervalPrice: {
-                                    version: '1.0',
-                                    id: `op:${product.productName}@${name}@p-ticket@adult@${product.daysValid}${
-                                        product.daysValid === '1' ? 'day' : 'days'
-                                    }`,
-                                    Amount: { $t: `${product.productPrice}` },
-                                    TimeIntervalRef: {
-                                        version: '1.0',
-                                        ref: `op:Tariff@${product.productName}@${product.daysValid}${
-                                            product.daysValid === '1' ? 'day' : 'days'
-                                        }`,
-                                    },
-                                    ColumnRef: {
-                                        version: '1.0',
-                                        ref: `op:${product.productName}@${name}@p-ticket@adult`,
-                                    },
-                                    RowRef: {
-                                        version: '1.0',
-                                        ref: `op:${product.productName}@${product.daysValid}${
-                                            product.daysValid === '1' ? 'day' : 'days'
-                                        }`,
-                                    },
-                                },
+                            },
+                            ColumnRef: {
+                                version: '1.0',
+                                ref: `op:${product.productName}@${name}@p-ticket@adult`,
+                            },
+                            RowRef: {
+                                version: '1.0',
+                                ref: `op:${product.productName}@${product.daysValid}${
+                                    product.daysValid === '1' ? 'day' : 'days'
+                                }`,
                             },
                         },
                     },
