@@ -281,7 +281,7 @@ const periodTicketNetexGenerator = (
                 updateFareTableFareFrame(netexFrames.FareFrame[2]),
             ];
         }
-        // console.log(util.inspect(netexJson, false, null, true));
+
         return convertJsonToXml(netexJson);
     };
 
