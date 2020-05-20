@@ -666,6 +666,13 @@ const getConditionsElement = (product: ProductDetails): NetexObject => ({
             },
         },
     },
+    UsageValidityPeriod: {
+        version: '1.0',
+        id: `op:Trip@${product.productName}@back@frequency`,
+        UsageTrigger: { $t: 'purchase' },
+        UsageEnd: { $t: product.expiryRules === 'endOfCalendarDay' ? 'endOfFareDay' : 'standardDuration' },
+        ActivationMeans: { $t: 'noneRequired' },
+    },
 });
 
 export const getFareStructuresElements = (
