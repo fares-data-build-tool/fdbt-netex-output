@@ -1639,6 +1639,19 @@ export const expectedMultiServiceFareStructureElements = [
                     id: 'op:Pass@a product@transferability',
                     version: '1.0',
                 },
+                UsageValidityPeriod: {
+                    ActivationMeans: {
+                        $t: 'noneRequired',
+                    },
+                    UsageEnd: {
+                        $t: 'endOfFareDay',
+                    },
+                    UsageTrigger: {
+                        $t: 'purchase',
+                    },
+                    id: 'op:Trip@a product@back@frequency',
+                    version: '1.0',
+                },
             },
             order: '1',
             version: '1.0',
@@ -1707,6 +1720,19 @@ export const expectedMultiServiceFareStructureElements = [
                     id: 'op:Pass@best product@transferability',
                     version: '1.0',
                 },
+                UsageValidityPeriod: {
+                    ActivationMeans: {
+                        $t: 'noneRequired',
+                    },
+                    UsageEnd: {
+                        $t: 'standardDuration',
+                    },
+                    UsageTrigger: {
+                        $t: 'purchase',
+                    },
+                    id: 'op:Trip@best product@back@frequency',
+                    version: '1.0',
+                },
             },
             order: '1',
             version: '1.0',
@@ -1772,6 +1798,19 @@ export const expectedGeoZoneFareStructureElements = [
                     id: 'op:Pass@IW Product@transferability',
                     version: '1.0',
                 },
+                UsageValidityPeriod: {
+                    ActivationMeans: {
+                        $t: 'noneRequired',
+                    },
+                    UsageEnd: {
+                        $t: 'endOfFareDay',
+                    },
+                    UsageTrigger: {
+                        $t: 'purchase',
+                    },
+                    id: 'op:Trip@IW Product@back@frequency',
+                    version: '1.0',
+                },
             },
             order: '1',
             version: '1.0',
@@ -1832,6 +1871,19 @@ export const expectedGeoZoneFareStructureElements = [
                     CanTransfer: { $t: 'false' },
                     Name: { $t: 'Ticket is not transferable' },
                     id: 'op:Pass@Super Product@transferability',
+                    version: '1.0',
+                },
+                UsageValidityPeriod: {
+                    ActivationMeans: {
+                        $t: 'noneRequired',
+                    },
+                    UsageEnd: {
+                        $t: 'standardDuration',
+                    },
+                    UsageTrigger: {
+                        $t: 'purchase',
+                    },
+                    id: 'op:Trip@Super Product@back@frequency',
                     version: '1.0',
                 },
             },
