@@ -1,8 +1,8 @@
 import {
     Stop,
-    OperatorData,
+    Operator,
     PeriodTicket,
-    MultipleServicesTicket,
+    PeriodMultipleServicesTicket,
     PeriodGeoZoneTicket,
     ScheduledStopPoint,
     TopographicProjectionRef,
@@ -15,8 +15,8 @@ import { getCleanWebsite, NetexObject } from '../sharedHelpers';
 export const isGeoZoneTicket = (ticket: PeriodTicket): ticket is PeriodGeoZoneTicket =>
     (ticket as PeriodGeoZoneTicket).zoneName !== undefined;
 
-export const isMultiServiceTicket = (ticket: PeriodTicket): ticket is MultipleServicesTicket =>
-    (ticket as MultipleServicesTicket).selectedServices !== undefined;
+export const isMultiServiceTicket = (ticket: PeriodTicket): ticket is PeriodMultipleServicesTicket =>
+    (ticket as PeriodMultipleServicesTicket).selectedServices !== undefined;
 
 export const getScheduledStopPointsList = (stops: Stop[]): ScheduledStopPoint[] =>
     stops.map((stop: Stop) => ({
@@ -32,7 +32,7 @@ export const getTopographicProjectionRefList = (stops: Stop[]): TopographicProje
         $t: `${stop.street}, ${stop.localityName}, ${stop.parentLocalityName}`,
     }));
 
-export const getLinesList = (userPeriodTicket: MultipleServicesTicket, operatorData: OperatorData): Line[] =>
+export const getLinesList = (userPeriodTicket: PeriodMultipleServicesTicket, operatorData: Operator): Line[] =>
     userPeriodTicket.selectedServices
         ? userPeriodTicket.selectedServices.map(service => ({
               version: '1.0',
@@ -47,7 +47,7 @@ export const getLinesList = (userPeriodTicket: MultipleServicesTicket, operatorD
           }))
         : [];
 
-export const getLineRefList = (userPeriodTicket: MultipleServicesTicket): LineRef[] =>
+export const getLineRefList = (userPeriodTicket: PeriodMultipleServicesTicket): LineRef[] =>
     userPeriodTicket.selectedServices
         ? userPeriodTicket.selectedServices.map(service => ({
               version: '1.0',
@@ -179,7 +179,7 @@ export const getGeoZoneFareTable = (userPeriodTicket: PeriodGeoZoneTicket): Nete
         },
     }));
 
-const getMultiServiceList = (userPeriodTicket: MultipleServicesTicket): NetexObject[] => {
+const getMultiServiceList = (userPeriodTicket: PeriodMultipleServicesTicket): NetexObject[] => {
     const name = `${userPeriodTicket.nocCode}-multi-service`;
 
     return userPeriodTicket.products.map(product => ({
@@ -296,7 +296,7 @@ const getMultiServiceList = (userPeriodTicket: MultipleServicesTicket): NetexObj
     }));
 };
 
-const getFlatFareList = (userPeriodTicket: MultipleServicesTicket): NetexObject[] =>
+const getFlatFareList = (userPeriodTicket: PeriodMultipleServicesTicket): NetexObject[] =>
     userPeriodTicket.products.map(product => ({
         version: '1.0',
         id: `op:${product.productName}`,
@@ -329,7 +329,7 @@ const getFlatFareList = (userPeriodTicket: MultipleServicesTicket): NetexObject[
         },
     }));
 
-export const getMultiServiceFareTable = (userPeriodTicket: MultipleServicesTicket): NetexObject[] => {
+export const getMultiServiceFareTable = (userPeriodTicket: PeriodMultipleServicesTicket): NetexObject[] => {
     if (userPeriodTicket.products[0].daysValid) {
         return getMultiServiceList(userPeriodTicket);
     }

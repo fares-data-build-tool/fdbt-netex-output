@@ -131,7 +131,7 @@
 					</organisations>
 				</ResourceFrame>
 				<SiteFrame version="1.0" id="epd:UK:HCTY:SiteFrame_UK_PI_NETWORK:Line_16:op" responsibilitySetRef="nptg:data" dataSourceRef="nptg:dft">
-					<Description>This frame contains the NPTG locality definitions used by the stops  the service. It Could also be exchanged separately.</Description>
+					<Description>This frame contains the NPTG locality definitions used by the stops in the service. It could also be exchanged separately.</Description>
 					<TypeOfFrameRef version="fxc:v1.0" ref="fxc:UK:DFT:TypeOfFrame_UK_PI_STOP:FXCP" />
 					<prerequisites>
 						<ResourceFrameRef version="1.0" ref="epd:UK:HCTY:ResourceFrame_UK_PI_COMMON:op" />
@@ -354,17 +354,11 @@
 										<LimitationGroupingType>XOR</LimitationGroupingType>
 										<limitations>
 											<!---  ===ELIGIBILITY USAGE PARAMETERS =========    -->
-											<UserProfile version="1.0" id="adult">
-												<Name>Adult</Name>
-												<companionProfiles>
-													<CompanionProfile version="1.0" id="adult@infant">
-														<UserProfileRef ref="infant" version="1.0" />
-														<MinimumNumberOfPersons>0</MinimumNumberOfPersons>
-														<MaximumNumberOfPersons>3</MaximumNumberOfPersons>
-													</CompanionProfile>
-												</companionProfiles>
+											<UserProfile version="1.0" id="anyone">
+												<Name>Anyone</Name>
+												<Description>Valid for any person</Description>
 											</UserProfile>
-											<UserProfile version="1.0" id="infant">
+											<!-- <UserProfile version="1.0" id="infant">
 												<Name>Infant</Name>
 												<Description>Infant up to 5 years. Must be with adult</Description>
 												<Url>http://www.connexionsbuses.com/concessions/</Url>
@@ -397,7 +391,7 @@
 												<MaximumAge>18</MaximumAge>
 												<ProofRequired>membershipCard</ProofRequired>
 												<DiscountBasis>discount</DiscountBasis>
-											</UserProfile>
+											</UserProfile> -->
 										</limitations>
 									</GenericParameterAssignment>
 								</FareStructureElement>

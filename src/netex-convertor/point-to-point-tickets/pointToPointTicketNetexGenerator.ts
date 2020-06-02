@@ -1,11 +1,4 @@
-import {
-    FareZoneList,
-    MatchingData,
-    MatchingReturnData,
-    MatchingSingleData,
-    OperatorData,
-    ScheduledStopPoints,
-} from '../types';
+import { FareZoneList, PointToPointTicket, ReturnTicket, SingleTicket, Operator, ScheduledStopPoints } from '../types';
 import {
     getDistanceMatrixElements,
     getFareTableElements,
@@ -17,18 +10,42 @@ import {
 } from './pointToPointTicketNetexHelpers';
 import { convertJsonToXml, getCleanWebsite, getNetexTemplateAsJson, NetexObject } from '../sharedHelpers';
 
-const isReturnTicket = (ticket: MatchingData): ticket is MatchingReturnData =>
-    ((ticket as MatchingReturnData).inboundFareZones !== undefined &&
-        (ticket as MatchingReturnData).inboundFareZones.length > 0) ||
-    ((ticket as MatchingReturnData).outboundFareZones !== undefined &&
-        (ticket as MatchingReturnData).outboundFareZones.length > 0);
+interface UserType {
+    name: string;
+    id: string;
+}
 
-const isSingleTicket = (ticket: MatchingData): ticket is MatchingSingleData =>
-    (ticket as MatchingSingleData).fareZones !== undefined && (ticket as MatchingSingleData).fareZones.length > 0;
+const isReturnTicket = (ticket: PointToPointTicket): ticket is ReturnTicket =>
+    ((ticket as ReturnTicket).inboundFareZones !== undefined && (ticket as ReturnTicket).inboundFareZones.length > 0) ||
+    ((ticket as ReturnTicket).outboundFareZones !== undefined && (ticket as ReturnTicket).outboundFareZones.length > 0);
+
+const isSingleTicket = (ticket: PointToPointTicket): ticket is SingleTicket =>
+    (ticket as SingleTicket).fareZones !== undefined && (ticket as SingleTicket).fareZones.length > 0;
+
+const doesUserProfileNeedUpdating = (matchingData: PointToPointTicket): UserType | undefined => {
+    const dynamicUserTypes = [
+        { name: 'Adult', id: 'adult' },
+        { name: 'Child', id: 'child' },
+        { name: 'Infant', id: 'infant' },
+        { name: 'Senior', id: 'senior' },
+        { name: 'Student', id: 'student' },
+        { name: 'Young Person', id: 'youngPerson' },
+        { name: 'School Pupil', id: 'schoolPupil' },
+        { name: 'Disabled', id: 'disabled' },
+        { name: 'Disabled Companion', id: 'disabledCompanion' },
+        { name: 'Employee', id: 'employee' },
+        { name: 'Military', id: 'military' },
+        { name: 'Job Seeker', id: 'jobSeeker' },
+        { name: 'Guide Dog', id: 'guideDog' },
+        { name: 'Animal', id: 'animal' },
+    ];
+    const userType = dynamicUserTypes.find(type => type.name === matchingData.passengerType);
+    return userType;
+};
 
 const pointToPointTicketNetexGenerator = (
-    matchingData: MatchingData,
-    operatorData: OperatorData,
+    matchingData: PointToPointTicket,
+    operatorData: Operator,
 ): { generate: Function } => {
     const opIdNocFormat = `noc:${operatorData.opId}`;
     const nocCodeNocFormat = `noc:${matchingData.nocCode}`;
@@ -190,6 +207,28 @@ const pointToPointTicketNetexGenerator = (
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[1].GenericParameterAssignment.id =
                 'Tariff@return@eligibility';
 
+            const userType = doesUserProfileNeedUpdating(matchingData);
+            if (userType) {
+                priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[1].GenericParameterAssignment.limitations.UserProfile.id =
+                    userType.id;
+                priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[1].GenericParameterAssignment.limitations.UserProfile.name =
+                    userType.name;
+                if (matchingData.ageRangeMin) {
+                    priceFareFrameToUpdate.tariffs.Tarif.fareStructureElements.FareStructureElement[1].GenericParameterAssignment.limitations.UserProfile.MinimumAge =
+                        matchingData.ageRangeMin;
+                }
+                if (matchingData.ageRangeMax) {
+                    priceFareFrameToUpdate.tariffs.Tarif.fareStructureElements.FareStructureElement[1].GenericParameterAssignment.limitations.UserProfile.MaximumAge =
+                        matchingData.ageRangeMax;
+                }
+                if (matchingData.proofDocuments) {
+                    for (let i = 0; i < matchingData.proofDocuments.length; i += 1) {
+                        priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[1].GenericParameterAssignment.limitations.UserProfile.ProofRequired =
+                            matchingData.proofDocuments[i];
+                    }
+                }
+            }
+
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[2].id =
                 'Trip@return@conditions_of_travel';
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[2].GenericParameterAssignment.id =
@@ -237,8 +276,7 @@ const pointToPointTicketNetexGenerator = (
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[1]
                 .GenericParameterAssignment.limitations.UserProfile;
         let userProfile;
-        // eslint-disable-next-line no-plusplus
-        for (userProfile = 1; userProfile < 4; userProfile++) {
+        for (userProfile = 1; userProfile < 4; userProfile += 1) {
             arrayofUserProfiles[userProfile].Url.$t = website;
         }
         priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage.BrandingRef.ref = `${matchingData.nocCode}@brand`;

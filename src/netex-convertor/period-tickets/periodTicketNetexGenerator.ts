@@ -1,4 +1,4 @@
-import { OperatorData, PeriodTicket } from '../types';
+import { Operator, PeriodTicket } from '../types';
 import {
     getScheduledStopPointsList,
     getTopographicProjectionRefList,
@@ -17,10 +17,7 @@ import { NetexObject, getCleanWebsite, getNetexTemplateAsJson, convertJsonToXml 
 
 const placeHolderGroupOfProductsName = 'PLACEHOLDER';
 
-const periodTicketNetexGenerator = (
-    userPeriodTicket: PeriodTicket,
-    operatorData: OperatorData,
-): { generate: Function } => {
+const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData: Operator): { generate: Function } => {
     const opIdNocFormat = `noc:${operatorData.opId}`;
     const nocCodeNocFormat = `noc:${userPeriodTicket.nocCode}`;
     const currentDate = new Date(Date.now());
