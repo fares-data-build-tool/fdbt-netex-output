@@ -13,7 +13,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
 
         console.info(`NeTEx generation starting for type: ${type}...`);
 
-        if (type === 'pointToPoint' || type === 'return') {
+        if (type === 'single' || type === 'return') {
             const matchingData: PointToPointTicket = s3Data;
             const operatorData = await db.getOperatorDataByNocCode(matchingData.nocCode);
 

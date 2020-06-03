@@ -1,5 +1,12 @@
 import { S3Event } from 'aws-lambda';
 import { netexConvertorHandler } from './handler';
+import {
+    singleTicket,
+    periodGeoZoneTicket,
+    periodMultipleServicesTicket,
+    flatFareTicket,
+    periodGeoZoneTicketWithNoType,
+} from './test-data/matchingData';
 import * as mocks from './test-data/testData';
 import * as s3 from './data/s3';
 import * as pointToPointTicketNetexGenerator from './point-to-point-tickets/pointToPointTicketNetexGenerator';
@@ -25,7 +32,7 @@ describe('netexConvertorHandler', () => {
         const pointToPointTicketNetexGeneratorSpy = jest.spyOn(pointToPointTicketNetexGenerator, 'default');
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         pointToPointTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
-        mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(mocks.mockSingleTicketMatchingDataUpload));
+        mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(singleTicket));
         await netexConvertorHandler(event);
         expect(pointToPointTicketNetexGeneratorSpy).toHaveBeenCalled();
     });
@@ -34,9 +41,7 @@ describe('netexConvertorHandler', () => {
         const periodTicketNetexGeneratorSpy = jest.spyOn(periodTicketNetexGenerator, 'default');
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
-        mockFetchDataFromS3Spy.mockImplementation(() =>
-            Promise.resolve(mocks.mockPeriodGeoZoneTicketMatchingDataUpload),
-        );
+        mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(periodGeoZoneTicket));
         await netexConvertorHandler(event);
         expect(periodTicketNetexGeneratorSpy).toHaveBeenCalled();
     });
@@ -45,9 +50,7 @@ describe('netexConvertorHandler', () => {
         const periodTicketNetexGeneratorSpy = jest.spyOn(periodTicketNetexGenerator, 'default');
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
-        mockFetchDataFromS3Spy.mockImplementation(() =>
-            Promise.resolve(mocks.mockPeriodMultiServicesTicketMatchingDataUpload),
-        );
+        mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(periodMultipleServicesTicket));
         await netexConvertorHandler(event);
         expect(periodTicketNetexGeneratorSpy).toHaveBeenCalled();
     });
@@ -56,13 +59,13 @@ describe('netexConvertorHandler', () => {
         const periodTicketNetexGeneratorSpy = jest.spyOn(periodTicketNetexGenerator, 'default');
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
-        mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(mocks.mockFlatFareTicketMatchingDataUpload));
+        mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(flatFareTicket));
         await netexConvertorHandler(event);
         expect(periodTicketNetexGeneratorSpy).toHaveBeenCalled();
     });
 
     it('should throw an error if the user data uploaded to the fdbt-matching-data bucket does not contain a "type" attribute', async () => {
-        mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(mocks.mockMatchingDataUploadWithNoType));
+        mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(periodGeoZoneTicketWithNoType));
         await expect(netexConvertorHandler(event)).rejects.toThrow();
     });
 });

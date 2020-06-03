@@ -29,7 +29,6 @@ export interface Stop {
 
 // Matching Data (created by the user on the site)
 
-// TODO: FIX MATCHING DATA TYPES IN SITE TO HAVE THIS SAME BASE TICKET FORMAT
 export interface BaseTicket {
     nocCode: string;
     type: string;
@@ -85,6 +84,15 @@ export interface PeriodMultipleServicesTicket extends BasePeriodTicket {
     selectedServices: SelectedService[];
 }
 
+export interface FlatFareTicket extends BaseTicket {
+    operatorName: string;
+    products: {
+        productName: string;
+        productPrice: string;
+    }[];
+    selectedServices: SelectedService[];
+}
+
 export interface SelectedService {
     lineName: string;
     startDate: string;
@@ -94,8 +102,8 @@ export interface SelectedService {
 export interface ProductDetails {
     productName: string;
     productPrice: string;
-    daysValid?: string;
-    expiryRules?: string;
+    productDuration?: string;
+    productValidity?: string;
 }
 
 // NeTEx

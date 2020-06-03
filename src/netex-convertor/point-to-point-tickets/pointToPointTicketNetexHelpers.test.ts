@@ -1,13 +1,14 @@
 import * as netexHelpers from './pointToPointTicketNetexHelpers';
 import { FareZone } from '../types';
-import { fareZoneList, expectedFareTables } from '../test-data/testData';
+import { singleTicket } from '../test-data/matchingData';
+import { expectedInnerFareTables } from '../test-data/testData';
 
 describe('Netex Helpers', () => {
     let fareZones: FareZone[];
     let lineIdName: string;
 
     beforeEach(() => {
-        fareZones = fareZoneList.fareZones;
+        fareZones = singleTicket.fareZones;
         lineIdName = 'line_123';
     });
 
@@ -17,40 +18,48 @@ describe('Netex Helpers', () => {
 
             expect(stops).toEqual([
                 {
-                    atcoCode: '3290YYA03623',
-                    localityCode: 'E0026633',
-                    localityName: 'Bewbush',
-                    parentLocalityName: 'IW Test',
-                    naptanCode: '32903623',
-                    qualifierName: 'West Sussex',
-                    stopName: 'Queenswood Grove',
+                    stopName: 'Ashton Bus Station',
+                    naptanCode: '',
+                    atcoCode: '1800EHQ0081',
+                    localityCode: 'E0028492',
+                    localityName: 'Ashton-under-Lyne',
+                    parentLocalityName: '',
+                    indicator: 'Arrivals',
+                    street: 'Wellington Road',
+                    qualifierName: '',
                 },
                 {
-                    atcoCode: '3290YYA00077',
-                    localityCode: 'E0026633',
-                    localityName: 'Bewbush',
-                    parentLocalityName: 'IW Test',
-                    naptanCode: '32900077',
-                    qualifierName: 'West Sussex',
-                    stopName: 'Kingsthorpe',
+                    stopName: 'Henrietta Street',
+                    naptanCode: 'MANDAMPT',
+                    atcoCode: '1800EH24201',
+                    localityCode: 'E0028492',
+                    localityName: 'Ashton-under-Lyne',
+                    parentLocalityName: '',
+                    indicator: 'Stop BB',
+                    street: '',
+                    qualifierName: '',
                 },
                 {
-                    atcoCode: '3290YYA00359',
-                    localityCode: 'E0026633',
-                    localityName: 'Bewbush',
-                    parentLocalityName: 'IW Test',
-                    naptanCode: '32900359',
-                    qualifierName: 'West Sussex',
-                    stopName: 'Mattison Way',
+                    stopName: 'Crickets Ln',
+                    naptanCode: 'MANDAMPA',
+                    atcoCode: '1800EH24151',
+                    localityCode: 'E0028492',
+                    localityName: 'Ashton-under-Lyne',
+                    parentLocalityName: '',
+                    indicator: 'opp',
+                    street: 'PENNY MEADOW',
+                    qualifierName: '',
                 },
                 {
-                    atcoCode: '3290YYA00357',
-                    localityCode: 'E0026633',
-                    localityName: 'Bewbush',
-                    parentLocalityName: 'IW Test',
-                    naptanCode: '32900357',
-                    qualifierName: 'West Sussex',
-                    stopName: 'Campbell Avenue',
+                    stopName: 'Tameside College',
+                    naptanCode: 'MANDAJAM',
+                    atcoCode: '1800EH21241',
+                    localityCode: 'N0077788',
+                    localityName: 'Cockbrook',
+                    parentLocalityName: 'Ashton-under-Lyne',
+                    indicator: 'opp',
+                    street: 'BEAUFORT RD',
+                    qualifierName: '',
                 },
             ]);
         });
@@ -60,7 +69,7 @@ describe('Netex Helpers', () => {
         it('returns a list of unique price groups given a list of farezones', () => {
             const prices = netexHelpers.getUniquePriceGroups(fareZones);
 
-            expect(prices).toEqual(['1.10', '1.70', '2.20']);
+            expect(prices).toEqual(['1.00', '1.20', '1.30']);
         });
     });
 
@@ -84,43 +93,43 @@ describe('Netex Helpers', () => {
 
             expect(stops).toEqual([
                 {
-                    Name: { $t: 'Queenswood Grove' },
+                    Name: { $t: 'Ashton Bus Station' },
                     TopographicPlaceView: {
-                        Name: { $t: 'Bewbush' },
-                        QualifierName: { $t: 'West Sussex' },
-                        TopographicPlaceRef: { ref: 'nptgLocality:E0026633' },
+                        Name: { $t: 'Ashton-under-Lyne' },
+                        QualifierName: { $t: '' },
+                        TopographicPlaceRef: { ref: 'nptgLocality:E0028492' },
                     },
-                    id: 'naptan:3290YYA03623',
+                    id: 'atco:1800EHQ0081',
                     version: 'any',
                 },
                 {
-                    Name: { $t: 'Kingsthorpe' },
+                    Name: { $t: 'Henrietta Street' },
                     TopographicPlaceView: {
-                        Name: { $t: 'Bewbush' },
-                        QualifierName: { $t: 'West Sussex' },
-                        TopographicPlaceRef: { ref: 'nptgLocality:E0026633' },
+                        Name: { $t: 'Ashton-under-Lyne' },
+                        QualifierName: { $t: '' },
+                        TopographicPlaceRef: { ref: 'nptgLocality:E0028492' },
                     },
-                    id: 'naptan:3290YYA00077',
+                    id: 'atco:1800EH24201',
                     version: 'any',
                 },
                 {
-                    Name: { $t: 'Mattison Way' },
+                    Name: { $t: 'Crickets Ln' },
                     TopographicPlaceView: {
-                        Name: { $t: 'Bewbush' },
-                        QualifierName: { $t: 'West Sussex' },
-                        TopographicPlaceRef: { ref: 'nptgLocality:E0026633' },
+                        Name: { $t: 'Ashton-under-Lyne' },
+                        QualifierName: { $t: '' },
+                        TopographicPlaceRef: { ref: 'nptgLocality:E0028492' },
                     },
-                    id: 'naptan:3290YYA00359',
+                    id: 'atco:1800EH24151',
                     version: 'any',
                 },
                 {
-                    Name: { $t: 'Campbell Avenue' },
+                    Name: { $t: 'Tameside College' },
                     TopographicPlaceView: {
-                        Name: { $t: 'Bewbush' },
-                        QualifierName: { $t: 'West Sussex' },
-                        TopographicPlaceRef: { ref: 'nptgLocality:E0026633' },
+                        Name: { $t: 'Cockbrook' },
+                        QualifierName: { $t: '' },
+                        TopographicPlaceRef: { ref: 'nptgLocality:N0077788' },
                     },
-                    id: 'naptan:3290YYA00357',
+                    id: 'atco:1800EH21241',
                     version: 'any',
                 },
             ]);
@@ -129,16 +138,16 @@ describe('Netex Helpers', () => {
 
     describe('getPriceGroups', () => {
         it('gets a NeTEx price group for each unique price in the fare zones', () => {
-            const priceGroups = netexHelpers.getPriceGroups(fareZones);
+            const priceGroups = netexHelpers.getPriceGroups(singleTicket);
 
             expect(priceGroups).toEqual([
                 {
-                    id: 'price_band_1.10',
+                    id: 'price_band_1.00',
                     members: [
                         {
                             GeographicalIntervalPrice: {
-                                Amount: { $t: '1.10' },
-                                id: 'price_band_1.10@adult',
+                                Amount: { $t: '1.00' },
+                                id: 'price_band_1.00@Anyone',
                                 version: '1.0',
                             },
                         },
@@ -146,12 +155,12 @@ describe('Netex Helpers', () => {
                     version: '1.0',
                 },
                 {
-                    id: 'price_band_1.70',
+                    id: 'price_band_1.20',
                     members: [
                         {
                             GeographicalIntervalPrice: {
-                                Amount: { $t: '1.70' },
-                                id: 'price_band_1.70@adult',
+                                Amount: { $t: '1.20' },
+                                id: 'price_band_1.20@Anyone',
                                 version: '1.0',
                             },
                         },
@@ -159,12 +168,12 @@ describe('Netex Helpers', () => {
                     version: '1.0',
                 },
                 {
-                    id: 'price_band_2.20',
+                    id: 'price_band_1.30',
                     members: [
                         {
                             GeographicalIntervalPrice: {
-                                Amount: { $t: '2.20' },
-                                id: 'price_band_2.20@adult',
+                                Amount: { $t: '1.30' },
+                                id: 'price_band_1.30@Anyone',
                                 version: '1.0',
                             },
                         },
@@ -181,18 +190,13 @@ describe('Netex Helpers', () => {
 
             expect(netexZones).toEqual([
                 {
-                    Name: { $t: 'Acomb Green Lane' },
-                    id: 'fs@Acomb_Green_Lane',
+                    Name: { $t: 'Fare Zone 1' },
+                    id: 'fs@Fare_Zone_1',
                     members: {
                         ScheduledStopPointRef: [
                             {
-                                $t: 'Queenswood Grove, Bewbush',
-                                ref: 'naptan:3290YYA03623',
-                                version: 'any',
-                            },
-                            {
-                                $t: 'Kingsthorpe, Bewbush',
-                                ref: 'naptan:3290YYA00077',
+                                $t: 'Ashton Bus Station, Ashton-under-Lyne',
+                                ref: 'atco:1800EHQ0081',
                                 version: 'any',
                             },
                         ],
@@ -200,13 +204,13 @@ describe('Netex Helpers', () => {
                     version: '1.0',
                 },
                 {
-                    Name: { $t: 'Mattison Way' },
-                    id: 'fs@Mattison_Way',
+                    Name: { $t: 'Fare Zone 2' },
+                    id: 'fs@Fare_Zone_2',
                     members: {
                         ScheduledStopPointRef: [
                             {
-                                $t: 'Mattison Way, Bewbush',
-                                ref: 'naptan:3290YYA00359',
+                                $t: 'Henrietta Street, Ashton-under-Lyne',
+                                ref: 'atco:1800EH24201',
                                 version: 'any',
                             },
                         ],
@@ -214,23 +218,22 @@ describe('Netex Helpers', () => {
                     version: '1.0',
                 },
                 {
-                    Name: { $t: 'Nursery Drive' },
-                    id: 'fs@Nursery_Drive',
+                    Name: { $t: 'Fare Zone 3' },
+                    id: 'fs@Fare_Zone_3',
                     members: {
                         ScheduledStopPointRef: [
                             {
-                                $t: 'Campbell Avenue, Bewbush',
-                                ref: 'naptan:3290YYA00357',
+                                $t: 'Crickets Ln, Ashton-under-Lyne',
+                                ref: 'atco:1800EH24151',
+                                version: 'any',
+                            },
+                            {
+                                $t: 'Tameside College, Cockbrook',
+                                ref: 'atco:1800EH21241',
                                 version: 'any',
                             },
                         ],
                     },
-                    version: '1.0',
-                },
-                {
-                    Name: { $t: 'Holl Bank/Beech Ave' },
-                    id: 'fs@Holl_Bank/Beech_Ave',
-                    members: { ScheduledStopPointRef: [] },
                     version: '1.0',
                 },
             ]);
@@ -243,45 +246,24 @@ describe('Netex Helpers', () => {
 
             expect(matrixElements).toEqual([
                 {
-                    EndTariffZoneRef: { ref: 'fs@Mattison_Way', version: '1.0' },
-                    StartTariffZoneRef: { ref: 'fs@Acomb_Green_Lane', version: '1.0' },
-                    id: 'Acomb_Green_Lane+Mattison_Way',
-                    priceGroups: { PriceGroupRef: { ref: 'price_band_1.10', version: '1.0' } },
+                    EndTariffZoneRef: { ref: 'fs@Fare_Zone_3', version: '1.0' },
+                    StartTariffZoneRef: { ref: 'fs@Fare_Zone_2', version: '1.0' },
+                    id: 'Fare_Zone_2+Fare_Zone_3',
+                    priceGroups: { PriceGroupRef: { ref: 'price_band_1.00', version: '1.0' } },
                     version: '1.0',
                 },
                 {
-                    EndTariffZoneRef: { ref: 'fs@Nursery_Drive', version: '1.0' },
-                    StartTariffZoneRef: { ref: 'fs@Acomb_Green_Lane', version: '1.0' },
-                    id: 'Acomb_Green_Lane+Nursery_Drive',
-                    priceGroups: { PriceGroupRef: { ref: 'price_band_1.70', version: '1.0' } },
+                    EndTariffZoneRef: { ref: 'fs@Fare_Zone_1', version: '1.0' },
+                    StartTariffZoneRef: { ref: 'fs@Fare_Zone_2', version: '1.0' },
+                    id: 'Fare_Zone_2+Fare_Zone_1',
+                    priceGroups: { PriceGroupRef: { ref: 'price_band_1.20', version: '1.0' } },
                     version: '1.0',
                 },
                 {
-                    EndTariffZoneRef: { ref: 'fs@Holl_Bank/Beech_Ave', version: '1.0' },
-                    StartTariffZoneRef: { ref: 'fs@Acomb_Green_Lane', version: '1.0' },
-                    id: 'Acomb_Green_Lane+Holl_Bank/Beech_Ave',
-                    priceGroups: { PriceGroupRef: { ref: 'price_band_2.20', version: '1.0' } },
-                    version: '1.0',
-                },
-                {
-                    EndTariffZoneRef: { ref: 'fs@Nursery_Drive', version: '1.0' },
-                    StartTariffZoneRef: { ref: 'fs@Mattison_Way', version: '1.0' },
-                    id: 'Mattison_Way+Nursery_Drive',
-                    priceGroups: { PriceGroupRef: { ref: 'price_band_1.10', version: '1.0' } },
-                    version: '1.0',
-                },
-                {
-                    EndTariffZoneRef: { ref: 'fs@Holl_Bank/Beech_Ave', version: '1.0' },
-                    StartTariffZoneRef: { ref: 'fs@Mattison_Way', version: '1.0' },
-                    id: 'Mattison_Way+Holl_Bank/Beech_Ave',
-                    priceGroups: { PriceGroupRef: { ref: 'price_band_1.70', version: '1.0' } },
-                    version: '1.0',
-                },
-                {
-                    EndTariffZoneRef: { ref: 'fs@Holl_Bank/Beech_Ave', version: '1.0' },
-                    StartTariffZoneRef: { ref: 'fs@Nursery_Drive', version: '1.0' },
-                    id: 'Nursery_Drive+Holl_Bank/Beech_Ave',
-                    priceGroups: { PriceGroupRef: { ref: 'price_band_1.10', version: '1.0' } },
+                    EndTariffZoneRef: { ref: 'fs@Fare_Zone_1', version: '1.0' },
+                    StartTariffZoneRef: { ref: 'fs@Fare_Zone_3', version: '1.0' },
+                    id: 'Fare_Zone_3+Fare_Zone_1',
+                    priceGroups: { PriceGroupRef: { ref: 'price_band_1.30', version: '1.0' } },
                     version: '1.0',
                 },
             ]);
@@ -290,31 +272,37 @@ describe('Netex Helpers', () => {
 
     describe('getFareTableElements', () => {
         it('removes the last item when generating the fare table elements', () => {
-            const fareTableElements = netexHelpers.getFareTableElements(fareZones, lineIdName, 'c', 'single');
+            const fareTableElements = netexHelpers.getFareTableElements(
+                fareZones,
+                lineIdName,
+                'c',
+                singleTicket.type,
+                singleTicket.passengerType,
+            );
 
             expect(fareTableElements).toHaveLength(fareZones.length - 1);
         });
 
         it('correctly generates elements using the prefix', () => {
-            const fareTableElements = netexHelpers.getFareTableElements(fareZones, lineIdName, 'c', 'single');
+            const fareTableElements = netexHelpers.getFareTableElements(
+                fareZones,
+                lineIdName,
+                'c',
+                singleTicket.type,
+                singleTicket.passengerType,
+            );
 
             expect(fareTableElements).toEqual([
                 {
-                    Name: { $t: 'Acomb Green Lane' },
-                    id: 'Trip@single-SOP@p-ticket@line_123@adult@c1@Acomb_Green_Lane',
+                    Name: { $t: 'Fare Zone 1' },
+                    id: 'Trip@single-SOP@p-ticket@line_123@Anyone@c1@Fare_Zone_1',
                     order: 1,
                     version: '1.0',
                 },
                 {
-                    Name: { $t: 'Mattison Way' },
-                    id: 'Trip@single-SOP@p-ticket@line_123@adult@c2@Mattison_Way',
+                    Name: { $t: 'Fare Zone 2' },
+                    id: 'Trip@single-SOP@p-ticket@line_123@Anyone@c2@Fare_Zone_2',
                     order: 2,
-                    version: '1.0',
-                },
-                {
-                    Name: { $t: 'Nursery Drive' },
-                    id: 'Trip@single-SOP@p-ticket@line_123@adult@c3@Nursery_Drive',
-                    order: 3,
                     version: '1.0',
                 },
             ]);
@@ -323,9 +311,14 @@ describe('Netex Helpers', () => {
 
     describe('getFareTables', () => {
         it('gets the fare tables for all fare zones and price groups', () => {
-            const fareTables = netexHelpers.getFareTables(fareZones.slice(0, -1), lineIdName, 'single');
+            const fareTables = netexHelpers.getInnerFareTables(
+                fareZones.slice(0, -1),
+                lineIdName,
+                singleTicket.type,
+                singleTicket.passengerType,
+            );
 
-            expect(fareTables).toEqual(expectedFareTables);
+            expect(fareTables).toEqual(expectedInnerFareTables);
         });
     });
 });

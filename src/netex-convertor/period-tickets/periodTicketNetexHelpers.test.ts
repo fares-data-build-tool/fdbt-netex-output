@@ -1,13 +1,12 @@
 import { PeriodGeoZoneTicket } from '../types';
 import * as netexHelpers from './periodTicketNetexHelpers';
-import geoZonePeriodData from '../test-data/geoZonePeriodData';
+import { periodGeoZoneTicket, periodMultipleServicesTicket } from '../test-data/matchingData';
+import operatorData from '../test-data/operatorData';
 import {
     expectedScheduledStopPointsList,
     expectedTopographicProjectionsList,
     expectedLinesList,
     expectedLineRefList,
-    multiServicesPeriodData,
-    operatorData,
     expectedGeoZoneFareTables,
     expectedMultiServiceFareTables,
     expectedMultipleFareTables,
@@ -20,9 +19,8 @@ import {
 } from '../test-data/testData';
 
 describe('periodTicketNetexHelpers', () => {
-    const { stops } = geoZonePeriodData;
-    const geoUserPeriodTicket: PeriodGeoZoneTicket = geoZonePeriodData;
-    const multiServicesUserPeriodTicket = multiServicesPeriodData;
+    const { stops } = periodGeoZoneTicket;
+    const geoUserPeriodTicket: PeriodGeoZoneTicket = periodGeoZoneTicket;
     const opData = operatorData;
     const placeHolderText = 'PLACEHOLDER';
 
@@ -44,7 +42,7 @@ describe('periodTicketNetexHelpers', () => {
 
     describe('getLinesList', () => {
         it('returns a list of NeTEx lines given a UserPeriodTicket object', () => {
-            const linesList = netexHelpers.getLinesList(multiServicesUserPeriodTicket, opData);
+            const linesList = netexHelpers.getLinesList(periodMultipleServicesTicket, opData);
 
             expect(linesList).toEqual(expectedLinesList);
         });
@@ -52,7 +50,7 @@ describe('periodTicketNetexHelpers', () => {
 
     describe('getLineRefList', () => {
         it('returns a list of NeTEx line refs given a UserPeriodTicket object', () => {
-            const lineRefList = netexHelpers.getLineRefList(multiServicesUserPeriodTicket);
+            const lineRefList = netexHelpers.getLineRefList(periodMultipleServicesTicket);
 
             expect(lineRefList).toEqual(expectedLineRefList);
         });
@@ -68,7 +66,7 @@ describe('periodTicketNetexHelpers', () => {
 
     describe('getMultiServiceFareTable', () => {
         it('returns a fare table for multiple services products', () => {
-            const result = netexHelpers.getMultiServiceFareTable(multiServicesUserPeriodTicket);
+            const result = netexHelpers.getMultiServiceFareTable(periodMultipleServicesTicket);
 
             expect(result).toEqual(expectedMultiServiceFareTables);
         });
@@ -76,7 +74,7 @@ describe('periodTicketNetexHelpers', () => {
 
     describe('getFareTableList', () => {
         it('returns a fare table row for every product in the products array', () => {
-            const result = netexHelpers.getFareTableList(multiServicesPeriodData, placeHolderText);
+            const result = netexHelpers.getFareTableList(periodMultipleServicesTicket, placeHolderText);
 
             expect(result).toEqual(expectedMultipleFareTables);
         });
@@ -103,8 +101,8 @@ describe('periodTicketNetexHelpers', () => {
 
         it('returns a preassigned fare product per each product in the products array for multiService', () => {
             const result = netexHelpers.getPreassignedFareProduct(
-                multiServicesPeriodData,
-                `noc:${multiServicesPeriodData.nocCode}`,
+                periodMultipleServicesTicket,
+                `noc:${periodMultipleServicesTicket.nocCode}`,
                 'noc:TestOperatorOpId',
             );
 
@@ -114,7 +112,7 @@ describe('periodTicketNetexHelpers', () => {
 
     describe('getTimeIntervals', () => {
         it('returns a time interval for each product in the products array', () => {
-            const result = netexHelpers.getTimeIntervals(multiServicesPeriodData);
+            const result = netexHelpers.getTimeIntervals(periodMultipleServicesTicket);
 
             expect(result).toEqual(expectedTimeIntervals);
         });
@@ -122,7 +120,7 @@ describe('periodTicketNetexHelpers', () => {
 
     describe('getFareStructureElements', () => {
         it('returns a list of fareSructureElements for each product in the products array for multiService', () => {
-            const result = netexHelpers.getFareStructuresElements(multiServicesPeriodData, placeHolderText);
+            const result = netexHelpers.getFareStructuresElements(periodMultipleServicesTicket, placeHolderText);
 
             expect(result).toEqual(expectedMultiServiceFareStructureElements);
         });
