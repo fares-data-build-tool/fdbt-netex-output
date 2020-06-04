@@ -142,10 +142,12 @@ const pointToPointTicketNetexGenerator = (
         priceFareFrameToUpdate.id = `epd:UK:${matchingData.nocCode}:FareFrame_UK_PI_FARE_PRODUCT:${lineIdName}:op`;
         priceFareFrameToUpdate.tariffs.Tariff.id = `Tariff@${matchingData.type}@${lineIdName}`;
         priceFareFrameToUpdate.tariffs.Tariff.Name.$t = `${operatorPublicNameLineNameFormat} - ${matchingData.type} fares`;
-        priceFareFrameToUpdate.tariffs.Tariff.validityConditions.ValidBetween.FromDate.$t = currentDate.toISOString();
-        priceFareFrameToUpdate.tariffs.Tariff.validityConditions.ValidBetween.ToDate.$t = new Date(
-            currentDate.setFullYear(currentDate.getFullYear() + 99),
-        ).toISOString();
+        priceFareFrameToUpdate.tariffs.Tariff.validityConditions = {
+            ValidBetween: {
+                FromDate: { $t: currentDate.toISOString() },
+                ToDate: { $t: new Date(currentDate.setFullYear(currentDate.getFullYear() + 99)).toISOString() },
+            },
+        };
         priceFareFrameToUpdate.tariffs.Tariff.OperatorRef.ref = nocCodeNocFormat;
         priceFareFrameToUpdate.tariffs.Tariff.OperatorRef.$t = opIdNocFormat;
         priceFareFrameToUpdate.tariffs.Tariff.LineRef.ref = matchingData.lineName;
@@ -159,7 +161,7 @@ const pointToPointTicketNetexGenerator = (
             matchingData,
         );
         priceFareFrameToUpdate.fareProducts.PreassignedFareProduct = getPreassignedFareProduct(matchingData);
-        priceFareFrameToUpdate.fareProducts.salesOfferPackages.SalesOfferPackage = getSalesOfferPackage(matchingData);
+        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage = getSalesOfferPackage(matchingData);
 
         if (isReturnTicket(matchingData)) {
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[0].id =
@@ -198,7 +200,7 @@ const pointToPointTicketNetexGenerator = (
         fareTableFareFrameToUpdate.id = `epd:UK:${matchingData.nocCode}:FareFrame_UK_PI_FARE_PRICE:${lineIdName}:op`;
 
         fareTableFareFrameToUpdate.priceGroups.PriceGroup = getPriceGroups(matchingData);
-        fareTableFareFrameToUpdate.priceGroups.fareTables.FareTable = getFareTable(matchingData);
+        fareTableFareFrameToUpdate.fareTables.FareTable = getFareTable(matchingData);
 
         return fareTableFareFrameToUpdate;
     };

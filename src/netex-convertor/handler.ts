@@ -8,7 +8,6 @@ import { PointToPointTicket, PeriodTicket } from './types';
 export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
     try {
         const s3Data = await s3.fetchDataFromS3(event);
-
         const { type } = s3Data;
 
         console.info(`NeTEx generation starting for type: ${type}...`);
