@@ -320,7 +320,6 @@ describe('Netex Helpers', () => {
             );
 
             const cells = fareTables.flatMap((table: NetexObject) => {
-                console.log(table.cells.Cell)
                 return table.cells.Cell;
             });
 
