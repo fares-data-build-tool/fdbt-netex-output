@@ -14,7 +14,6 @@ import {
     expectedMultiServicesPreassignedFareProducts,
     expectedTimeIntervals,
     expectedMultiServiceFareStructureElements,
-    expectedGeoZoneFareStructureElements,
 } from '../test-data/testData';
 
 describe('periodTicketNetexHelpers', () => {
@@ -110,16 +109,35 @@ describe('periodTicketNetexHelpers', () => {
     });
 
     describe('getFareStructureElements', () => {
-        it.only('returns a list of fareSructureElements for each product in the products array for multiService', () => {
-            const result = netexHelpers.getFareStructuresElements(multiServicePeriodData, placeHolderText);
+        it('returns a list of fareSructureElements for each product in the products array for multiService', () => {
+            const result = netexHelpers.getFareStructuresElements(periodMultipleServicesTicket, placeHolderText);
 
             expect(result).toEqual(expectedMultiServiceFareStructureElements);
         });
 
-        it('returns a list of fareSructureElements for each product in the products array for geoZone', () => {
+        it.only('returns 4 fareSructureElements for each product in the products array for geoZone; Access Zones, Durations, Eligibility and Conditions of Travel', () => {
             const result = netexHelpers.getFareStructuresElements(geoUserPeriodTicket, placeHolderText);
+            const typesOfFareStructureElements: string[] = result.map((element) => {
+                return element.Name.$t;
+            });
 
-            expect(result).toEqual(expectedGeoZoneFareStructureElements);
+            expect(typesOfFareStructureElements).toEqual([
+                'Available zones', 
+                'Available duration combination - Student ticket', 
+                'Eligible user types', 
+                'Conditions of travel', 
+                'Available zones', 
+                'Available duration combination - Student ticket', 
+                'Eligible user types', 
+                'Conditions of travel', 
+                'Available zones', 
+                'Available duration combination - Student ticket', 
+                'Eligible user types', 
+                'Conditions of travel', 
+                'Available zones', 
+                'Available duration combination - Student ticket', 
+                'Eligible user types', 
+                'Conditions of travel']);
         });
     });
 });
