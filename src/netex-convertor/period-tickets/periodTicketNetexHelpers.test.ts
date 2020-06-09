@@ -4,9 +4,6 @@ import { periodGeoZoneTicket, periodMultipleServicesTicket, flatFareTicket } fro
 import operatorData from '../test-data/operatorData';
 import {
     expectedMultiServiceFareTables,
-    expectedSalesOfferPackages,
-    expectedMultiServicesPreassignedFareProducts,
-    expectedTimeIntervals,
 } from '../test-data/testData';
 
 describe('periodTicketNetexHelpers', () => {
@@ -186,14 +183,49 @@ describe('periodTicketNetexHelpers', () => {
 
     describe('getSalesOfferPackageList', () => {
         it('returns a sales offer package for each product in the products array', () => {
+            const expectedLength = geoUserPeriodTicket.products.length;
             const result = netexHelpers.getSalesOfferPackageList(geoUserPeriodTicket);
 
-            expect(result).toEqual(expectedSalesOfferPackages);
+            const expectedFormat = {
+                Description: expect.objectContaining({ $t: expect.any(String) }),
+                Name: expect.objectContaining({ $t: expect.any(String) }),
+                distributionAssignments: expect.objectContaining({
+                    DistributionAssignment: expect.objectContaining({
+                        Description: expect.objectContaining({ $t: expect.any(String) }),
+                        DistributionChannelRef: expect.objectContaining({ ref: expect.any(String), version: expect.any(String) }),
+                        DistributionChannelType: expect.objectContaining({ $t: expect.any(String) }),
+                        FulfilmentMethodRef: expect.objectContaining({ ref: expect.any(String), version: expect.any(String) }),
+                        Name: expect.objectContaining({ $t: expect.any(String) }),
+                        PaymentMethods: expect.objectContaining({ $t: expect.any(String) }),
+                        id: expect.any(String),
+                        order: '1',
+                        version: '1.0',
+                    }),
+                }),
+                id: expect.any(String),
+                salesOfferPackageElements: expect.objectContaining({
+                    SalesOfferPackageElement: expect.objectContaining({
+                        PreassignedFareProductRef: expect.objectContaining({ ref: expect.any(String), version: '1.0' }),
+                        TypeOfTravelDocumentRef: expect.objectContaining({ ref: expect.any(String), version: '1.0' }),
+                        id: expect.any(String),
+                        order: '3',
+                        version: '1.0',
+                    }),
+                }),
+                version: '1.0',
+            }
+
+            result.forEach((salesOfferPackage) => {
+                expect(salesOfferPackage).toEqual(expectedFormat);
+            });
+
+            expect(result.length).toBe(expectedLength);
         });
     });
 
     describe('getPreassignedFareProducts', () => {
         it('returns a preassigned fare product per each product in the products array for geoZone', () => {
+            const expectedLength = geoUserPeriodTicket.products.length;
             const result = netexHelpers.getPreassignedFareProducts(
                 geoUserPeriodTicket,
                 `noc:${geoUserPeriodTicket.nocCode}`,
@@ -214,32 +246,62 @@ describe('periodTicketNetexHelpers', () => {
 
             result.forEach((preassignedFareProduct) => {
                 expect(preassignedFareProduct).toEqual(expectedFormat);
-            })
+            });
+
+            expect(result.length).toBe(expectedLength);
 
         });
 
         it('returns a preassigned fare product per each product in the products array for multiService', () => {
+            const expectedLength = periodMultipleServicesTicket.products.length;
             const result = netexHelpers.getPreassignedFareProducts(
                 periodMultipleServicesTicket,
                 `noc:${periodMultipleServicesTicket.nocCode}`,
                 'noc:TestOperatorOpId',
             );
 
-            expect(result).toEqual(expectedMultiServicesPreassignedFareProducts);
+            const expectedFormat = {
+                ChargingMomentType: expect.objectContaining({ $t: expect.any(String) }),
+                Name: expect.objectContaining({ $t: expect.any(String) }),
+                OperatorRef: expect.objectContaining({ $t: expect.any(String), ref: expect.any(String), version: '1.0' }),
+                ProductType: expect.objectContaining({ $t: expect.any(String) }),
+                accessRightsInProduct: expect.any(Object),
+                id: expect.any(String),
+                typesOfFareProduct: expect.objectContaining({ TypeOfFareProductRef: expect.objectContaining({ ref: expect.any(String), version: expect.any(String) }) }),
+                validableElements: expect.any(Object),
+                version: '1.0',
+            }
+
+            result.forEach((preassignedFareProduct) => {
+                expect(preassignedFareProduct).toEqual(expectedFormat);
+            });
+
+            expect(result.length).toBe(expectedLength);
         });
     });
 
     describe('getTimeIntervals', () => {
         it('returns a time interval for each product in the products array', () => {
+            const expectedLength = periodMultipleServicesTicket.products.length;
             const result = netexHelpers.getTimeIntervals(periodMultipleServicesTicket);
+            const expectedFormat = {
+                Description: expect.objectContaining({ $t: expect.any(String) }),
+                Name: expect.objectContaining({ $t: expect.any(String) }),
+                id: expect.any(String),
+                version: '1.0'
+            };
 
-            expect(result).toEqual(expectedTimeIntervals);
+            result.forEach((timeInterval) => {
+                expect(timeInterval).toEqual(expectedFormat);
+            })
+            expect(result.length).toBe(expectedLength);
         });
     });
 
     describe('getFareStructureElements', () => {
 
         it('returns 3 fareSructureElements for each product in the products array for multiService; Access Zones, Eligibility and Conditions of Travel', () => {
+            const expectedLength = flatFareTicket.products.length * 3;
             const result = netexHelpers.getFareStructuresElements(flatFareTicket, placeHolderText);
             const namesOfTypesOfFareStructureElements: string[] = result.map((element) => {
                 return element.Name.$t;
@@ -251,10 +313,13 @@ describe('periodTicketNetexHelpers', () => {
                     name === 'Eligible user types' ||
                     name === 'Conditions of travel')
                     .toBeTruthy();
-            })
+            });
+
+            expect(result.length).toBe(expectedLength);
         });
 
         it('returns 4 fareSructureElements for each product in the products array for multiService; Access Zones, Durations, Eligibility and Conditions of Travel', () => {
+            const expectedLength = periodMultipleServicesTicket.products.length * 4;
             const result = netexHelpers.getFareStructuresElements(periodMultipleServicesTicket, placeHolderText);
             const namesOfTypesOfFareStructureElements: string[] = result.map((element) => {
                 return element.Name.$t;
@@ -267,10 +332,12 @@ describe('periodTicketNetexHelpers', () => {
                     name === 'Eligible user types' ||
                     name === 'Conditions of travel')
                     .toBeTruthy();
-            })
+            });
+            expect(result.length).toBe(expectedLength);
         });
 
         it('returns 4 fareSructureElements for each product in the products array for geoZone; Access Zones, Durations, Eligibility and Conditions of Travel', () => {
+            const expectedLength = geoUserPeriodTicket.products.length * 4;
             const result = netexHelpers.getFareStructuresElements(geoUserPeriodTicket, placeHolderText);
             const namesOfTypesOfFareStructureElements: string[] = result.map((element) => {
                 return element.Name.$t;
@@ -283,7 +350,8 @@ describe('periodTicketNetexHelpers', () => {
                     name === 'Eligible user types' ||
                     name === 'Conditions of travel')
                     .toBeTruthy();
-            })
+            });
+            expect(result.length).toBe(expectedLength);
         });
 
         it('returns the fareStructureElements in the format we expect', () => {

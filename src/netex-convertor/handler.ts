@@ -10,7 +10,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
         const s3Data = await s3.fetchDataFromS3(event);
         const { type } = s3Data;
 
-        console.info(`NeTEx generation starting for type: ${type}...`);
+        //console.info(`NeTEx generation starting for type: ${type}...`);
 
         if (type === 'single' || type === 'return') {
             const matchingData: PointToPointTicket = s3Data;
@@ -21,7 +21,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
 
             const fileName = `${matchingData.operatorShortName.replace(/\/|\s/g, '_')}_${
                 matchingData.lineName
-            }_${new Date().toISOString()}.xml`;
+                }_${new Date().toISOString()}.xml`;
 
             const fileNameWithoutSlashes = fileName.replace('/', '_');
             await s3.uploadNetexToS3(generatedNetex, fileNameWithoutSlashes);
@@ -48,7 +48,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
         } else {
             throw new Error(
                 `The JSON object '${decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '))}' in the '${
-                    event.Records[0].s3.bucket.name
+                event.Records[0].s3.bucket.name
                 }' bucket does not contain a 'type' attribute to distinguish product type.`,
             );
         }
@@ -57,7 +57,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
         throw new Error(error);
     }
 
-    console.info('NeTEx generation complete!');
+    //console.info('NeTEx generation complete!');
 };
 
 export default netexConvertorHandler;
