@@ -397,7 +397,12 @@ export const periodGeoZoneTicket: PeriodGeoZoneTicket = {
     nocCode: 'BLAC',
     products: [
         { productName: 'Selenium Test Product', productPrice: '10.50', productDuration: '1', productValidity: '24hr' },
-        { productName: 'Selenium Test Product 2', productPrice: '150', productDuration: '2', productValidity: 'Calendar' },
+        {
+            productName: 'Selenium Test Product 2',
+            productPrice: '150',
+            productDuration: '2',
+            productValidity: 'Calendar',
+        },
         { productName: 'Selenium Test Product 3', productPrice: '170', productDuration: '3', productValidity: '24hr' },
         { productName: 'Selenium Test Product 4', productPrice: '15', productDuration: '4', productValidity: '24hr' },
     ],
