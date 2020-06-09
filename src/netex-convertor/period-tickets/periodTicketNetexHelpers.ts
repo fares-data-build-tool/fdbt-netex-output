@@ -722,7 +722,7 @@ export const getFareStructuresElements = (
             validityParameterGroupingType = 'OR';
             validityParametersObject = { LineRef: getLineRefList(userPeriodTicket) };
         }
-        if (isGeoZoneTicket || (isMultiServiceTicket && userPeriodTicket.products[0].productDuration)) {
+        if (isGeoZoneTicket(userPeriodTicket) || (isMultiServiceTicket(userPeriodTicket) && userPeriodTicket.products[0].productDuration)) {
             return [
                 getAvailabilityElement(id, validityParameterGroupingType, validityParametersObject),
                 getDurationElement(userPeriodTicket, product),

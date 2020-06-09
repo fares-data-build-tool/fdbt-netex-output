@@ -9,7 +9,6 @@ import {
     expectedLineRefList,
     expectedGeoZoneFareTables,
     expectedMultiServiceFareTables,
-    expectedMultipleFareTables,
     expectedSalesOfferPackages,
     expectedGeoZonePreassignedFareProducts,
     expectedMultiServicesPreassignedFareProducts,
@@ -58,7 +57,7 @@ describe('periodTicketNetexHelpers', () => {
 
     describe('getGeoZoneFareTable', () => {
         it('returns a fare table for geoZone products', () => {
-            const result = netexHelpers.getGeoZoneFareTable(geoUserPeriodTicket);
+            const result = netexHelpers.getGeoZoneFareTable(geoUserPeriodTicket, placeHolderText);
 
             expect(result).toEqual(expectedGeoZoneFareTables);
         });
@@ -72,17 +71,9 @@ describe('periodTicketNetexHelpers', () => {
         });
     });
 
-    describe('getFareTableList', () => {
-        it('returns a fare table row for every product in the products array', () => {
-            const result = netexHelpers.getFareTableList(periodMultipleServicesTicket, placeHolderText);
-
-            expect(result).toEqual(expectedMultipleFareTables);
-        });
-    });
-
     describe('getSalesOfferPackageList', () => {
         it('returns a sales offer package for each product in the products array', () => {
-            const result = netexHelpers.getSalesOfferPackageList(geoUserPeriodTicket, placeHolderText);
+            const result = netexHelpers.getSalesOfferPackageList(geoUserPeriodTicket);
 
             expect(result).toEqual(expectedSalesOfferPackages);
         });
@@ -90,7 +81,7 @@ describe('periodTicketNetexHelpers', () => {
 
     describe('getPreassignedFareProduct', () => {
         it('returns a preassigned fare product per each product in the products array for geoZone', () => {
-            const result = netexHelpers.getPreassignedFareProduct(
+            const result = netexHelpers.getPreassignedFareProducts(
                 geoUserPeriodTicket,
                 `noc:${geoUserPeriodTicket.nocCode}`,
                 'noc:TestOperatorOpId',
@@ -100,7 +91,7 @@ describe('periodTicketNetexHelpers', () => {
         });
 
         it('returns a preassigned fare product per each product in the products array for multiService', () => {
-            const result = netexHelpers.getPreassignedFareProduct(
+            const result = netexHelpers.getPreassignedFareProducts(
                 periodMultipleServicesTicket,
                 `noc:${periodMultipleServicesTicket.nocCode}`,
                 'noc:TestOperatorOpId',
@@ -119,8 +110,8 @@ describe('periodTicketNetexHelpers', () => {
     });
 
     describe('getFareStructureElements', () => {
-        it('returns a list of fareSructureElements for each product in the products array for multiService', () => {
-            const result = netexHelpers.getFareStructuresElements(periodMultipleServicesTicket, placeHolderText);
+        it.only('returns a list of fareSructureElements for each product in the products array for multiService', () => {
+            const result = netexHelpers.getFareStructuresElements(multiServicePeriodData, placeHolderText);
 
             expect(result).toEqual(expectedMultiServiceFareStructureElements);
         });

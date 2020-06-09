@@ -84,14 +84,14 @@ export interface PeriodMultipleServicesTicket extends BasePeriodTicket {
     selectedServices: SelectedService[];
 }
 
-// export interface FlatFareTicket extends BaseTicket {
-//     operatorName: string;
-//     products: {
-//         productName: string;
-//         productPrice: string;
-//     }[];
-//     selectedServices: SelectedService[];
-// }
+export interface FlatFareTicket extends BaseTicket {
+    operatorName: string;
+    products: {
+        productName: string;
+        productPrice: string;
+    }[];
+    selectedServices: SelectedService[];
+}
 
 export interface SelectedService {
     lineName: string;
