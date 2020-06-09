@@ -1,15 +1,12 @@
 import { PeriodGeoZoneTicket } from '../types';
 import * as netexHelpers from './periodTicketNetexHelpers';
-import { periodGeoZoneTicket, periodMultipleServicesTicket } from '../test-data/matchingData';
+import { periodGeoZoneTicket, periodMultipleServicesTicket, flatFareTicket } from '../test-data/matchingData';
 import operatorData from '../test-data/operatorData';
 import {
     expectedMultiServiceFareTables,
     expectedSalesOfferPackages,
-    expectedGeoZonePreassignedFareProducts,
     expectedMultiServicesPreassignedFareProducts,
     expectedTimeIntervals,
-    expectedMultiServiceFareStructureElements,
-    expectedGeoZoneFareStructureElements,
 } from '../test-data/testData';
 
 describe('periodTicketNetexHelpers', () => {
@@ -195,7 +192,7 @@ describe('periodTicketNetexHelpers', () => {
         });
     });
 
-    describe('getPreassignedFareProduct', () => {
+    describe('getPreassignedFareProducts', () => {
         it('returns a preassigned fare product per each product in the products array for geoZone', () => {
             const result = netexHelpers.getPreassignedFareProducts(
                 geoUserPeriodTicket,
@@ -203,7 +200,22 @@ describe('periodTicketNetexHelpers', () => {
                 'noc:TestOperatorOpId',
             );
 
-            expect(result).toEqual(expectedGeoZonePreassignedFareProducts);
+            const expectedFormat = {
+                ChargingMomentType: expect.objectContaining({ $t: expect.any(String) }),
+                Name: expect.objectContaining({ $t: expect.any(String) }),
+                OperatorRef: expect.objectContaining({ $t: expect.any(String), ref: expect.any(String), version: '1.0' }),
+                ProductType: expect.objectContaining({ $t: expect.any(String) }),
+                accessRightsInProduct: expect.any(Object),
+                id: expect.any(String),
+                typesOfFareProduct: expect.objectContaining({ TypeOfFareProductRef: expect.objectContaining({ ref: expect.any(String), version: expect.any(String) }) }),
+                validableElements: expect.any(Object),
+                version: '1.0',
+            }
+
+            result.forEach((preassignedFareProduct) => {
+                expect(preassignedFareProduct).toEqual(expectedFormat);
+            })
+
         });
 
         it('returns a preassigned fare product per each product in the products array for multiService', () => {
@@ -226,16 +238,102 @@ describe('periodTicketNetexHelpers', () => {
     });
 
     describe('getFareStructureElements', () => {
-        it('returns a list of fareSructureElements for each product in the products array for multiService', () => {
+
+        it('returns 3 fareSructureElements for each product in the products array for multiService; Access Zones, Eligibility and Conditions of Travel', () => {
+            const result = netexHelpers.getFareStructuresElements(flatFareTicket, placeHolderText);
+            const namesOfTypesOfFareStructureElements: string[] = result.map((element) => {
+                return element.Name.$t;
+            });
+
+            namesOfTypesOfFareStructureElements.forEach((name) => {
+                expect(
+                    name === 'Available zones' ||
+                    name === 'Eligible user types' ||
+                    name === 'Conditions of travel')
+                    .toBeTruthy();
+            })
+        });
+
+        it('returns 4 fareSructureElements for each product in the products array for multiService; Access Zones, Durations, Eligibility and Conditions of Travel', () => {
             const result = netexHelpers.getFareStructuresElements(periodMultipleServicesTicket, placeHolderText);
+            const namesOfTypesOfFareStructureElements: string[] = result.map((element) => {
+                return element.Name.$t;
+            });
 
-            expect(result).toEqual(expectedMultiServiceFareStructureElements);
+            namesOfTypesOfFareStructureElements.forEach((name) => {
+                expect(
+                    name === 'Available zones' ||
+                    name === 'Available duration combination - Adult ticket' ||
+                    name === 'Eligible user types' ||
+                    name === 'Conditions of travel')
+                    .toBeTruthy();
+            })
         });
 
-        it('returns a list of fareSructureElements for each product in the products array for geoZone', () => {
+        it('returns 4 fareSructureElements for each product in the products array for geoZone; Access Zones, Durations, Eligibility and Conditions of Travel', () => {
             const result = netexHelpers.getFareStructuresElements(geoUserPeriodTicket, placeHolderText);
+            const namesOfTypesOfFareStructureElements: string[] = result.map((element) => {
+                return element.Name.$t;
+            });
 
-            expect(result).toEqual(expectedGeoZoneFareStructureElements);
+            namesOfTypesOfFareStructureElements.forEach((name) => {
+                expect(
+                    name === 'Available zones' ||
+                    name === 'Available duration combination - Student ticket' ||
+                    name === 'Eligible user types' ||
+                    name === 'Conditions of travel')
+                    .toBeTruthy();
+            })
         });
+
+        it('returns the fareStructureElements in the format we expect', () => {
+            const geoResult = netexHelpers.getFareStructuresElements(geoUserPeriodTicket, placeHolderText);
+
+            const expectedAccessZonesFareStructureElement = {
+                version: '1.0',
+                id: expect.stringContaining('op:Tariff@'),
+                Name: expect.objectContaining({ $t: expect.any(String) }),
+                Description: expect.objectContaining({ $t: expect.any(String) }),
+                TypeOfFareStructureElementRef: expect.objectContaining({ version: expect.any(String), ref: expect.any(String) }),
+                GenericParameterAssignment: expect.any(Object),
+            };
+
+            const expectedDurationsFareStructureElement = {
+                version: '1.0',
+                id: expect.stringContaining('op:Tariff@'),
+                Name: expect.objectContaining({ $t: expect.any(String) }),
+                Description: expect.objectContaining({ $t: expect.any(String) }),
+                TypeOfFareStructureElementRef: expect.objectContaining({ version: expect.any(String), ref: expect.any(String) }),
+                timeIntervals: expect.objectContaining({ TimeIntervalRef: expect.anything() }),
+                GenericParameterAssignment: expect.any(Object),
+            };
+
+            const expectedEligibilityFareStructureElement = {
+                version: '1.0',
+                id: expect.stringContaining('op:Tariff@'),
+                Name: expect.objectContaining({ $t: expect.any(String) }),
+                TypeOfFareStructureElementRef: expect.objectContaining({ version: expect.any(String), ref: expect.any(String) }),
+                GenericParameterAssignment: expect.any(Object),
+            };
+
+            const expectedConditionsOfTravelFareStructureElement = {
+                version: '1.0',
+                id: expect.stringContaining('op:Tariff@'),
+                Name: expect.objectContaining({ $t: expect.any(String) }),
+                GenericParameterAssignment: expect.any(Object),
+            };
+
+            geoResult.forEach(fareStructureElement => {
+                if (fareStructureElement.timeIntervals) {
+                    expect(fareStructureElement).toEqual(expectedDurationsFareStructureElement);
+                } else if (fareStructureElement.Description) {
+                    expect(fareStructureElement).toEqual(expectedAccessZonesFareStructureElement);
+                } else if (fareStructureElement.TypeOfFareStructureElementRef) {
+                    expect(fareStructureElement).toEqual(expectedEligibilityFareStructureElement);
+                } else {
+                    expect(fareStructureElement).toEqual(expectedConditionsOfTravelFareStructureElement);
+                }
+            });
+        })
     });
 });
