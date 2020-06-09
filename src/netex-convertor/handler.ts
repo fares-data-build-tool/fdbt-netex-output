@@ -10,7 +10,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
         const s3Data = await s3.fetchDataFromS3(event);
         const { type } = s3Data;
 
-        //console.info(`NeTEx generation starting for type: ${type}...`);
+        console.info(`NeTEx generation starting for type: ${type}...`);
 
         if (type === 'single' || type === 'return') {
             const matchingData: PointToPointTicket = s3Data;
@@ -57,7 +57,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
         throw new Error(error);
     }
 
-    //console.info('NeTEx generation complete!');
+    console.info('NeTEx generation complete!');
 };
 
 export default netexConvertorHandler;
