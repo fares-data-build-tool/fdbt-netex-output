@@ -1,7 +1,7 @@
 import * as netexHelpers from './pointToPointTicketNetexHelpers';
 import { FareZone } from '../types';
 import { singleTicket } from '../test-data/matchingData';
-import { expectedInnerFareTables } from '../test-data/testData';
+import { NetexObject } from '../sharedHelpers';
 
 describe('Netex Helpers', () => {
     let fareZones: FareZone[];
@@ -311,6 +311,7 @@ describe('Netex Helpers', () => {
 
     describe('getFareTables', () => {
         it('gets the fare tables for all fare zones and price groups', () => {
+
             const fareTables = netexHelpers.getInnerFareTables(
                 fareZones.slice(0, -1),
                 lineIdName,
@@ -318,7 +319,46 @@ describe('Netex Helpers', () => {
                 singleTicket.passengerType,
             );
 
-            expect(fareTables).toEqual(expectedInnerFareTables);
+            const cells = fareTables.flatMap((table: NetexObject) => {
+                console.log(table.cells.Cell)
+                return table.cells.Cell;
+            });
+
+            const expectedCellFormat = {
+                ColumnRef: expect.objectContaining({
+                    ref: expect.any(String),
+                    versionRef: '1',
+                }),
+                DistanceMatrixElementPrice: expect.objectContaining({
+                    DistanceMatrixElementRef: { ref: expect.any(String), version: '1.0' },
+                    GeographicalIntervalPriceRef: { ref: expect.any(String), version: '1.0' },
+                    id: expect.any(String),
+                    version: '1.0',
+                }),
+                RowRef: expect.objectContaining({
+                    ref: expect.any(String),
+                    versionRef: '1',
+                }),
+                id: expect.any(String),
+                order: expect.any(Number),
+                version: '1.0',
+            };
+
+            const expectedFormat = {
+                id: expect.any(String),
+                version: '1.0',
+                Name: expect.objectContaining({ '$t': expect.any(String) }),
+                Description: expect.objectContaining({ '$t': expect.any(String) }),
+                cells: expect.objectContaining({ Cell: expect.any(Array) }),
+            };
+
+            fareTables.forEach((table) => {
+                expect(table).toEqual(expectedFormat);
+            });
+
+            cells.forEach((cell) => {
+                expect(cell).toEqual(expectedCellFormat);
+            });
         });
     });
 });
