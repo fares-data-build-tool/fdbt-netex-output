@@ -11,14 +11,12 @@ import * as mocks from './test-data/testData';
 import * as s3 from './data/s3';
 import * as pointToPointTicketNetexGenerator from './point-to-point-tickets/pointToPointTicketNetexGenerator';
 import * as periodTicketNetexGenerator from './period-tickets/periodTicketNetexGenerator';
-import * as db from './data/auroradb'
+import * as db from './data/auroradb';
 
 jest.mock('./data/auroradb.ts');
 jest.spyOn(s3, 'uploadNetexToS3').mockImplementation(() => Promise.resolve());
 const event: S3Event = mocks.mockS3Event('BucketThing', 'TheBigBucketName');
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let mockFetchDataFromS3Spy: any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let mockUploadNetexToS3Spy: any;
 mockFetchDataFromS3Spy = jest.spyOn(s3, 'fetchDataFromS3');
 mockUploadNetexToS3Spy = jest.spyOn(s3, 'uploadNetexToS3');
@@ -29,19 +27,20 @@ const pointToPointTicketNetexGeneratorSpy = jest.spyOn(pointToPointTicketNetexGe
 const periodTicketNetexGeneratorSpy = jest.spyOn(periodTicketNetexGenerator, 'default');
 
 describe('netexConvertorHandler', () => {
-
     beforeEach(() => {
-        jest.spyOn(db, 'getOperatorDataByNocCode').mockImplementation(() => Promise.resolve({
-            website: "www.unittest.com",
-            ttrteEnq: "aaaaaa",
-            operatorPublicName: "Test Buses",
-            opId: "7Z",
-            vosaPsvLicenseName: "CCD",
-            fareEnq: "SSSS",
-            complEnq: "334",
-            mode: "test",
-        }));
-    })
+        jest.spyOn(db, 'getOperatorDataByNocCode').mockImplementation(() =>
+            Promise.resolve({
+                website: 'www.unittest.com',
+                ttrteEnq: 'aaaaaa',
+                operatorPublicName: 'Test Buses',
+                opId: '7Z',
+                vosaPsvLicenseName: 'CCD',
+                fareEnq: 'SSSS',
+                complEnq: '334',
+                mode: 'test',
+            }),
+        );
+    });
 
     afterEach(() => {
         jest.resetAllMocks();
@@ -49,7 +48,7 @@ describe('netexConvertorHandler', () => {
 
     it('should call the pointToPointTicketNetexGenerator when a user uploads info for a single ticket', async () => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        pointToPointTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => { } }));
+        pointToPointTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(singleTicket));
         await netexConvertorHandler(event);
         expect(pointToPointTicketNetexGeneratorSpy).toHaveBeenCalled();
@@ -57,7 +56,7 @@ describe('netexConvertorHandler', () => {
 
     it('should call the periodTicketNetexGenerator when a user uploads info for a geozone period ticket', async () => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => { } }));
+        periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(periodGeoZoneTicket));
         await netexConvertorHandler(event);
         expect(periodTicketNetexGeneratorSpy).toHaveBeenCalled();
@@ -65,7 +64,7 @@ describe('netexConvertorHandler', () => {
 
     it('should call the periodTicketNetexGenerator when a user uploads info for a multiple services period ticket', async () => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => { } }));
+        periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(periodMultipleServicesTicket));
         await netexConvertorHandler(event);
         expect(periodTicketNetexGeneratorSpy).toHaveBeenCalled();
@@ -73,7 +72,7 @@ describe('netexConvertorHandler', () => {
 
     it('should call the periodTicketNetexGenerator when a user uploads info for a flat fare ticket', async () => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => { } }));
+        periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(flatFareTicket));
         await netexConvertorHandler(event);
         expect(periodTicketNetexGeneratorSpy).toHaveBeenCalled();

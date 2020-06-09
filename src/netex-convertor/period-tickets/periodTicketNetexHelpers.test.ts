@@ -3,11 +3,6 @@ import * as netexHelpers from './periodTicketNetexHelpers';
 import { periodGeoZoneTicket, periodMultipleServicesTicket } from '../test-data/matchingData';
 import operatorData from '../test-data/operatorData';
 import {
-    expectedScheduledStopPointsList,
-    expectedTopographicProjectionsList,
-    expectedLinesList,
-    expectedLineRefList,
-    expectedGeoZoneFareTables,
     expectedMultiServiceFareTables,
     expectedSalesOfferPackages,
     expectedGeoZonePreassignedFareProducts,
@@ -26,40 +21,161 @@ describe('periodTicketNetexHelpers', () => {
     describe('getScheduledStopPointsList', () => {
         it('returns a list of NeTEx scheduled stop points given a list of stops', () => {
             const scheduledStopPointsList = netexHelpers.getScheduledStopPointsList(stops);
+            const expectedLength = stops.length;
 
-            expect(scheduledStopPointsList).toEqual(expectedScheduledStopPointsList);
+            expect(scheduledStopPointsList).toHaveLength(expectedLength);
+            scheduledStopPointsList.forEach(scheduledStopPoint => {
+                expect(scheduledStopPoint).toEqual(
+                    expect.objectContaining({
+                        versionRef: 'EXTERNAL',
+                        ref: expect.any(String),
+                        $t: expect.any(String),
+                    }),
+                );
+            });
         });
     });
 
     describe('getTopographicProjectionRefList', () => {
         it('returns a list of NeTEx topographic projections given a list of stops', () => {
             const topographicProjectionsList = netexHelpers.getTopographicProjectionRefList(stops);
+            const expectedLength = stops.length;
 
-            expect(topographicProjectionsList).toEqual(expectedTopographicProjectionsList);
+            expect(topographicProjectionsList).toHaveLength(expectedLength);
+            topographicProjectionsList.forEach(topographicProjection => {
+                expect(topographicProjection).toEqual(
+                    expect.objectContaining({
+                        versionRef: 'nptg:EXTERNAL',
+                        ref: expect.any(String),
+                        $t: expect.any(String),
+                    }),
+                );
+            });
         });
     });
 
     describe('getLinesList', () => {
-        it('returns a list of NeTEx lines given a UserPeriodTicket object', () => {
+        it('returns a list of NeTEx lines given periodMultipleServicesTicket matching data', () => {
+            const expectedLineFormat = {
+                version: '1.0',
+                id: expect.stringContaining('op:'),
+                Name: expect.objectContaining({ $t: expect.any(String) }),
+                Description: { $t: expect.any(String) },
+                Url: expect.objectContaining({ $t: expect.any(String) }),
+                PublicCode: expect.objectContaining({ $t: expect.any(String) }),
+                PrivateCode: expect.objectContaining({ type: 'noc', $t: expect.any(String) }),
+                OperatorRef: { version: '1.0', ref: expect.stringContaining('noc:') },
+                LineType: { $t: 'local' },
+            };
+            const expectedLength = periodMultipleServicesTicket.selectedServices.length;
+
             const linesList = netexHelpers.getLinesList(periodMultipleServicesTicket, opData);
 
-            expect(linesList).toEqual(expectedLinesList);
+            expect(linesList).toHaveLength(expectedLength);
+            linesList.forEach(line => {
+                expect(line).toEqual(expectedLineFormat);
+            });
         });
     });
 
     describe('getLineRefList', () => {
-        it('returns a list of NeTEx line refs given a UserPeriodTicket object', () => {
+        it('returns a list of NeTEx line refs given periodMultipleServicesTicket matching data', () => {
+            const expectLineRefFormat = {
+                version: '1.0',
+                ref: expect.stringContaining('op:'),
+            };
+            const expectedLength = periodMultipleServicesTicket.selectedServices.length;
+
             const lineRefList = netexHelpers.getLineRefList(periodMultipleServicesTicket);
 
-            expect(lineRefList).toEqual(expectedLineRefList);
+            expect(lineRefList).toHaveLength(expectedLength);
+            lineRefList.forEach(lineRef => {
+                expect(lineRef).toEqual(expectLineRefFormat);
+            });
         });
     });
 
     describe('getGeoZoneFareTable', () => {
-        it('returns a fare table for geoZone products', () => {
-            const result = netexHelpers.getGeoZoneFareTable(geoUserPeriodTicket, placeHolderText);
+        it('returns a list of geoFareZoneTable objects for the products defined in periodGeoZoneTicket matching data', () => {
+            const opString = expect.stringContaining('op:');
+            const representingObjectTypeOfTravelDoc = {
+                TypeOfTravelDocumentRef: expect.objectContaining({ ref: opString, version: '1.0' }),
+                UserProfileRef: expect.objectContaining({ ref: opString, version: '1.0' }),
+            };
 
-            expect(result).toEqual(expectedGeoZoneFareTables);
+            const expectedFareTableColumn = (representing: {}): jest.Expect =>
+                expect.objectContaining({
+                    Name: expect.objectContaining({ $t: expect.any(String) }),
+                    id: opString,
+                    representing: expect.objectContaining(representing),
+                    version: '1.0',
+                });
+
+            const geoZoneFareTableFormat = {
+                version: '1.0',
+                id: opString,
+                Name: expect.objectContaining({ $t: expect.any(String) }),
+                specifics: {
+                    TariffZoneRef: { ref: opString, version: '1.0' },
+                },
+                columns: expect.objectContaining({
+                    FareTableColumn: expectedFareTableColumn({
+                        TariffZoneRef: { ref: opString, version: '1.0' },
+                    }),
+                }),
+                includes: {
+                    FareTable: {
+                        Name: { $t: expect.any(String) },
+                        columns: {
+                            FareTableColumn: expectedFareTableColumn(representingObjectTypeOfTravelDoc),
+                        },
+                        id: opString,
+                        includes: {
+                            FareTable: {
+                                Name: { $t: expect.any(String) },
+                                cells: {
+                                    Cell: {
+                                        TimeIntervalPrice: {
+                                            Amount: expect.any(Object),
+                                            TimeIntervalRef: { ref: opString, version: '1.0' },
+                                            id: opString,
+                                            version: '1.0',
+                                        },
+                                        id: opString,
+                                        order: '1',
+                                        version: '1.0',
+                                        ColumnRef: { ref: opString, version: '1.0' },
+                                        RowRef: { ref: opString, version: '1.0' },
+                                    },
+                                },
+                                columns: {
+                                    FareTableColumn: expectedFareTableColumn(representingObjectTypeOfTravelDoc),
+                                },
+                                id: opString,
+                                limitations: {
+                                    UserProfileRef: { ref: opString, version: '1.0' },
+                                },
+                                version: '1.0',
+                            },
+                        },
+                        pricesFor: {
+                            SalesOfferPackageRef: { ref: opString, version: '1.0' },
+                        },
+                        specifics: {
+                            TypeOfTravelDocumentRef: { ref: opString, version: '1.0' },
+                        },
+                        version: '1.0',
+                    },
+                },
+            };
+            const expectedLength = geoUserPeriodTicket.products.length;
+
+            const geoZoneFareTables = netexHelpers.getGeoZoneFareTable(geoUserPeriodTicket, placeHolderText);
+
+            expect(geoZoneFareTables).toHaveLength(expectedLength);
+            geoZoneFareTables.forEach(geoZoneFareTable => {
+                expect(geoZoneFareTable).toEqual(geoZoneFareTableFormat);
+            });
         });
     });
 
@@ -110,8 +226,8 @@ describe('periodTicketNetexHelpers', () => {
     });
 
     describe('getFareStructureElements', () => {
-        it.only('returns a list of fareSructureElements for each product in the products array for multiService', () => {
-            const result = netexHelpers.getFareStructuresElements(multiServicePeriodData, placeHolderText);
+        it('returns a list of fareSructureElements for each product in the products array for multiService', () => {
+            const result = netexHelpers.getFareStructuresElements(periodMultipleServicesTicket, placeHolderText);
 
             expect(result).toEqual(expectedMultiServiceFareStructureElements);
         });

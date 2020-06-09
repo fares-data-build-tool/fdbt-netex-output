@@ -272,13 +272,13 @@ export const expectedInnerFareTables = [
 export const expectedScheduledStopPointsList = [
     {
         versionRef: 'EXTERNAL',
-        ref: 'naptStop:wilajmwd',
-        $t: 'Woodcock Park, Woodcock Road, Warminster',
+        ref: 'naptStop:CHEPJWM',
+        $t: 'The Towers, Park Street, Macclesfield',
     },
     {
         versionRef: 'EXTERNAL',
-        ref: 'naptStop:sglgdjd',
-        $t: 'Ellacombe Road Shops, Ellacombe Road, Longwell Green',
+        ref: 'naptStop:wrgdpma',
+        $t: 'Dog & Partridge, New Manchester Road, Paddington',
     },
     {
         versionRef: 'EXTERNAL',
@@ -287,13 +287,63 @@ export const expectedScheduledStopPointsList = [
     },
     {
         versionRef: 'EXTERNAL',
+        ref: 'naptStop:MANDGADW',
+        $t: 'Bower Fold, Mottram Rd, Bower Fold',
+    },
+    {
+        versionRef: 'EXTERNAL',
+        ref: 'naptStop:MANJTPJW',
+        $t: 'Oak Road, WARBURTON LANE, Partington',
+    },
+    {
+        versionRef: 'EXTERNAL',
+        ref: 'naptStop:MANPATDT',
+        $t: 'Meadow Close, BOOTH ROAD, Little Lever',
+    },
+    {
+        versionRef: 'EXTERNAL',
+        ref: 'naptStop:lanatgjp',
+        $t: 'Church Road, Church Road, Great Plumpton',
+    },
+    {
+        versionRef: 'EXTERNAL',
+        ref: 'naptStop:lanawtwg',
+        $t: 'Hare and Hounds, Whalley Road, Clayton-le-Moors',
+    },
+    {
+        versionRef: 'EXTERNAL',
         ref: 'naptStop:langjpaw',
         $t: 'Skippool Avenue, Breck Road, Poulton-le-Fylde',
     },
     {
         versionRef: 'EXTERNAL',
-        ref: 'naptStop:plygpaj',
-        $t: 'Warleigh Crescent, Looseleigh Lane, Derriford',
+        ref: 'naptStop:lanpamtw',
+        $t: 'Lytham St Annes HTC, Church Road, Ansdell',
+    },
+    {
+        versionRef: 'EXTERNAL',
+        ref: 'naptStop:blpadadw',
+        $t: 'Torsway Avenue, Newton Drive, Kingscote',
+    },
+    {
+        versionRef: 'EXTERNAL',
+        ref: 'naptStop:blpadwgm',
+        $t: 'Spencer Court, Talbot Road, Central',
+    },
+    {
+        versionRef: 'EXTERNAL',
+        ref: 'naptStop:mergjpjd',
+        $t: 'Mesnes Park, Park Road North, Newton le Willows',
+    },
+    {
+        versionRef: 'EXTERNAL',
+        ref: 'naptStop:merdwgmt',
+        $t: 'Grosvenor Road, St Helens Road, Prescot',
+    },
+    {
+        versionRef: 'EXTERNAL',
+        ref: 'naptStop:32900357',
+        $t: 'Campbell Avenue, Hamilton Drive, Holgate',
     },
     {
         versionRef: 'EXTERNAL',
@@ -302,63 +352,13 @@ export const expectedScheduledStopPointsList = [
     },
     {
         versionRef: 'EXTERNAL',
-        ref: 'naptStop:flijmgd',
-        $t: 'Deeside Leisure Centre, Chester Road West, Queensferry',
+        ref: 'naptStop:45010202',
+        $t: 'Main Street St Johns Close, Main Street, Aberford',
     },
     {
-        versionRef: 'EXTERNAL',
-        ref: 'naptStop:32010274',
-        $t: 'Hare & Hounds, Rook Street, Lothersdale',
-    },
-    {
-        versionRef: 'EXTERNAL',
-        ref: 'naptStop:bregdtw',
-        $t: 'Caedu Crossing, Alma Terrace, Ogmore Vale',
-    },
-    {
-        versionRef: 'EXTERNAL',
-        ref: 'naptStop:MANDWAWJ',
-        $t: 'The Summit, TODMORDEN RD, Summit',
-    },
-    {
-        versionRef: 'EXTERNAL',
-        ref: 'naptStop:esxjdwpj',
-        $t: 'Fox & Raven, Chelmer Village Way, Chelmer Village',
-    },
-    {
-        versionRef: 'EXTERNAL',
-        ref: 'naptStop:wardmatm',
-        $t: 'Peake Avenue, St Nicolas Park Drive, Nuneaton',
-    },
-    {
-        versionRef: 'EXTERNAL',
-        ref: 'naptStop:67524289',
-        $t: 'Lyde Road End, A966, Rendall',
-    },
-    {
-        versionRef: 'EXTERNAL',
-        ref: 'naptStop:26426393',
-        $t: 'Crossroads Cottage, B965, Chapelton',
-    },
-    {
-        versionRef: 'EXTERNAL',
-        ref: 'naptStop:22001392',
-        $t: 'Brough Moor Road, Moor Road, Brough',
-    },
-    {
-        versionRef: 'EXTERNAL',
-        ref: 'naptStop:dbsdpgta',
-        $t: 'Bridge End, Derwent Lane, Derwent',
-    },
-    {
-        versionRef: 'EXTERNAL',
-        ref: 'naptStop:CHEPWJP',
-        $t: 'Bus Station, Queen Victoria Street, Macclesfield',
-    },
-    {
-        versionRef: 'EXTERNAL',
-        ref: 'naptStop:',
-        $t: 'Arram Rail Station, -, Arram',
+        a: 'EXTERNAL',
+        b: 'naptStop:45019529',
+        c: 'Midgley Road Spring Villas, Midgley Road, Mytholmroyd',
     },
 ];
 
