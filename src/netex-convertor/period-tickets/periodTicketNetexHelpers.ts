@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {
     Stop,
     Operator,
@@ -595,12 +596,16 @@ const getUserProfile = (userPeriodTicket: PeriodTicket, product: ProductDetails)
         prices: {
             UsageParameterPrice: {
                 version: '1.0',
-                id: `op:${userPeriodTicket.passengerType}`,
+                id: `op:${product.productName}@${userPeriodTicket.passengerType}`,
             },
         },
         TypeOfConcessionRef: {
             version: 'fxc:v1.0',
-            ref: 'fxc:none',
+            ref: `fxc:${
+                userPeriodTicket.passengerType === 'anyone' || userPeriodTicket.passengerType === 'adult'
+                    ? 'none'
+                    : _.snakeCase(userPeriodTicket.passengerType)
+            }`,
         },
     };
     if (userPeriodTicket.ageRange && userPeriodTicket.ageRange === 'Yes') {
@@ -638,7 +643,6 @@ const getEligibilityElement = (userPeriodTicket: PeriodTicket, product: ProductD
         GenericParameterAssignment: {
             id: `op:Tariff@${product.productName}@${userPeriodTicket.passengerType}`,
             version: '1.0',
-            order: '1',
             TypeOfAccessRightAssignmentRef: {
                 version: 'fxc:v1.0',
                 ref: 'fxc:eligible',

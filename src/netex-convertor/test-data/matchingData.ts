@@ -566,6 +566,8 @@ export const returnCircularTicket: ReturnTicket = {
     ],
     inboundFareZones: [],
     passengerType: 'student',
+    proof: 'No',
+    ageRange: 'No',
 };
 
 export const periodGeoZoneTicket: PeriodGeoZoneTicket = {
@@ -785,7 +787,7 @@ export const periodMultipleServicesTicket: PeriodMultipleServicesTicket = {
     ageRangeMin: '12',
     ageRangeMax: '25',
     proof: 'Yes',
-    proofDocuments: ['Membership Card', 'Student Card', 'Identity Document'],
+    proofDocuments: ['membershipCard', 'studentCard', 'identityDocument'],
     selectedServices: [
         { lineName: '35', startDate: '30/03/2020', serviceDescription: 'PRESTON - PRESTON via Fylde Road, Lane Ends' },
         {
