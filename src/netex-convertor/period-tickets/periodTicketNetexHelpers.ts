@@ -588,7 +588,7 @@ const getUserProfile = (userPeriodTicket: PeriodTicket): NetexObject => {
         version: '1.0',
         id: userPeriodTicket.passengerType,
         Name: { $t: userPeriodTicket.passengerType },
-        UserType: userPeriodTicket.passengerType,
+        UserType: { $t: userPeriodTicket.passengerType },
         prices: {
             UsageParameterPrice: {
                 version: '1.0',
@@ -604,20 +604,20 @@ const getUserProfile = (userPeriodTicket: PeriodTicket): NetexObject => {
         if (userPeriodTicket.ageRangeMin) {
             userProfile = {
                 ...userProfile,
-                MinimumAge: userPeriodTicket.ageRangeMin,
+                MinimumAge: { $t: userPeriodTicket.ageRangeMin },
             };
         }
         if (userPeriodTicket.ageRangeMax) {
             userProfile = {
                 ...userProfile,
-                MaximumAge: userPeriodTicket.ageRangeMax,
+                MaximumAge: { $t: userPeriodTicket.ageRangeMax },
             };
         }
     }
     if (userPeriodTicket.proof && userPeriodTicket.proof === 'Yes') {
         userProfile = {
             ...userProfile,
-            ProofRequired: userPeriodTicket.proofDocuments,
+            ProofRequired: { $t: userPeriodTicket.proofDocuments },
         };
     }
     return userProfile;
