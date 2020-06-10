@@ -1171,7 +1171,7 @@
 								<TypeOfConcession version="fxc:v1.0" id="fxc:student">
 									<Name>Student</Name>
 								</TypeOfConcession>
-								<TypeOfConcession version="fxc:v1.0" id="fxc:young_adult">
+								<TypeOfConcession version="fxc:v1.0" id="fxc:young_person">
 									<Name>Youth</Name>
 								</TypeOfConcession>
 								<TypeOfConcession version="fxc:v1.0" id="fxc:senior">
