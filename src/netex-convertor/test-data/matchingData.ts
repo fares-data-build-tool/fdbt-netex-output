@@ -79,7 +79,7 @@ export const singleTicket: SingleTicket = {
             prices: [{ price: '1.30', fareZones: ['Fare Zone 1'] }],
         },
     ],
-    passengerType: 'Anyone',
+    passengerType: 'anyone',
 };
 
 export const returnNonCircularTicket: ReturnTicket = {
@@ -388,7 +388,7 @@ export const returnNonCircularTicket: ReturnTicket = {
             prices: [],
         },
     ],
-    passengerType: 'Anyone',
+    passengerType: 'anyone',
 };
 
 export const returnCircularTicket: ReturnTicket = {
@@ -565,7 +565,7 @@ export const returnCircularTicket: ReturnTicket = {
         },
     ],
     inboundFareZones: [],
-    passengerType: 'Student',
+    passengerType: 'student',
 };
 
 export const periodGeoZoneTicket: PeriodGeoZoneTicket = {
@@ -583,7 +583,7 @@ export const periodGeoZoneTicket: PeriodGeoZoneTicket = {
         { productName: 'Selenium Test Product 3', productPrice: '170', productDuration: '3', productValidity: '24hr' },
         { productName: 'Selenium Test Product 4', productPrice: '15', productDuration: '4', productValidity: '24hr' },
     ],
-    passengerType: 'Student',
+    passengerType: 'student',
     ageRange: 'Yes',
     ageRangeMax: '30',
     proof: 'No',
@@ -780,7 +780,7 @@ export const periodMultipleServicesTicket: PeriodMultipleServicesTicket = {
         { productName: 'Day Rider', productPrice: '12', productDuration: '1', productValidity: '24hr' },
         { productName: 'Weekly Rider', productPrice: '30', productDuration: '7', productValidity: '24hr' },
     ],
-    passengerType: 'Adult',
+    passengerType: 'adult',
     ageRange: 'Yes',
     ageRangeMin: '12',
     ageRangeMax: '25',
@@ -1019,7 +1019,7 @@ export const flatFareTicket: FlatFareTicket = {
         { lineName: 'H20', startDate: '13/04/2020', serviceDescription: 'Murdishaw - Murdishaw' },
         { lineName: 'H20A', startDate: '13/04/2020', serviceDescription: 'Murdishaw - Murdishaw' },
     ],
-    passengerType: 'Anyone',
+    passengerType: 'anyone',
 };
 
 export const periodGeoZoneTicketWithNoType = {
@@ -1046,7 +1046,7 @@ export const periodGeoZoneTicketWithNoType = {
         },
     ],
     nocCode: 'IW1234',
-    passengerType: 'Student',
+    passengerType: 'student',
     ageRange: 'Yes',
     ageRangeMax: '30',
     proof: 'No',
