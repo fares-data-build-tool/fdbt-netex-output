@@ -205,6 +205,7 @@ export const getPreassignedFareProduct = (matchingData: PointToPointTicket): Net
     const ticketUserConcat = `${matchingData.type}_${matchingData.passengerType}`;
     return {
         id: `Trip@${ticketUserConcat}`,
+        version: '1.0',
         Name: {
             $t: `${matchingData.type} Ticket - ${matchingData.passengerType}`,
         },
@@ -214,6 +215,7 @@ export const getPreassignedFareProduct = (matchingData: PointToPointTicket): Net
         validableElements: {
             ValidableElement: {
                 id: `Trip@${ticketUserConcat}@travel`,
+                version: '1.0',
                 Name: { $t: `${matchingData.type} Ride` },
                 fareStructureElements: {
                     FareStructureElementRef: [
@@ -233,6 +235,8 @@ export const getPreassignedFareProduct = (matchingData: PointToPointTicket): Net
         accessRightsInProduct: {
             AccessRightInProduct: {
                 id: `Trip@${ticketUserConcat}`,
+                version: '1.0',
+                order: '1',
                 ValidableElementRef: {
                     ref: `Trip@${ticketUserConcat}@travel`,
                 },
@@ -244,6 +248,7 @@ export const getPreassignedFareProduct = (matchingData: PointToPointTicket): Net
 export const getSalesOfferPackage = (matchingData: PointToPointTicket): NetexObject => {
     const ticketUserConcat = `${matchingData.type}_${matchingData.passengerType}`;
     return {
+        version: '1.0',
         id: `Trip@${ticketUserConcat}-SOP@p-ticket`,
         BrandingRef: {
             ref: `${matchingData.nocCode}@brand`,
@@ -288,8 +293,9 @@ export const getSalesOfferPackage = (matchingData: PointToPointTicket): NetexObj
             SalesOfferPackageElement: {
                 id: `Trip@${ticketUserConcat}-SOP@p-ticket`,
                 version: '1.0',
+                order: '2',
                 TypeOfTravelDocumentRef: {
-                    version: '1.0',
+                    version: 'fxc:v1.0',
                     ref: 'fxc:printed_ticket',
                 },
                 PreassignedFareProductRef: {
@@ -320,7 +326,7 @@ export const getFareTable = (matchingData: PointToPointTicket): NetexObject => {
             },
         },
         usedIn: {
-            TariffRef: { version: '1.0', ref: `op:Tariff@${matchingData.type}@${lineIdName}` },
+            TariffRef: { version: '1.0', ref: `Tariff@${matchingData.type}@${lineIdName}` },
         },
         specifics: {
             LineRef: {
