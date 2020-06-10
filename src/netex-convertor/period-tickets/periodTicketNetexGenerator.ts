@@ -36,7 +36,7 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.OperatorRef.ref = nocCodeNocFormat;
         publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.OperatorRef.$t = opIdNocFormat;
         // below ref is being set to the first product name, so the ID can be found.
-        publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.PreassignedFareProductRef.ref = `op:Pass@${userPeriodTicket.products[0].productName}`;
+        publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.PreassignedFareProductRef.ref = `op:Pass@${userPeriodTicket.products[0].productName}_${userPeriodTicket.passengerType}`;
 
         return publicationRequestToUpdate;
     };

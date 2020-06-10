@@ -90,7 +90,7 @@ export const getGeoZoneFareTable = (
                 pricesFor: {
                     SalesOfferPackageRef: {
                         version: '1.0',
-                        ref: `op:Pass@${product.productName}-SOP@p-ticket`,
+                        ref: `op:Pass@${product.productName}_${userPeriodTicket.passengerType}-SOP@p-ticket`,
                     },
                 },
                 specifics: {
@@ -111,7 +111,7 @@ export const getGeoZoneFareTable = (
                             },
                             UserProfileRef: {
                                 version: '1.0',
-                                ref: `op:${userPeriodTicket.passengerType}`,
+                                ref: `op:${product.productName}@${userPeriodTicket.passengerType}`,
                             },
                         },
                     },
@@ -124,7 +124,7 @@ export const getGeoZoneFareTable = (
                         limitations: {
                             UserProfileRef: {
                                 version: '1.0',
-                                ref: `op:${userPeriodTicket.passengerType}`,
+                                ref: `op:${product.productName}@${userPeriodTicket.passengerType}`,
                             },
                         },
                         columns: {
@@ -139,7 +139,7 @@ export const getGeoZoneFareTable = (
                                     },
                                     UserProfileRef: {
                                         version: '1.0',
-                                        ref: `op:${userPeriodTicket.passengerType}`,
+                                        ref: `op:${product.productName}@${userPeriodTicket.passengerType}`,
                                     },
                                 },
                             },
@@ -206,7 +206,7 @@ const getMultiServiceList = (userPeriodTicket: PeriodMultipleServicesTicket): Ne
                 pricesFor: {
                     SalesOfferPackageRef: {
                         version: '1.0',
-                        ref: `op:Pass@${product.productName}-SOP@p-ticket`,
+                        ref: `op:Pass@${product.productName}_${userPeriodTicket.passengerType}-SOP@p-ticket`,
                     },
                 },
                 specifics: {
@@ -227,7 +227,7 @@ const getMultiServiceList = (userPeriodTicket: PeriodMultipleServicesTicket): Ne
                             },
                             UserProfileRef: {
                                 version: '1.0',
-                                ref: `op:${userPeriodTicket.passengerType}`,
+                                ref: `op:${product.productName}@${userPeriodTicket.passengerType}`,
                             },
                         },
                     },
@@ -240,7 +240,7 @@ const getMultiServiceList = (userPeriodTicket: PeriodMultipleServicesTicket): Ne
                         limitations: {
                             UserProfileRef: {
                                 version: '1.0',
-                                ref: `op:${userPeriodTicket.passengerType}`,
+                                ref: `op:${product.productName}@${userPeriodTicket.passengerType}`,
                             },
                         },
                         columns: {
@@ -255,7 +255,7 @@ const getMultiServiceList = (userPeriodTicket: PeriodMultipleServicesTicket): Ne
                                     },
                                     UserProfileRef: {
                                         version: '1.0',
-                                        ref: `op:${userPeriodTicket.passengerType}`,
+                                        ref: `op:${product.productName}@${userPeriodTicket.passengerType}`,
                                     },
                                 },
                             },
@@ -312,13 +312,13 @@ const getFlatFareList = (userPeriodTicket: PeriodMultipleServicesTicket): NetexO
                 pricesFor: {
                     SalesOfferPackageRef: {
                         version: '1.0',
-                        ref: `op:Pass@${product.productName}-SOP@p-ticket`,
+                        ref: `op:Pass@${product.productName}_${userPeriodTicket.passengerType}-SOP@p-ticket`,
                     },
                 },
                 limitations: {
                     UserProfileRef: {
                         version: '1.0',
-                        ref: `op:${userPeriodTicket.passengerType}`,
+                        ref: `op:${product.productName}@${userPeriodTicket.passengerType}`,
                     },
                 },
                 prices: {
@@ -580,16 +580,16 @@ const getDurationElement = (userPeriodTicket: PeriodTicket, product: ProductDeta
         limitations: {
             UserProfileRef: {
                 version: '1.0',
-                ref: `op:${userPeriodTicket.passengerType}`,
+                ref: `op:${product.productName}@${userPeriodTicket.passengerType}`,
             },
         },
     },
 });
 
-const getUserProfile = (userPeriodTicket: PeriodTicket): NetexObject => {
+const getUserProfile = (userPeriodTicket: PeriodTicket, product: ProductDetails): NetexObject => {
     let userProfile: NetexObject = {
         version: '1.0',
-        id: userPeriodTicket.passengerType,
+        id: `op:${product.productName}@${userPeriodTicket.passengerType}`,
         Name: { $t: userPeriodTicket.passengerType },
         UserType: { $t: userPeriodTicket.passengerType },
         prices: {
@@ -645,7 +645,7 @@ const getEligibilityElement = (userPeriodTicket: PeriodTicket, product: ProductD
             },
             LimitationGroupingType: { $t: 'XOR' },
             limitations: {
-                UserProfile: getUserProfile(userPeriodTicket),
+                UserProfile: getUserProfile(userPeriodTicket, product),
             },
         },
     };

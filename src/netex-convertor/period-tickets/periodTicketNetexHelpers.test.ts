@@ -389,7 +389,7 @@ describe('periodTicketNetexHelpers', () => {
             namesOfTypesOfFareStructureElements.forEach(name => {
                 expect(
                     name === 'Available zones' ||
-                        name === 'Available duration combination - Adult ticket' ||
+                        name.includes('Available duration combination') ||
                         name === 'Eligible user types' ||
                         name === 'Conditions of travel',
                 ).toBeTruthy();
@@ -407,7 +407,7 @@ describe('periodTicketNetexHelpers', () => {
             namesOfTypesOfFareStructureElements.forEach(name => {
                 expect(
                     name === 'Available zones' ||
-                        name === 'Available duration combination - Student ticket' ||
+                        name.includes('Available duration combination') ||
                         name === 'Eligible user types' ||
                         name === 'Conditions of travel',
                 ).toBeTruthy();
