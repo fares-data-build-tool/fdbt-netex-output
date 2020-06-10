@@ -1,5 +1,5 @@
 import * as netexHelpers from './pointToPointTicketNetexHelpers';
-import { FareZone } from '../types';
+import { FareZone, PointToPointTicket } from '../types';
 import { singleTicket, returnNonCircularTicket, returnCircularTicket } from '../test-data/matchingData';
 import { NetexObject } from '../sharedHelpers';
 
@@ -395,7 +395,7 @@ describe('Netex Helpers', () => {
                     MaximumAge: { $t: expect.any(String) },
                     ProofRequired: { $t: [expect.any(String)] },
                 };
-                const ticketWithAgeRangeAndProof = {
+                const ticketWithAgeRangeAndProof: PointToPointTicket = {
                     ...ticket,
                     ageRange: 'Yes',
                     ageRangeMin: '12',
@@ -422,7 +422,7 @@ describe('Netex Helpers', () => {
                     UserType: { $t: expect.any(String) },
                     MinimumAge: { $t: expect.any(String) },
                 };
-                const ticketWithAgeRange = {
+                const ticketWithAgeRange: PointToPointTicket = {
                     ...ticket,
                     ageRange: 'Yes',
                     ageRangeMin: '18',
@@ -465,7 +465,7 @@ describe('Netex Helpers', () => {
                 },
                 accessRightsInProduct: {
                     AccessRightInProduct: {
-                        ref: expect.stringContaining(tripString),
+                        id: expect.stringContaining(tripString),
                         ValidableElementRef: {
                             ref: expect.stringContaining(tripString),
                         },
@@ -484,6 +484,22 @@ describe('Netex Helpers', () => {
             ['return circular ticket', returnCircularTicket],
         ])('should return a sales offer package object object for a %s', (_ticketType, ticket) => {
             const tripString = 'Trip@';
+            const getDistributionAssigmentSchema = (purchaseLocation: string): {} => ({
+                version: '1.0',
+                id: expect.stringContaining(purchaseLocation),
+                order: expect.any(String),
+                Name: { $t: expect.any(String) },
+                Description: { $t: expect.any(String) },
+                DistributionChannelRef: {
+                    ref: expect.stringContaining('fxc:'),
+                    version: 'fxc:v1.0',
+                },
+                PaymentMethods: { $t: 'debitCard creditCard cash' },
+                FulfilmentMethodRef: {
+                    ref: expect.stringContaining('fxc:collect'),
+                    version: 'fxc:v1.0',
+                },
+            });
             const expectedSalesOfferPackage = {
                 id: expect.stringContaining(tripString),
                 BrandingRef: {
@@ -491,13 +507,18 @@ describe('Netex Helpers', () => {
                 },
                 distributionAssignments: {
                     DistributionAssignment: [
-                        { id: expect.stringContaining('@atStop') },
-                        { id: expect.stringContaining('@onBoard') },
+                        getDistributionAssigmentSchema('atStop'),
+                        getDistributionAssigmentSchema('onBoard'),
                     ],
                 },
                 salesOfferPackageElements: {
                     SalesOfferPackageElement: {
                         id: expect.stringContaining(tripString),
+                        version: '1.0',
+                        TypeOfTravelDocumentRef: {
+                            version: '1.0',
+                            ref: 'fxc:printed_ticket',
+                        },
                         PreassignedFareProductRef: {
                             ref: expect.stringContaining(tripString),
                         },

@@ -253,7 +253,7 @@ export const getSalesOfferPackage = (matchingData: PointToPointTicket): NetexObj
                 {
                     version: '1.0',
                     id: `Trip@${ticketUserConcat}-SOP@p-ticket@atStop`,
-                    order: '1',
+                    order: '0',
                     Name: { $t: 'At Stop' },
                     Description: { $t: 'Bought at stop' },
                     DistributionChannelRef: {
@@ -266,7 +266,7 @@ export const getSalesOfferPackage = (matchingData: PointToPointTicket): NetexObj
                         version: 'fxc:v1.0',
                     },
                 },
-                { 
+                {
                     version: '1.0',
                     id: `Trip@${ticketUserConcat}-SOP@p-ticket@onBoard`,
                     order: '1',
@@ -281,7 +281,7 @@ export const getSalesOfferPackage = (matchingData: PointToPointTicket): NetexObj
                         ref: 'fxc:collect_on_board',
                         version: 'fxc:v1.0',
                     },
-             },
+                },
             ],
         },
         salesOfferPackageElements: {
@@ -290,7 +290,7 @@ export const getSalesOfferPackage = (matchingData: PointToPointTicket): NetexObj
                 version: '1.0',
                 TypeOfTravelDocumentRef: {
                     version: '1.0',
-                    ref: 'fxc:printed_ticket'
+                    ref: 'fxc:printed_ticket',
                 },
                 PreassignedFareProductRef: {
                     ref: `Trip@${ticketUserConcat}`,
