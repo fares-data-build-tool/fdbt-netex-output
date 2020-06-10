@@ -394,7 +394,7 @@ const getPeriodTicketFareStructureElementRefs = (
         },
         {
             version: '1.0',
-            ref: `op:Tariff@eligibility@${passengerType}`,
+            ref: `op:Tariff@${product.productName}@eligibility@${passengerType}`,
         },
         {
             version: '1.0',
@@ -419,7 +419,7 @@ const getFlatFareFareStructureElementRefs = (
         },
         {
             version: '1.0',
-            ref: `op:Tariff@eligibility@${passengerType}`,
+            ref: `op:Tariff@${product.productName}@eligibility@${passengerType}`,
         },
         {
             version: '1.0',
@@ -446,7 +446,10 @@ export const getPreassignedFareProducts = (
             elementZeroRef = '';
         }
 
-        if (isGeoZoneTicket || (isMultiServiceTicket && userPeriodTicket.products[0].productDuration)) {
+        if (
+            isGeoZoneTicket(userPeriodTicket) ||
+            (isMultiServiceTicket(userPeriodTicket) && userPeriodTicket.products[0].productDuration)
+        ) {
             fareStructureElementRefs = getPeriodTicketFareStructureElementRefs(elementZeroRef, product, passengerType);
         } else {
             fareStructureElementRefs = getFlatFareFareStructureElementRefs(elementZeroRef, product, passengerType);
@@ -623,17 +626,17 @@ const getUserProfile = (userPeriodTicket: PeriodTicket): NetexObject => {
     return userProfile;
 };
 
-const getEligibilityElement = (userPeriodTicket: PeriodTicket): NetexObject => {
+const getEligibilityElement = (userPeriodTicket: PeriodTicket, product: ProductDetails): NetexObject => {
     return {
         version: '1.0',
-        id: `op:Tariff@eligibility@${userPeriodTicket.passengerType}`,
+        id: `op:Tariff@${product.productName}@eligibility@${userPeriodTicket.passengerType}`,
         Name: { $t: 'Eligible user types' },
         TypeOfFareStructureElementRef: {
             version: 'fxc:v1.0',
             ref: 'fxc:eligibility',
         },
         GenericParameterAssignment: {
-            id: `op:Tariff@eligibility@${userPeriodTicket.passengerType}`,
+            id: `op:Tariff@${product.productName}@${userPeriodTicket.passengerType}`,
             version: '1.0',
             order: '1',
             TypeOfAccessRightAssignmentRef: {
@@ -704,12 +707,11 @@ export const getFareStructuresElements = (
     placeHolderGroupOfProductsName: string,
 ): NetexObject[] => {
     const arrayOfArraysOfFareStructureElements = userPeriodTicket.products.map((product: ProductDetails) => {
-        // FareStructureElement 1 - availability
-        let id = '';
+        let availabilityElementId = '';
         let validityParametersObject: {} = {};
         let validityParameterGroupingType = '';
         if (isGeoZoneTicket(userPeriodTicket)) {
-            id = `Tariff@${product.productName}@access_zones`;
+            availabilityElementId = `Tariff@${product.productName}@access_zones`;
             validityParameterGroupingType = 'XOR';
             validityParametersObject = {
                 FareZoneRef: {
@@ -718,7 +720,7 @@ export const getFareStructuresElements = (
                 },
             };
         } else if (isMultiServiceTicket(userPeriodTicket)) {
-            id = `Tariff@${product.productName}@access_lines`;
+            availabilityElementId = `Tariff@${product.productName}@access_lines`;
             validityParameterGroupingType = 'OR';
             validityParametersObject = { LineRef: getLineRefList(userPeriodTicket) };
         }
@@ -727,15 +729,15 @@ export const getFareStructuresElements = (
             (isMultiServiceTicket(userPeriodTicket) && userPeriodTicket.products[0].productDuration)
         ) {
             return [
-                getAvailabilityElement(id, validityParameterGroupingType, validityParametersObject),
+                getAvailabilityElement(availabilityElementId, validityParameterGroupingType, validityParametersObject),
                 getDurationElement(userPeriodTicket, product),
-                getEligibilityElement(userPeriodTicket),
+                getEligibilityElement(userPeriodTicket, product),
                 getConditionsElement(product),
             ];
         }
         return [
-            getAvailabilityElement(id, validityParameterGroupingType, validityParametersObject),
-            getEligibilityElement(userPeriodTicket),
+            getAvailabilityElement(availabilityElementId, validityParameterGroupingType, validityParametersObject),
+            getEligibilityElement(userPeriodTicket, product),
             getConditionsElement(product),
         ];
     });
