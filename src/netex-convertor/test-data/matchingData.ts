@@ -82,7 +82,7 @@ export const singleTicket: SingleTicket = {
     passengerType: 'Anyone',
 };
 
-export const returnTicket: ReturnTicket = {
+export const returnNonCircularTicket: ReturnTicket = {
     lineName: '16',
     nocCode: 'PBLT',
     operatorShortName: 'Rotala Preston Bus',
@@ -389,6 +389,183 @@ export const returnTicket: ReturnTicket = {
         },
     ],
     passengerType: 'Anyone',
+};
+
+export const returnCircularTicket: ReturnTicket = {
+    lineName: '709',
+    nocCode: 'WBTR',
+    operatorShortName: "Warrington's Own Buses",
+    serviceDescription: 'Warrington Road / Dunbeath Avenue - Prescot Road / Regents Road',
+    type: 'return',
+    outboundFareZones: [
+        {
+            name: 'Shott Drive',
+            stops: [
+                {
+                    stopName: 'Dunbeath Avenue',
+                    naptanCode: 'meragptp',
+                    atcoCode: '2800S14038B',
+                    localityCode: 'N0071071',
+                    localityName: 'Rainhill Stoops',
+                    parentLocalityName: 'Rainhill',
+                    indicator: 'opp',
+                    street: 'Warrington Road',
+                    qualifierName: '',
+                },
+            ],
+            prices: [
+                {
+                    price: '1.10',
+                    fareZones: ['The Stag pub', 'Frederick Drive', 'Red Lane'],
+                },
+                {
+                    price: '1.70',
+                    fareZones: ['Rail Station', 'Redtree Street', 'Park Lane', 'Daws Bank/Plough Ave'],
+                },
+            ],
+        },
+        {
+            name: 'The Stag pub',
+            stops: [
+                {
+                    stopName: 'Stratton Drive',
+                    naptanCode: 'mergjtad',
+                    atcoCode: '2800S13247A',
+                    localityCode: 'E0029906',
+                    localityName: 'Thatto Heath',
+                    parentLocalityName: 'St Helens',
+                    indicator: 'opp',
+                    street: 'Elton Head Road',
+                    qualifierName: '',
+                },
+            ],
+            prices: [
+                { price: '1.10', fareZones: ['Frederick Drive', 'Red Lane'] },
+                {
+                    price: '1.70',
+                    fareZones: ['Rail Station', 'Redtree Street', 'Park Lane', 'Daws Bank/Plough Ave'],
+                },
+            ],
+        },
+        {
+            name: 'Frederick Drive',
+            stops: [
+                {
+                    stopName: 'Elton Head Road',
+                    naptanCode: 'meragmjm',
+                    atcoCode: '2800S14005A',
+                    localityCode: 'E0052697',
+                    localityName: 'Rainhill',
+                    parentLocalityName: '',
+                    indicator: 'adj',
+                    street: 'Rainhill Road',
+                    qualifierName: '',
+                },
+            ],
+            prices: [
+                {
+                    price: '1.10',
+                    fareZones: ['Red Lane', 'Rail Station', 'Redtree Street'],
+                },
+                { price: '1.70', fareZones: ['Park Lane', 'Daws Bank/Plough Ave'] },
+            ],
+        },
+        {
+            name: 'Red Lane',
+            stops: [
+                {
+                    stopName: 'Wedgewood Gardens',
+                    naptanCode: 'meragpdt',
+                    atcoCode: '2800S14023A',
+                    localityCode: 'E0029827',
+                    localityName: 'Nutgrove',
+                    parentLocalityName: 'Thatto Heath',
+                    indicator: 'nr',
+                    street: 'Rainhill Road',
+                    qualifierName: '',
+                },
+            ],
+            prices: [
+                { price: '1.10', fareZones: ['Rail Station', 'Redtree Street'] },
+                { price: '1.70', fareZones: ['Park Lane', 'Daws Bank/Plough Ave'] },
+            ],
+        },
+        {
+            name: 'Rail Station',
+            stops: [
+                {
+                    stopName: 'Foxwood',
+                    naptanCode: 'meragmjd',
+                    atcoCode: '2800S14004A',
+                    localityCode: 'E0029906',
+                    localityName: 'Thatto Heath',
+                    parentLocalityName: 'St Helens',
+                    indicator: 'adj',
+                    street: 'Nutgrove Road',
+                    qualifierName: '',
+                },
+            ],
+            prices: [
+                {
+                    price: '1.00',
+                    fareZones: ['Redtree Street', 'Park Lane', 'Daws Bank/Plough Ave'],
+                },
+            ],
+        },
+        {
+            name: 'Redtree Street',
+            stops: [
+                {
+                    stopName: 'Edge Street',
+                    naptanCode: 'meragmgw',
+                    atcoCode: '2800S14003A',
+                    localityCode: 'E0029906',
+                    localityName: 'Thatto Heath',
+                    parentLocalityName: 'St Helens',
+                    indicator: 'adj',
+                    street: 'Nutgrove Road',
+                    qualifierName: '',
+                },
+            ],
+            prices: [{ price: '1.00', fareZones: ['Park Lane', 'Daws Bank/Plough Ave'] }],
+        },
+        {
+            name: 'Park Lane',
+            stops: [
+                {
+                    stopName: 'Scholes Lane',
+                    naptanCode: 'meradtpj',
+                    atcoCode: '2800S13025C',
+                    localityCode: 'E0029906',
+                    localityName: 'Thatto Heath',
+                    parentLocalityName: 'St Helens',
+                    indicator: 'adj',
+                    street: 'Nutgrove Road',
+                    qualifierName: '',
+                },
+            ],
+            prices: [{ price: '1.00', fareZones: ['Daws Bank/Plough Ave'] }],
+        },
+        {
+            name: 'Daws Bank/Plough Ave',
+            stops: [
+                {
+                    stopName: 'Thatto Heath Station',
+                    naptanCode: 'mergjwda',
+                    atcoCode: '2800S16052A',
+                    localityCode: 'E0029906',
+                    localityName: 'Thatto Heath',
+                    parentLocalityName: 'St Helens',
+                    indicator: 'Stop A',
+                    street: 'Thatto Heath Road',
+                    qualifierName: '',
+                },
+            ],
+            prices: [],
+        },
+    ],
+    inboundFareZones: [],
+    passengerType: 'Student',
 };
 
 export const periodGeoZoneTicket: PeriodGeoZoneTicket = {

@@ -176,26 +176,26 @@ export const getUserProfile = (matchingData: PointToPointTicket): NetexObject =>
         version: '1.0',
         id: matchingData.passengerType,
         Name: { $t: matchingData.passengerType },
-        UserType: matchingData.passengerType,
+        UserType: { $t: matchingData.passengerType },
     };
     if (matchingData.ageRange && matchingData.ageRange === 'Yes') {
         if (matchingData.ageRangeMin) {
             userProfile = {
                 ...userProfile,
-                MinimumAge: matchingData.ageRangeMin,
+                MinimumAge: { $t: matchingData.ageRangeMin },
             };
         }
         if (matchingData.ageRangeMax) {
             userProfile = {
                 ...userProfile,
-                MaximumAge: matchingData.ageRangeMax,
+                MaximumAge: { $t: matchingData.ageRangeMax },
             };
         }
     }
     if (matchingData.proof && matchingData.proof === 'Yes') {
         userProfile = {
             ...userProfile,
-            ProofRequired: matchingData.proofDocuments,
+            ProofRequired: { $t: matchingData.proofDocuments },
         };
     }
     return userProfile;
@@ -214,7 +214,7 @@ export const getPreassignedFareProduct = (matchingData: PointToPointTicket): Net
         validableElements: {
             ValidableElement: {
                 id: `Trip@${ticketUserConcat}@travel`,
-                Name: `${matchingData.type} Ride`,
+                Name: { $t: `${matchingData.type} Ride` },
                 fareStructureElements: {
                     FareStructureElementRef: [
                         {
@@ -285,7 +285,7 @@ export const getFareTable = (matchingData: PointToPointTicket): NetexObject => {
             },
         },
         usedIn: {
-            TariffRef: `Tariff@${matchingData.type}@${lineIdName}`,
+            TariffRef: { version: '1.0', ref: `op:Tariff@${matchingData.type}@${lineIdName}` },
         },
         specifics: {
             LineRef: {

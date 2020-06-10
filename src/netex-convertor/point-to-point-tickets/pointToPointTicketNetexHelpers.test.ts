@@ -1,6 +1,6 @@
 import * as netexHelpers from './pointToPointTicketNetexHelpers';
 import { FareZone } from '../types';
-import { singleTicket } from '../test-data/matchingData';
+import { singleTicket, returnNonCircularTicket, returnCircularTicket } from '../test-data/matchingData';
 import { NetexObject } from '../sharedHelpers';
 
 describe('Netex Helpers', () => {
@@ -357,6 +357,202 @@ describe('Netex Helpers', () => {
             cells.forEach(cell => {
                 expect(cell).toEqual(expectedCellFormat);
             });
+        });
+    });
+
+    describe('getUserProfile', () => {
+        it.each([
+            ['single ticket', singleTicket],
+            ['return non-circular ticket', returnNonCircularTicket],
+            ['return circular ticket', returnCircularTicket],
+        ])(
+            'should return a user profile for %s with no age range or proof documents defined when they are missing',
+            (_ticketType, ticket) => {
+                const expectedUserProfile = {
+                    version: '1.0',
+                    id: expect.any(String),
+                    Name: { $t: expect.any(String) },
+                    UserType: { $t: expect.any(String) },
+                };
+                const actualUserProfile = netexHelpers.getUserProfile(ticket);
+                expect(actualUserProfile).toEqual(expectedUserProfile);
+            },
+        );
+
+        it.each([
+            ['single ticket', singleTicket],
+            ['return non-circular ticket', returnNonCircularTicket],
+            ['return circular ticket', returnCircularTicket],
+        ])(
+            'should return a user profile for %s with an age range and proof documents defined if they are given',
+            (_ticketType, ticket) => {
+                const expectedUserProfile = {
+                    version: '1.0',
+                    id: expect.any(String),
+                    Name: { $t: expect.any(String) },
+                    UserType: { $t: expect.any(String) },
+                    MinimumAge: { $t: expect.any(String) },
+                    MaximumAge: { $t: expect.any(String) },
+                    ProofRequired: { $t: [expect.any(String)] },
+                };
+                const ticketWithAgeRangeAndProof = {
+                    ...ticket,
+                    ageRange: 'Yes',
+                    ageRangeMin: '12',
+                    ageRangeMax: '45',
+                    proof: 'Yes',
+                    proofDocuments: ['Membership Card'],
+                };
+                const actualUserProfile = netexHelpers.getUserProfile(ticketWithAgeRangeAndProof);
+                expect(actualUserProfile).toEqual(expectedUserProfile);
+            },
+        );
+
+        it.each([
+            ['single ticket', singleTicket],
+            ['return non-circular ticket', returnNonCircularTicket],
+            ['return circular ticket', returnCircularTicket],
+        ])(
+            'should return a user profile for %s with only an age range defined if it is given and proof documents are missing',
+            (_ticketType, ticket) => {
+                const expectedUserProfile = {
+                    version: '1.0',
+                    id: expect.any(String),
+                    Name: { $t: expect.any(String) },
+                    UserType: { $t: expect.any(String) },
+                    MinimumAge: { $t: expect.any(String) },
+                };
+                const ticketWithAgeRange = {
+                    ...ticket,
+                    ageRange: 'Yes',
+                    ageRangeMin: '18',
+                };
+                const actualUserProfile = netexHelpers.getUserProfile(ticketWithAgeRange);
+                expect(actualUserProfile).toEqual(expectedUserProfile);
+            },
+        );
+    });
+
+    describe('getPreassignedFareProduct', () => {
+        it.each([
+            ['single ticket', singleTicket],
+            ['return non-circular ticket', returnNonCircularTicket],
+            ['return circular ticket', returnCircularTicket],
+        ])('should return a preassigned fare product object for a %s', (_ticketType, ticket) => {
+            const tripString = 'Trip@';
+            const expectedPreassignedFareProduct = {
+                id: expect.stringContaining(tripString),
+                Name: { $t: expect.any(String) },
+                TypeOfFareProductRef: { ref: expect.stringContaining('fxc:standard_product@trip@') },
+                validableElements: {
+                    ValidableElement: {
+                        id: expect.stringContaining(tripString),
+                        Name: { $t: expect.any(String) },
+                        fareStructureElements: {
+                            FareStructureElementRef: [
+                                {
+                                    ref: expect.stringContaining('@lines'),
+                                },
+                                {
+                                    ref: expect.stringContaining('@eligibility'),
+                                },
+                                {
+                                    ref: expect.stringContaining('@conditions_of_travel'),
+                                },
+                            ],
+                        },
+                    },
+                },
+                accessRightsInProduct: {
+                    AccessRightInProduct: {
+                        ref: expect.stringContaining(tripString),
+                        ValidableElementRef: {
+                            ref: expect.stringContaining(tripString),
+                        },
+                    },
+                },
+            };
+            const actualPreassignedFareProduct = netexHelpers.getPreassignedFareProduct(ticket);
+            expect(actualPreassignedFareProduct).toEqual(expectedPreassignedFareProduct);
+        });
+    });
+
+    describe('getSalesOfferPackage', () => {
+        it.each([
+            ['single ticket', singleTicket],
+            ['return non-circular ticket', returnNonCircularTicket],
+            ['return circular ticket', returnCircularTicket],
+        ])('should return a sales offer package object object for a %s', (_ticketType, ticket) => {
+            const tripString = 'Trip@';
+            const expectedSalesOfferPackage = {
+                id: expect.stringContaining(tripString),
+                BrandingRef: {
+                    ref: expect.stringContaining('@brand'),
+                },
+                distributionAssignments: {
+                    DistributionAssignment: [
+                        { id: expect.stringContaining('@atStop') },
+                        { id: expect.stringContaining('@onBoard') },
+                    ],
+                },
+                salesOfferPackageElements: {
+                    SalesOfferPackageElement: {
+                        id: expect.stringContaining(tripString),
+                        PreassignedFareProductRef: {
+                            ref: expect.stringContaining(tripString),
+                        },
+                    },
+                },
+            };
+            const actualSalesOfferPackage = netexHelpers.getSalesOfferPackage(ticket);
+            expect(actualSalesOfferPackage).toEqual(expectedSalesOfferPackage);
+        });
+    });
+
+    describe('getFareTable', () => {
+        it.each([
+            ['single ticket', singleTicket],
+            ['return non-circular ticket', returnNonCircularTicket],
+            ['return circular ticket', returnCircularTicket],
+        ])('should return a fare table object object for a %s', (_ticketType, ticket) => {
+            const tripString = 'Trip@';
+            const expectedFareTable = {
+                id: expect.stringContaining(tripString),
+                Name: { $t: expect.any(String) },
+                Description: {
+                    $t: expect.any(String),
+                },
+                pricesFor: {
+                    PreassignedFareProductRef: {
+                        ref: expect.stringContaining(tripString),
+                    },
+                    SalesOfferPackageRef: {
+                        ref: expect.stringContaining(tripString),
+                    },
+                    UserProfileRef: {
+                        ref: expect.any(String),
+                    },
+                },
+                usedIn: {
+                    TariffRef: { version: '1.0', ref: expect.stringContaining('op:Tariff') },
+                },
+                specifics: {
+                    LineRef: {
+                        ref: expect.any(String),
+                    },
+                },
+                columns: {
+                    FareTableColumn: expect.any(Array),
+                },
+                rows: {
+                    FareTableRow: expect.any(Array),
+                },
+                includes: {
+                    FareTable: expect.any(Array),
+                },
+            };
+            const actualFareTable = netexHelpers.getFareTable(ticket);
+            expect(actualFareTable).toEqual(expectedFareTable);
         });
     });
 });
