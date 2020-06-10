@@ -232,7 +232,7 @@ export const getPreassignedFareProduct = (matchingData: PointToPointTicket): Net
         },
         accessRightsInProduct: {
             AccessRightInProduct: {
-                ref: `Trip@${ticketUserConcat}`,
+                id: `Trip@${ticketUserConcat}`,
                 ValidableElementRef: {
                     ref: `Trip@${ticketUserConcat}@travel`,
                 },
@@ -250,13 +250,48 @@ export const getSalesOfferPackage = (matchingData: PointToPointTicket): NetexObj
         },
         distributionAssignments: {
             DistributionAssignment: [
-                { id: `Trip@${ticketUserConcat}-SOP@p-ticket@atStop` },
-                { id: `Trip@${ticketUserConcat}-SOP@p-ticket@onBoard` },
+                {
+                    version: '1.0',
+                    id: `Trip@${ticketUserConcat}-SOP@p-ticket@atStop`,
+                    order: '1',
+                    Name: { $t: 'At Stop' },
+                    Description: { $t: 'Bought at stop' },
+                    DistributionChannelRef: {
+                        ref: 'fxc:at_stop',
+                        version: 'fxc:v1.0',
+                    },
+                    PaymentMethods: { $t: 'debitCard creditCard cash' },
+                    FulfilmentMethodRef: {
+                        ref: 'fxc:collect_from_machine',
+                        version: 'fxc:v1.0',
+                    },
+                },
+                { 
+                    version: '1.0',
+                    id: `Trip@${ticketUserConcat}-SOP@p-ticket@onBoard`,
+                    order: '1',
+                    Name: { $t: 'Onboard' },
+                    Description: { $t: 'Bought onboard' },
+                    DistributionChannelRef: {
+                        ref: 'fxc:on_board',
+                        version: 'fxc:v1.0',
+                    },
+                    PaymentMethods: { $t: 'debitCard creditCard cash' },
+                    FulfilmentMethodRef: {
+                        ref: 'fxc:collect_on_board',
+                        version: 'fxc:v1.0',
+                    },
+             },
             ],
         },
         salesOfferPackageElements: {
             SalesOfferPackageElement: {
                 id: `Trip@${ticketUserConcat}-SOP@p-ticket`,
+                version: '1.0',
+                TypeOfTravelDocumentRef: {
+                    version: '1.0',
+                    ref: 'fxc:printed_ticket'
+                },
                 PreassignedFareProductRef: {
                     ref: `Trip@${ticketUserConcat}`,
                 },
