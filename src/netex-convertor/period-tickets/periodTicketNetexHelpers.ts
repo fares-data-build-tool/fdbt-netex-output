@@ -543,7 +543,7 @@ const getAvailabilityElement = (
     },
 });
 
-const getDurationElement = (userPeriodTicket: PeriodTicket, product: ProductDetails): NetexObject => ({
+const getDurationElement = (userPeriodTicket: PeriodTicket, product: ProductDetails, index: number): NetexObject => ({
     version: '1.0',
     id: `op:Tariff@${product.productName}@durations@${userPeriodTicket.passengerType}`,
     Name: { $t: `Available duration combination - ${userPeriodTicket.passengerType} ticket` },
@@ -566,7 +566,7 @@ const getDurationElement = (userPeriodTicket: PeriodTicket, product: ProductDeta
     GenericParameterAssignment: {
         id: `op:Tariff@${product.productName}@${userPeriodTicket.passengerType}`,
         version: '1.0',
-        order: '1',
+        order: `${index + 1}`,
         Description: {
             $t: `${userPeriodTicket.passengerType} cash ticket ${
                 product.productDuration ? `available for ${product.productDuration} day${product.productDuration}` : ''
@@ -616,7 +616,7 @@ const getUserProfile = (userPeriodTicket: PeriodTicket, product: ProductDetails)
     return userProfile;
 };
 
-const getEligibilityElement = (userPeriodTicket: PeriodTicket, product: ProductDetails): NetexObject => {
+const getEligibilityElement = (userPeriodTicket: PeriodTicket, product: ProductDetails, index: number): NetexObject => {
     return {
         version: '1.0',
         id: `op:Tariff@${product.productName}@eligibility@${userPeriodTicket.passengerType}`,
@@ -628,6 +628,7 @@ const getEligibilityElement = (userPeriodTicket: PeriodTicket, product: ProductD
         GenericParameterAssignment: {
             id: `op:Tariff@${product.productName}@${userPeriodTicket.passengerType}`,
             version: '1.0',
+            order: `${index + 2}`,
             TypeOfAccessRightAssignmentRef: {
                 version: 'fxc:v1.0',
                 ref: 'fxc:eligible',
@@ -695,7 +696,7 @@ export const getFareStructuresElements = (
     userPeriodTicket: PeriodTicket,
     placeHolderGroupOfProductsName: string,
 ): NetexObject[] => {
-    const arrayOfArraysOfFareStructureElements = userPeriodTicket.products.map((product: ProductDetails) => {
+    const arrayOfArraysOfFareStructureElements = userPeriodTicket.products.map((product: ProductDetails, index) => {
         let availabilityElementId = '';
         let validityParametersObject: {} = {};
         let validityParameterGroupingType = '';
@@ -719,14 +720,14 @@ export const getFareStructuresElements = (
         ) {
             return [
                 getAvailabilityElement(availabilityElementId, validityParameterGroupingType, validityParametersObject),
-                getDurationElement(userPeriodTicket, product),
-                getEligibilityElement(userPeriodTicket, product),
+                getDurationElement(userPeriodTicket, product, index),
+                getEligibilityElement(userPeriodTicket, product, index),
                 getConditionsElement(product),
             ];
         }
         return [
             getAvailabilityElement(availabilityElementId, validityParameterGroupingType, validityParametersObject),
-            getEligibilityElement(userPeriodTicket, product),
+            getEligibilityElement(userPeriodTicket, product, index),
             getConditionsElement(product),
         ];
     });
