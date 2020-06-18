@@ -27,37 +27,31 @@ provider:
               - ses:SendRawEmail
           Resource:
               - '*'
+    s3:
+        matchingDataBucket:
+            name: fdbt-matching-data-${self:provider.stage}
+            bucketEncryption:
+                ServerSideEncryptionConfiguration:
+                    - ServerSideEncryptionByDefault:
+                          SSEAlgorithm: AES256
+            lifecycleConfiguration:
+                Rules:
+                    - Id: ExpiryRule
+                      Status: Enabled
+                      ExpirationInDays: '60'
 
-resources:
-    Resources:
-        MatchingDataBucket:
-            Type: AWS::S3::Bucket
-            Properties:
-                BucketName: fdbt-matching-data-${self:provider.stage}
-                BucketEncryption:
-                    ServerSideEncryptionConfiguration:
-                        - ServerSideEncryptionByDefault:
-                              SSEAlgorithm: AES256
-                LifecycleConfiguration:
-                    Rules:
-                        - Id: ExpiryRule
-                          Status: Enabled
-                          ExpirationInDays: '60'
-
-        NetexDataBucket:
-            Type: AWS::S3::Bucket
-            Properties:
-                BucketName: fdbt-netex-data-${self:provider.stage}
-                BucketEncryption:
-                    ServerSideEncryptionConfiguration:
-                        - ServerSideEncryptionByDefault:
-                              SSEAlgorithm: AES256
+        netexDataBucket:
+            name: fdbt-netex-data-${self:provider.stage}
+            bucketEncryption:
+                ServerSideEncryptionConfiguration:
+                    - ServerSideEncryptionByDefault:
+                          SSEAlgorithm: AES256
 
 functions:
     NetexConvertor:
         handler: src/netex-convertor/handler.netexConvertorHandler
         events:
-            - s3: MatchingDataBucket
+            - s3: matchingDataBucket
               event: s3:ObjectCreated:*
         vpc:
             securityGroupIds:
@@ -74,7 +68,7 @@ functions:
     OdhUploader:
         handler: src/odh-uploader/handler.odhUploaderHandler
         events:
-            - s3: NetexDataBucket
+            - s3: netexDataBucket
               event: s3:ObjectCreated:*
 
 plugins:
