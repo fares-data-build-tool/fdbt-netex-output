@@ -30,6 +30,11 @@ provider:
     s3:
         matchingDataBucket:
             name: fdbt-matching-data-${self:provider.stage}
+            publicAccessBlockConfiguration:
+                BlockPublicAcls: true
+                BlockPublicPolicy: true
+                IgnorePublicAcls: true
+                RestrictPublicBuckets: true
             bucketEncryption:
                 ServerSideEncryptionConfiguration:
                     - ServerSideEncryptionByDefault:
@@ -42,6 +47,11 @@ provider:
 
         netexDataBucket:
             name: fdbt-netex-data-${self:provider.stage}
+            publicAccessBlockConfiguration:
+                BlockPublicAcls: true
+                BlockPublicPolicy: true
+                IgnorePublicAcls: true
+                RestrictPublicBuckets: true
             bucketEncryption:
                 ServerSideEncryptionConfiguration:
                     - ServerSideEncryptionByDefault:

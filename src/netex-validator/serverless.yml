@@ -28,6 +28,11 @@ provider:
     s3:
         unvalidatedNetexDataBucket:
             name: fdbt-unvalidated-netex-data-${self:provider.stage}
+            publicAccessBlockConfiguration:
+                BlockPublicAcls: true
+                BlockPublicPolicy: true
+                IgnorePublicAcls: true
+                RestrictPublicBuckets: true
             bucketEncryption:
                 ServerSideEncryptionConfiguration:
                     - ServerSideEncryptionByDefault:
