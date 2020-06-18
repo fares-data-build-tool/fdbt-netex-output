@@ -28,11 +28,36 @@ provider:
           Resource:
               - '*'
 
+resources:
+    Resources:
+        MatchingDataBucket:
+            Type: AWS::S3::Bucket
+            Properties:
+                BucketName: fdbt-matching-data-${self:provider.stage}
+                BucketEncryption:
+                    ServerSideEncryptionConfiguration:
+                        - ServerSideEncryptionByDefault:
+                              SSEAlgorithm: AES256
+                LifecycleConfiguration:
+                    Rules:
+                        - Id: ExpiryRule
+                          Status: Enabled
+                          ExpirationInDays: '60'
+
+        NetexDataBucket:
+            Type: AWS::S3::Bucket
+            Properties:
+                BucketName: fdbt-netex-data-${self:provider.stage}
+                BucketEncryption:
+                    ServerSideEncryptionConfiguration:
+                        - ServerSideEncryptionByDefault:
+                              SSEAlgorithm: AES256
+
 functions:
     NetexConvertor:
         handler: src/netex-convertor/handler.netexConvertorHandler
         events:
-            - s3: fdbt-matching-data-${self:provider.stage}
+            - s3: MatchingDataBucket
               event: s3:ObjectCreated:*
         vpc:
             securityGroupIds:
@@ -49,7 +74,7 @@ functions:
     OdhUploader:
         handler: src/odh-uploader/handler.odhUploaderHandler
         events:
-            - s3: fdbt-netex-data-${self:provider.stage}
+            - s3: NetexDataBucket
               event: s3:ObjectCreated:*
 
 plugins:

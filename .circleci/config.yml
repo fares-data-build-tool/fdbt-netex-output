@@ -162,6 +162,7 @@ workflows:
                       branches:
                           only:
                               - develop
+                              - secure-bucket
 
             - hold-netex-validator-preprod-deployment:
                   type: approval
@@ -201,6 +202,7 @@ workflows:
                       branches:
                           only:
                               - develop
+                              - secure-bucket
 
             - hold-preprod-deployment:
                   type: approval
