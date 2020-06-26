@@ -18,7 +18,7 @@ const uploadToS3 = async (netex: string, fileName: string): Promise<void> => {
     );
 };
 
-const generateFileName = (nocCode: string, type: string, uuid: string): string =>
+export const generateFileName = (nocCode: string, type: string, uuid: string): string =>
     `${nocCode}/${type}/${uuid}-${Date.now()}.xml`;
 
 export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
