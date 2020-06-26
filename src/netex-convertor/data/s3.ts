@@ -33,7 +33,6 @@ export const fetchDataFromS3 = async (event: S3Event): Promise<any> => {
                     .promise()
             ).Body?.toString('utf-8') ?? '';
         const dataAsJson: JSON = JSON.parse(dataAsString);
-        console.log('data as json', dataAsJson);
         return dataAsJson;
     } catch (err) {
         throw new Error(`Error in retrieving data. ${err.stack}`);
