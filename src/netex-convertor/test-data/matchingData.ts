@@ -802,8 +802,8 @@ export const periodMultipleServicesTicket: PeriodMultipleServicesTicket = {
             serviceDescription: 'MYERSCOUGH COLLEGE - BARTON GRANGE CENTRE - MYERSCOUGH COLLEGE',
         },
         {
-            lineName: '656',
-            serviceCode: 'NW_05_BLAC_656_1',
+            lineName: '35',
+            serviceCode: 'NW_05_BLAC_35_1',
             startDate: '09/01/2017',
             serviceDescription: 'BROADGATE - LEA - ASHTON - ARCHBISHOP TEMPLE HS',
         },
@@ -814,9 +814,9 @@ export const periodMultipleServicesTicket: PeriodMultipleServicesTicket = {
             serviceDescription: 'WALMER BRIDGE - PENWORTHAM ALL HALLOWS RCHS  ',
         },
         {
-            lineName: '112',
-            serviceCode: 'NW_05_BLAC_112_1',
-            startDate: '28/03/2020',
+            lineName: '401',
+            serviceCode: 'NW_05_BLAC_401_2',
+            startDate: '03/09/2018',
             serviceDescription:
                 'PRESTON - MOSS SIDE via Frenchwood, Walton le Dale, Walton Summit, Clayton Green, Runshaw College, Midge Hall',
         },
@@ -993,9 +993,9 @@ export const flatFareTicket: FlatFareTicket = {
             serviceDescription: 'Alder Hey Road / De La Salle School - News Lane / Hydes Brow',
         },
         {
-            lineName: '751',
-            serviceCode: 'NW_05_BLAC_751_1',
-            startDate: '02/03/2020',
+            lineName: '709',
+            serviceCode: 'NW_05_BLAC_709_1',
+            startDate: '09/03/2021',
             serviceDescription: 'Alder Hey Road / De La Salle School - Warrington Road / Lawton Road',
         },
         {
@@ -1005,8 +1005,8 @@ export const flatFareTicket: FlatFareTicket = {
             serviceDescription: 'Alder Hey Road / De La Salle School - Forest Road / Shakespeare Road',
         },
         {
-            lineName: '755',
-            serviceCode: 'NW_05_BLAC_755_1',
+            lineName: '743',
+            serviceCode: 'NW_05_BLAC_743_2',
             startDate: '02/03/2020',
             serviceDescription: 'Alder Hey Road / De La Salle School - St Helens Junction Rail Station/ Station Road',
         },
