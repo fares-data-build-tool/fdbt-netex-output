@@ -80,6 +80,8 @@ functions:
         events:
             - s3: netexDataBucket
               event: s3:ObjectCreated:*
+        environment:
+            MATCHING_DATA_BUCKET: fdbt-matching-data-${self:provider.stage}
 
 plugins:
     - serverless-plugin-typescript

@@ -1,8 +1,10 @@
 import { S3Event } from 'aws-lambda';
 import AWS from 'aws-sdk';
+import { promises as fs } from 'fs';
 import nodemailer, { SentMessageInfo } from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
-import { promises as fs } from 'fs';
+import { fetchDataFromMatchingS3, getNetexFileFromS3 } from './data/s3';
+import emailTemplate from './template/emailTemplate';
 
 export interface S3ObjectParameters {
     Bucket: string;
@@ -18,22 +20,46 @@ export const createMailTransporter = (): Mail => {
     });
 };
 
+export interface ProductList {
+    productName: string;
+}
+
+export interface ServiceList {
+    lineName: string;
+}
+
 export const setS3ObjectParams = (event: S3Event): S3ObjectParameters => {
     const s3BucketName: string = event.Records[0].s3.bucket.name;
     const s3FileName: string = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '));
-    const params: S3ObjectParameters = {
+    return {
         Bucket: s3BucketName,
         Key: s3FileName,
     };
-    return params;
 };
 
-export const setMailOptions = (params: S3ObjectParameters, pathToNetex: string): Mail.Options => {
+export const setMailOptions = (
+    params: S3ObjectParameters,
+    pathToNetex: string,
+    email: string,
+    uuid: string,
+    fareType: string,
+    selectedServices: ServiceList[],
+    products: ProductList[],
+    passengerType: string,
+): Mail.Options => {
     return {
         from: 'tfn@infinityworks.com',
-        to: ['tfn@infinityworks.com', 'fdbt@transportforthenorth.com'],
+        to: [email],
         subject: `NeTEx created for ${params.Key}`,
         text: `There was a file uploaded to '${params.Bucket}' [Filename: '${params.Key} ']`,
+        html: emailTemplate(
+            uuid,
+            selectedServices,
+            fareType,
+            products,
+            passengerType,
+            `${new Date(Date.now()).toLocaleString()}}`,
+        ),
         attachments: [
             {
                 path: pathToNetex,
@@ -42,20 +68,28 @@ export const setMailOptions = (params: S3ObjectParameters, pathToNetex: string):
     };
 };
 
-export const getNetexFileFromS3 = async (params: S3ObjectParameters): Promise<string> => {
-    const s3 = new AWS.S3();
-    const data = await s3.getObject(params).promise();
-    return data.Body?.toString('utf-8') ?? '';
-};
-
 export const odhUploaderHandler = async (event: S3Event): Promise<void> => {
     try {
         const s3ObjectParams = setS3ObjectParams(event);
         const pathToSavedNetex = `/tmp/${s3ObjectParams.Key}`;
         const netexFile = await getNetexFileFromS3(s3ObjectParams);
+
+        const dataAsString = await fetchDataFromMatchingS3(event);
+
+        const { uuid, email, selectedServices, products, type, passengerType } = dataAsString;
+
         await fs.writeFile(pathToSavedNetex, netexFile);
 
-        const mailOptions = setMailOptions(s3ObjectParams, pathToSavedNetex);
+        const mailOptions = setMailOptions(
+            s3ObjectParams,
+            pathToSavedNetex,
+            email,
+            uuid,
+            type,
+            selectedServices,
+            products,
+            passengerType,
+        );
 
         const mailTransporter = createMailTransporter();
 
