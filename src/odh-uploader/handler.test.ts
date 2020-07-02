@@ -13,7 +13,9 @@ describe('odhHandler SES emailer', () => {
     const mockGetNetexFileFromS3 = jest.spyOn(s3, 'getNetexFileFromS3');
 
     beforeEach(() => {
-        mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve({ Body: testData.testNetexFromS3 }));
+        mockFetchDataFromS3Spy.mockImplementation(() =>
+            Promise.resolve({ Body: testData.testNetexFromS3, email: 'test@example.com' }),
+        );
         mockGetNetexFileFromS3.mockImplementation(() => Promise.resolve('Body: testData.testNetexFromS3'));
 
         (createMailTransporter as {}) = jest.fn().mockImplementation(() => {

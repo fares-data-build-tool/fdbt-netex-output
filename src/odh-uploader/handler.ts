@@ -78,6 +78,9 @@ export const odhUploaderHandler = async (event: S3Event): Promise<void> => {
 
         const { uuid, email, selectedServices, products, type, passengerType } = dataAsString;
 
+        if (!email) {
+            return;
+        }
         await fs.writeFile(pathToSavedNetex, netexFile);
 
         const mailOptions = setMailOptions(
