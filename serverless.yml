@@ -84,59 +84,59 @@ functions:
 resources:
     Resources:
         NetexCompleteSingleFilter:
-            Type: 'AWS::Logs::MetricFilter'
+            Type: "AWS::Logs::MetricFilter"
             Properties:
                 LogGroupName: /aws/lambda/${self:service}-${self:provider.stage}-NetexConvertor
-                FilterPattern: 'NeTEx generation complete for type single'
+                FilterPattern: "NeTEx generation complete for type single"
                 MetricTransformations:
-                    - MetricValue: '1'
-                      MetricNamespace: 'FDBT/Netex-Output'
-                      MetricName: 'netex-complete-single-${self:provider.stage}'
+                    - MetricValue: "1"
+                      MetricNamespace: "FDBT/Netex-Output"
+                      MetricName: "netex-complete-single-${self:provider.stage}"
         NetexCompleteReturnFilter:
-            Type: 'AWS::Logs::MetricFilter'
+            Type: "AWS::Logs::MetricFilter"
             Properties:
                 LogGroupName: /aws/lambda/${self:service}-${self:provider.stage}-NetexConvertor
-                FilterPattern: 'NeTEx generation complete for type return'
+                FilterPattern: "NeTEx generation complete for type return"
                 MetricTransformations:
-                    - MetricValue: '1'
-                      MetricNamespace: 'FDBT/Netex-Output'
-                      MetricName: 'netex-complete-return-${self:provider.stage}'
+                    - MetricValue: "1"
+                      MetricNamespace: "FDBT/Netex-Output"
+                      MetricName: "netex-complete-return-${self:provider.stage}"
         NetexCompletePeriodGeoZoneFilter:
-            Type: 'AWS::Logs::MetricFilter'
+            Type: "AWS::Logs::MetricFilter"
             Properties:
                 LogGroupName: /aws/lambda/${self:service}-${self:provider.stage}-NetexConvertor
-                FilterPattern: 'NeTEx generation complete for type periodGeoZone'
+                FilterPattern: "NeTEx generation complete for type periodGeoZone"
                 MetricTransformations:
-                    - MetricValue: '1'
-                      MetricNamespace: 'FDBT/Netex-Output'
-                      MetricName: 'netex-complete-periodgeozone-${self:provider.stage}'
+                    - MetricValue: "1"
+                      MetricNamespace: "FDBT/Netex-Output"
+                      MetricName: "netex-complete-periodgeozone-${self:provider.stage}"
         NetexCompletePeriodMultipleServicesFilter:
-            Type: 'AWS::Logs::MetricFilter'
+            Type: "AWS::Logs::MetricFilter"
             Properties:
                 LogGroupName: /aws/lambda/${self:service}-${self:provider.stage}-NetexConvertor
-                FilterPattern: 'NeTEx generation complete for type periodMultipleServices'
+                FilterPattern: "NeTEx generation complete for type periodMultipleServices"
                 MetricTransformations:
-                    - MetricValue: '1'
-                      MetricNamespace: 'FDBT/Netex-Output'
-                      MetricName: 'netex-complete-periodmultipleservices-${self:provider.stage}'
+                    - MetricValue: "1"
+                      MetricNamespace: "FDBT/Netex-Output"
+                      MetricName: "netex-complete-periodmultipleservices-${self:provider.stage}"
         NetexCompleteFlatFareFilter:
-            Type: 'AWS::Logs::MetricFilter'
+            Type: "AWS::Logs::MetricFilter"
             Properties:
                 LogGroupName: /aws/lambda/${self:service}-${self:provider.stage}-NetexConvertor
-                FilterPattern: 'NeTEx generation complete for type flatFare'
+                FilterPattern: "NeTEx generation complete for type flatFare"
                 MetricTransformations:
-                    - MetricValue: '1'
-                      MetricNamespace: 'FDBT/Netex-Output'
-                      MetricName: 'netex-complete-flatfare-${self:provider.stage}'
+                    - MetricValue: "1"
+                      MetricNamespace: "FDBT/Netex-Output"
+                      MetricName: "netex-complete-flatfare-${self:provider.stage}"
         SESEmailsSentFilter:
-            Type: 'AWS::Logs::MetricFilter'
+            Type: "AWS::Logs::MetricFilter"
             Properties:
                 LogGroupName: /aws/lambda/${self:service}-${self:provider.stage}-OdhUploader
-                FilterPattern: 'Email sent'
+                FilterPattern: "Email sent"
                 MetricTransformations:
-                    - MetricValue: '1'
-                      MetricNamespace: 'FDBT/Netex-OdhUploader'
-                      MetricName: 'SES-emails-sent-${self:provider.stage}'
+                    - MetricValue: "1"
+                      MetricNamespace: "FDBT/Netex-OdhUploader"
+                      MetricName: "SES-emails-sent-${self:provider.stage}"
 
 plugins:
     - serverless-plugin-typescript
