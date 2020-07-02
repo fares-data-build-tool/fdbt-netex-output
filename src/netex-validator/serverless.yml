@@ -76,8 +76,8 @@ resources:
                 FilterPattern: "XML valid scheme validation ok"
                 MetricTransformations:
                     - MetricValue: "1"
-                      MetricNamespace: CustomMetric
-                      MetricName: netex-valid-${self:provider.stage}
+                      MetricNamespace: "FDBT/Netex-Validator"
+                      MetricName: "netex-valid-${self:provider.stage}"
                       DefaultValue: "0"
         NetexInvalidFilter:
             Type: "AWS::Logs::MetricFilter"
@@ -86,6 +86,6 @@ resources:
                 FilterPattern: "Schema validation error"
                 MetricTransformations:
                     - MetricValue: "1"
-                      MetricNamespace: CustomMetric
-                      MetricName: netex-invalid-${self:provider.stage}
+                      MetricNamespace: "FDBT/Netex-Validator"
+                      MetricName: "netex-invalid-${self:provider.stage}"
                       DefaultValue: "0"
