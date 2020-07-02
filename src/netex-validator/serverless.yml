@@ -73,7 +73,7 @@ resources:
             Type: "AWS::Logs::MetricFilter"
             Properties:
                 LogGroupName: /aws/lambda/${self:service}-${self:provider.stage}-NetexValidator
-                FilterPattern: "XML valid, scheme validation ok."
+                FilterPattern: "XML valid scheme validation ok"
                 MetricTransformations:
                     - MetricValue: "1"
                       MetricNamespace: CustomMetric
