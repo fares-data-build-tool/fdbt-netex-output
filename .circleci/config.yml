@@ -162,6 +162,7 @@ workflows:
                       branches:
                           only:
                               - develop
+                                feature/TFN-458_custom_metrics_netex_output
 
             - hold-netex-validator-preprod-deployment:
                   type: approval
@@ -201,6 +202,7 @@ workflows:
                       branches:
                           only:
                               - develop
+                              feature/TFN-458_custom_metrics_netex_output
 
             - hold-preprod-deployment:
                   type: approval
