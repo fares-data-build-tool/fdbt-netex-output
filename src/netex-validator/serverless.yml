@@ -70,22 +70,20 @@ functions:
 resources:
     Resources:
         NetexValidFilter:
-            Type: "AWS::Logs::MetricFilter"
+            Type: 'AWS::Logs::MetricFilter'
             Properties:
                 LogGroupName: /aws/lambda/${self:service}-${self:provider.stage}-NetexValidator
-                FilterPattern: "XML valid scheme validation ok"
+                FilterPattern: 'XML valid scheme validation ok'
                 MetricTransformations:
-                    - MetricValue: "1"
-                      MetricNamespace: "FDBT/Netex-Validator"
-                      MetricName: "netex-valid-${self:provider.stage}"
-                      DefaultValue: "0"
+                    - MetricValue: '1'
+                      MetricNamespace: 'FDBT/Netex-Validator'
+                      MetricName: 'netex-valid-${self:provider.stage}'
         NetexInvalidFilter:
-            Type: "AWS::Logs::MetricFilter"
+            Type: 'AWS::Logs::MetricFilter'
             Properties:
                 LogGroupName: /aws/lambda/${self:service}-${self:provider.stage}-NetexValidator
-                FilterPattern: "Schema validation error"
+                FilterPattern: 'Schema validation error'
                 MetricTransformations:
-                    - MetricValue: "1"
-                      MetricNamespace: "FDBT/Netex-Validator"
-                      MetricName: "netex-invalid-${self:provider.stage}"
-                      DefaultValue: "0"
+                    - MetricValue: '1'
+                      MetricNamespace: 'FDBT/Netex-Validator'
+                      MetricName: 'netex-invalid-${self:provider.stage}'
