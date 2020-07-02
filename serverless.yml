@@ -87,7 +87,7 @@ resources:
             Type: "AWS::Logs::MetricFilter"
             Properties:
                 LogGroupName: /aws/lambda/${self:service}-${self:provider.stage}-NetexConvertor
-                FilterPattern: "NeTEx generation complete for type: single"
+                FilterPattern: "NeTEx generation complete for type single"
                 MetricTransformations:
                     - MetricValue: "1"
                       MetricNamespace: CustomMetric
@@ -97,7 +97,7 @@ resources:
             Type: "AWS::Logs::MetricFilter"
             Properties:
                 LogGroupName: /aws/lambda/${self:service}-${self:provider.stage}-NetexConvertor
-                FilterPattern: "NeTEx generation complete for type: return"
+                FilterPattern: "NeTEx generation complete for type return"
                 MetricTransformations:
                     - MetricValue: "1"
                       MetricNamespace: CustomMetric
@@ -107,7 +107,7 @@ resources:
             Type: "AWS::Logs::MetricFilter"
             Properties:
                 LogGroupName: /aws/lambda/${self:service}-${self:provider.stage}-NetexConvertor
-                FilterPattern: "NeTEx generation complete for type: periodGeoZone"
+                FilterPattern: "NeTEx generation complete for type periodGeoZone"
                 MetricTransformations:
                     - MetricValue: "1"
                       MetricNamespace: CustomMetric
