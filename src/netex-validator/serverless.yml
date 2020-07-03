@@ -82,7 +82,7 @@ resources:
             Type: 'AWS::Logs::MetricFilter'
             Properties:
                 LogGroupName: /aws/lambda/${self:service}-${self:provider.stage}-NetexValidator
-                FilterPattern: 'Schema validation error'
+                FilterPattern: '?Syntax ?Schema'
                 MetricTransformations:
                     - MetricValue: '1'
                       MetricNamespace: 'FDBT/Netex-Validator'
