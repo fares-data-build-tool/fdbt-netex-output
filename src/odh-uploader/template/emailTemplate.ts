@@ -2,11 +2,11 @@ import { ProductList, ServiceList } from '../handler';
 
 const emailTemplate = (
     uuid: string,
-    services: ServiceList[],
-    fareType: string,
-    products: ProductList[],
     passengerType: string,
     dateTimeCreation: string,
+    fareType: string,
+    services?: ServiceList[],
+    products?: ProductList[],
 ): string => {
     const productsList =
         products &&
@@ -14,7 +14,7 @@ const emailTemplate = (
             .map(product => {
                 return product.productName;
             })
-            .join(',');
+            .join(', ');
 
     const serviceList =
         services &&
@@ -22,7 +22,7 @@ const emailTemplate = (
             .map(service => {
                 return service.lineName;
             })
-            .join(',');
+            .join(', ');
 
     return `<!DOCTYPE html>
         <html lang="en">
@@ -86,7 +86,7 @@ const emailTemplate = (
                   <p
                     style="color: #0b0c0c; font-family: Arial,sans-serif; -webkit-font-smoothing: antialiased; font-weight: 400;"
                   >
-                    <strong>Services(s):</strong> ${!serviceList ? 'N/A' : serviceList.toString()}
+                    <strong>Services(s):</strong> ${!serviceList ? 'N/A' : serviceList}
                   </p>
                   <p
                     style="color: #0b0c0c; font-family: Arial,sans-serif; -webkit-font-smoothing: antialiased; font-weight: 400;"
@@ -96,7 +96,7 @@ const emailTemplate = (
                   <p
                     style="color: #0b0c0c; font-family: Arial,sans-serif; -webkit-font-smoothing: antialiased; font-weight: 400;"
                   >
-                    <strong>Products(s):</strong> ${!productsList ? 'N/A' : productsList.toString()}
+                    <strong>Products(s):</strong> ${!productsList ? 'N/A' : productsList}
                   </p>
                   <p
                     style="color: #0b0c0c; font-family: Arial,sans-serif; -webkit-font-smoothing: antialiased; font-weight: 400;"

@@ -3,12 +3,21 @@ import AWS from 'aws-sdk';
 import { promises as fs } from 'fs';
 import nodemailer, { SentMessageInfo } from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
-import { fetchDataFromMatchingS3, getNetexFileFromS3 } from './data/s3';
+import { fetchDataFromS3, getFileFromS3 } from '../utils/s3';
 import emailTemplate from './template/emailTemplate';
 
 export interface S3ObjectParameters {
     Bucket: string;
     Key: string;
+}
+
+export interface MatchingData {
+    uuid: string;
+    email: string;
+    selectedServices?: ServiceList[];
+    products?: ProductList[];
+    type: string;
+    passengerType: string;
 }
 
 export const createMailTransporter = (): Mail => {
@@ -43,22 +52,22 @@ export const setMailOptions = (
     email: string,
     uuid: string,
     fareType: string,
-    selectedServices: ServiceList[],
-    products: ProductList[],
     passengerType: string,
+    selectedServices?: ServiceList[],
+    products?: ProductList[],
 ): Mail.Options => {
     return {
         from: 'tfn@infinityworks.com',
-        to: [email],
+        to: email,
         subject: `NeTEx created for ${params.Key}`,
         text: `There was a file uploaded to '${params.Bucket}' [Filename: '${params.Key} ']`,
         html: emailTemplate(
             uuid,
-            selectedServices,
-            fareType,
-            products,
             passengerType,
             `${new Date(Date.now()).toLocaleString()}}`,
+            fareType,
+            selectedServices,
+            products,
         ),
         attachments: [
             {
@@ -72,9 +81,9 @@ export const odhUploaderHandler = async (event: S3Event): Promise<void> => {
     try {
         const s3ObjectParams = setS3ObjectParams(event);
         const pathToSavedNetex = `/tmp/${s3ObjectParams.Key}`;
-        const netexFile = await getNetexFileFromS3(s3ObjectParams);
+        const netexFile = await getFileFromS3(s3ObjectParams);
 
-        const dataAsString = await fetchDataFromMatchingS3(event);
+        const dataAsString: MatchingData = await fetchDataFromS3<MatchingData>(event, true);
 
         const { uuid, email, selectedServices, products, type, passengerType } = dataAsString;
 
@@ -89,9 +98,9 @@ export const odhUploaderHandler = async (event: S3Event): Promise<void> => {
             email,
             uuid,
             type,
+            passengerType,
             selectedServices,
             products,
-            passengerType,
         );
 
         const mailTransporter = createMailTransporter();

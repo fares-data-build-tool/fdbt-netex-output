@@ -4,7 +4,7 @@ import pointToPointTicketNetexGenerator from './point-to-point-tickets/pointToPo
 import periodTicketNetexGenerator from './period-tickets/periodTicketNetexGenerator';
 import * as db from './data/auroradb';
 import * as s3 from './data/s3';
-import { PointToPointTicket, PeriodTicket } from './types';
+import { PointToPointTicket, PeriodTicket } from '../types';
 
 const uploadToS3 = async (netex: string, fileName: string): Promise<void> => {
     const cleanFileName = fileName.replace(/(\s|\/)/g, '_');
