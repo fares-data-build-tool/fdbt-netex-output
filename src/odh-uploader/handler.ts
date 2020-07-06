@@ -104,7 +104,7 @@ export const odhUploaderHandler = async (event: S3Event): Promise<void> => {
             products,
         );
 
-        console.info(`Mail options: ${JSON.stringify(mailOptions)}`);
+        console.info(`Mail options: ${JSON.stringify(mailOptions, null, 4)}`);
 
         if (process.env.NODE_ENV !== 'development') {
             const mailTransporter = createMailTransporter();
