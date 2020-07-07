@@ -78,15 +78,6 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         return resourceFrameToUpdate;
     };
 
-    const updateSiteFrame = (siteFrame: NetexObject): NetexObject => {
-        const siteFrameToUpdate = { ...siteFrame };
-
-        siteFrameToUpdate.id = `epd:UK:${userPeriodTicket.nocCode}:SiteFrame_UK_PI_STOP:sale_pois:op`;
-        siteFrameToUpdate.Name.$t = `Common site elements for ${userPeriodTicket.nocCode}: Travel Shops`;
-
-        return siteFrameToUpdate;
-    };
-
     const updateServiceCalendarFrame = (serviceCalendarFrame: NetexObject): NetexObject => {
         const serviceCalendarFrameToUpdate = { ...serviceCalendarFrame };
 
@@ -215,7 +206,6 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
         );
 
         const netexFrames = netexJson.PublicationDelivery.dataObjects.CompositeFrame[0].frames;
-        netexFrames.SiteFrame = updateSiteFrame(netexFrames.SiteFrame);
         netexFrames.ResourceFrame = updateResourceFrame(netexFrames.ResourceFrame);
         netexFrames.ServiceCalendarFrame = updateServiceCalendarFrame(netexFrames.ServiceCalendarFrame);
 
