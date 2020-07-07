@@ -202,7 +202,7 @@ const getMultiServiceList = (userPeriodTicket: PeriodMultipleServicesTicket): Ne
         includes: {
             FareTable: {
                 version: '1.0',
-                id: `op:${product.productName}@${name}@p-ticket`,
+                id: `op:${product.productName}@${name}@all_media`,
                 Name: { $t: `${product.productName} - Cash` },
                 pricesFor: {
                     SalesOfferPackageRef: {
@@ -219,7 +219,7 @@ const getMultiServiceList = (userPeriodTicket: PeriodMultipleServicesTicket): Ne
                 columns: {
                     FareTableColumn: {
                         version: '1.0',
-                        id: `op:${product.productName}@${name}@p-ticket`,
+                        id: `op:${product.productName}@${name}@all_media@paper`,
                         Name: { $t: 'Cash' },
                         representing: {
                             TypeOfTravelDocumentRef: {
