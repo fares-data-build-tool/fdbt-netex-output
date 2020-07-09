@@ -64,7 +64,8 @@ export const setMailOptions = (
         html: emailTemplate(
             uuid,
             passengerType,
-            new Date(Date.now()).toLocaleString(),
+            `${new Date().getDate()}-${new Date().getMonth() +
+                1}-${new Date().getFullYear()} ${new Date().toLocaleTimeString('en-GB')}`,
             fareType,
             selectedServices,
             products,
