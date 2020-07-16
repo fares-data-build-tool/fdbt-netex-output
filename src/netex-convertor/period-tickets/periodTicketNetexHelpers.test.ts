@@ -1,4 +1,5 @@
-import { PeriodGeoZoneTicket, PeriodTicket } from '../../types';
+import { PeriodMultipleServicesTicket, PeriodGeoZoneTicket, PeriodTicket } from '../../types/index';
+
 import * as netexHelpers from './periodTicketNetexHelpers';
 import { periodGeoZoneTicket, periodMultipleServicesTicket, flatFareTicket } from '../../test-data/matchingData';
 import operatorData from '../test-data/operatorData';
@@ -240,7 +241,9 @@ describe('periodTicketNetexHelpers', () => {
                 },
             };
             const expectedLength = flatFareTicket.products.length;
-            const flatFareFareTables = netexHelpers.getMultiServiceFareTable(flatFareTicket);
+            const flatFareFareTables = netexHelpers.getMultiServiceFareTable(
+                flatFareTicket as PeriodMultipleServicesTicket,
+            );
             expect(flatFareFareTables).toHaveLength(expectedLength);
             flatFareFareTables.forEach(fareTable => {
                 expect(fareTable).toEqual(flatFareFareTableSchema);
@@ -391,7 +394,7 @@ describe('periodTicketNetexHelpers', () => {
     describe('getFareStructureElements', () => {
         it('returns 3 fareSructureElements for each product in the products array for multiService; Access Zones, Eligibility and Conditions of Travel', () => {
             const expectedLength = flatFareTicket.products.length * 3;
-            const result = netexHelpers.getFareStructuresElements(flatFareTicket, placeHolderText);
+            const result = netexHelpers.getFareStructuresElements(flatFareTicket as PeriodTicket, placeHolderText);
             const namesOfTypesOfFareStructureElements: string[] = result.map(element => {
                 return element.Name.$t;
             });

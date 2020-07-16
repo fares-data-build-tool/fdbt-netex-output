@@ -6,6 +6,11 @@ import {
     PointToPointTicket,
     ReturnTicket,
     SingleTicket,
+    DistributionAssignment,
+    SalesOfferPackageElement,
+    SalesOfferPackage,
+    BaseProduct,
+    NetexSalesOfferPackage,
 } from '../../types';
 import { NetexObject } from '../sharedHelpers';
 
@@ -245,120 +250,142 @@ export const getPreassignedFareProduct = (matchingData: PointToPointTicket): Net
     };
 };
 
-export const getSalesOfferPackage = (matchingData: PointToPointTicket): NetexObject => {
-    const ticketUserConcat = `${matchingData.type}_${matchingData.passengerType}`;
-    return {
-        version: '1.0',
-        id: `Trip@${ticketUserConcat}-SOP@p-ticket`,
-        BrandingRef: {
-            ref: `${matchingData.nocCode}@brand`,
-        },
-        distributionAssignments: {
-            DistributionAssignment: [
-                {
-                    version: '1.0',
-                    id: `Trip@${ticketUserConcat}-SOP@p-ticket@atStop`,
-                    order: '0',
-                    Name: { $t: 'At Stop' },
-                    Description: { $t: 'Bought at stop' },
-                    DistributionChannelRef: {
-                        ref: 'fxc:at_stop',
-                        version: 'fxc:v1.0',
-                    },
-                    PaymentMethods: { $t: 'debitCard creditCard cash' },
-                    FulfilmentMethodRef: {
-                        ref: 'fxc:collect_from_machine',
-                        version: 'fxc:v1.0',
-                    },
+export const buildSalesOfferPackage = (
+    nocCode: string,
+    salesOfferPackageInfo: SalesOfferPackage,
+    ticketUserConcat: string,
+): NetexSalesOfferPackage => {
+    const combineArrayedStrings = (strings: string[]): string => strings.join(', ');
+
+    const buildDistributionAssignments = (): DistributionAssignment[] => {
+        const distribAssignments = salesOfferPackageInfo.purchaseLocations.map(purchaseLocation => {
+            return {
+                version: '1.0',
+                id: `Trip@${ticketUserConcat}-SOP@${purchaseLocation}`,
+                order: '0',
+                DistributionChannelRef: {
+                    ref: `fxc:${purchaseLocation}`,
+                    version: 'fxc:v1.0',
                 },
-                {
-                    version: '1.0',
-                    id: `Trip@${ticketUserConcat}-SOP@p-ticket@onBoard`,
-                    order: '1',
-                    Name: { $t: 'Onboard' },
-                    Description: { $t: 'Bought onboard' },
-                    DistributionChannelRef: {
-                        ref: 'fxc:on_board',
-                        version: 'fxc:v1.0',
-                    },
-                    PaymentMethods: { $t: 'debitCard creditCard cash' },
-                    FulfilmentMethodRef: {
-                        ref: 'fxc:collect_on_board',
-                        version: 'fxc:v1.0',
-                    },
+                PaymentMethods: {
+                    $t: combineArrayedStrings(salesOfferPackageInfo.paymentMethods),
                 },
-            ],
-        },
-        salesOfferPackageElements: {
-            SalesOfferPackageElement: {
-                id: `Trip@${ticketUserConcat}-SOP@p-ticket`,
+            };
+        });
+        return distribAssignments;
+    };
+
+    const buildSalesOfferPackageElements = (): SalesOfferPackageElement[] => {
+        const salesOfferPackageElements = salesOfferPackageInfo.ticketFormats.map(ticketFormat => {
+            return {
+                id: `Trip@${ticketUserConcat}-SOP@${ticketFormat}`,
                 version: '1.0',
                 order: '2',
                 TypeOfTravelDocumentRef: {
                     version: 'fxc:v1.0',
-                    ref: 'fxc:printed_ticket',
+                    ref: `fxc:${ticketFormat}`,
                 },
                 PreassignedFareProductRef: {
                     ref: `Trip@${ticketUserConcat}`,
                 },
+            };
+        });
+        return salesOfferPackageElements;
+    };
+
+    return {
+        SalesOfferPackage: {
+            Name: {
+                $t: salesOfferPackageInfo.name,
+            },
+            Description: {
+                $t: salesOfferPackageInfo.description,
+            },
+            version: '1.0',
+            id: `Trip@${ticketUserConcat}-SOP@${salesOfferPackageInfo.name}`,
+            BrandingRef: {
+                ref: `${nocCode}@brand`,
+            },
+            distributionAssignments: {
+                DistributionAssignment: buildDistributionAssignments(),
+            },
+            salesOfferPackageElements: {
+                SalesOfferPackageElement: buildSalesOfferPackageElements(),
             },
         },
     };
 };
 
-export const getFareTable = (matchingData: PointToPointTicket): NetexObject => {
+export const buildSalesOfferPackages = (
+    product: BaseProduct,
+    ticketUserConcat: string,
+    nocCode: string,
+): NetexSalesOfferPackage[] => {
+    return product.salesOfferPackages.map(salesOfferPackage => {
+        return buildSalesOfferPackage(nocCode, salesOfferPackage, ticketUserConcat);
+    });
+};
+
+export const getFareTables = (matchingData: PointToPointTicket): NetexObject[] => {
     const fareZones = isReturnTicket(matchingData) ? matchingData.outboundFareZones : matchingData.fareZones;
     const ticketUserConcat = `${matchingData.type}_${matchingData.passengerType}`;
     const lineIdName = `Line_${matchingData.lineName}`;
-    return {
-        id: `Trip@${matchingData.type}-SOP@p-ticket@Line_${lineIdName}@${matchingData.passengerType}`,
-        version: '1.0',
-        Name: { $t: matchingData.serviceDescription },
-        Description: { $t: `${matchingData.passengerType} ${matchingData.type} fares - Organised as a fare triangle` },
-        pricesFor: {
-            PreassignedFareProductRef: {
-                ref: `Trip@${ticketUserConcat}`,
+
+    return matchingData.products[0].salesOfferPackages.map(salesOfferPackage => {
+        return {
+            FareTable: {
+                id: `Trip@${matchingData.type}-SOP@${salesOfferPackage.name}@Line_${lineIdName}@${matchingData.passengerType}`,
+                version: '1.0',
+                Name: { $t: matchingData.serviceDescription },
+                Description: {
+                    $t: `${matchingData.passengerType} ${matchingData.type} fares - Organised as a fare triangle`,
+                },
+                pricesFor: {
+                    PreassignedFareProductRef: {
+                        ref: `Trip@${ticketUserConcat}`,
+                    },
+                    SalesOfferPackageRef: {
+                        ref: `Trip@${ticketUserConcat}-SOP@${salesOfferPackage.name}`,
+                    },
+                    UserProfileRef: {
+                        ref: matchingData.passengerType,
+                    },
+                },
+                usedIn: {
+                    TariffRef: { version: '1.0', ref: `Tariff@${matchingData.type}@${lineIdName}` },
+                },
+                specifics: {
+                    LineRef: {
+                        ref: matchingData.lineName,
+                    },
+                },
+                columns: {
+                    FareTableColumn: getFareTableElements(
+                        [...fareZones],
+                        lineIdName,
+                        'c',
+                        matchingData.type,
+                        matchingData.passengerType,
+                    ),
+                },
+                rows: {
+                    FareTableRow: getFareTableElements(
+                        [...fareZones].reverse(),
+                        lineIdName,
+                        'r',
+                        matchingData.type,
+                        matchingData.passengerType,
+                    ),
+                },
+                includes: {
+                    FareTable: getInnerFareTables(
+                        [...fareZones].slice(0, -1),
+                        lineIdName,
+                        matchingData.type,
+                        matchingData.passengerType,
+                    ),
+                },
             },
-            SalesOfferPackageRef: {
-                ref: `Trip@${ticketUserConcat}-SOP@p-ticket`,
-            },
-            UserProfileRef: {
-                ref: matchingData.passengerType,
-            },
-        },
-        usedIn: {
-            TariffRef: { version: '1.0', ref: `Tariff@${matchingData.type}@${lineIdName}` },
-        },
-        specifics: {
-            LineRef: {
-                ref: matchingData.lineName,
-            },
-        },
-        columns: {
-            FareTableColumn: getFareTableElements(
-                [...fareZones],
-                lineIdName,
-                'c',
-                matchingData.type,
-                matchingData.passengerType,
-            ),
-        },
-        rows: {
-            FareTableRow: getFareTableElements(
-                [...fareZones].reverse(),
-                lineIdName,
-                'r',
-                matchingData.type,
-                matchingData.passengerType,
-            ),
-        },
-        includes: {
-            FareTable: getInnerFareTables(
-                [...fareZones].slice(0, -1),
-                lineIdName,
-                matchingData.type,
-                matchingData.passengerType,
-            ),
-        },
-    };
+        };
+    });
 };
