@@ -117,21 +117,16 @@
 								<!--- ==== ClassOfUse========= -->
 
 								<!-- DYNAMIC HERE IN THE FUTURE -->
-								<TypeOfTravelDocument version="1.0" id="op:paperTicket">
+								<TypeOfTravelDocument version="1.0" id="op:p-ticket">
 									<Name>Bought on the bus with Cash</Name>
 									<Description>Paper ticket</Description>
 									<IsSmartCard>false</IsSmartCard>
 									<MediaType>paperTicket</MediaType>
 								</TypeOfTravelDocument>
-								<TypeOfTravelDocument version="1.0" id="op:mobileApp">
+								<TypeOfTravelDocument version="1.0" id="op:m-ticket">
 									<Name>Stored on your mobile phone as m-tickets</Name>
 									<IsSmartCard>false</IsSmartCard>
 									<MediaType>mobileApp</MediaType>
-								</TypeOfTravelDocument>
-								<TypeOfTravelDocument version="1.0" id="op:smartCard">
-									<Name>Stored on your smart card</Name>
-									<IsSmartCard>true</IsSmartCard>
-									<MediaType>smartCard</MediaType>
 								</TypeOfTravelDocument>
 								<!-- ...TO HERE -->
 

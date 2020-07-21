@@ -283,7 +283,7 @@ export const buildSalesOfferPackage = (
                 order: '2',
                 TypeOfTravelDocumentRef: {
                     version: 'fxc:v1.0',
-                    ref: `op:${ticketFormat}`,
+                    ref: `fxc:${ticketFormat}`,
                 },
                 PreassignedFareProductRef: {
                     ref: `Trip@${ticketUserConcat}`,
