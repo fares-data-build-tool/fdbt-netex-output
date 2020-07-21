@@ -190,6 +190,9 @@ export interface DistributionAssignment {
     PaymentMethods: {
         $t: string;
     };
+    DistributionChannelType: {
+        $t: string;
+    };
 }
 
 export interface SalesOfferPackageElement {
@@ -215,14 +218,7 @@ export interface NetexSalesOfferPackage {
         };
         version: string;
         id: string;
-        BrandingRef: {
-            ref: string;
-        };
-        distributionAssignments: {
-            DistributionAssignment: DistributionAssignment[];
-        };
-        salesOfferPackageElements: {
-            SalesOfferPackageElement: SalesOfferPackageElement[];
-        };
+        distributionAssignments: { DistributionAssignment: DistributionAssignment[] };
+        salesOfferPackageElements: { SalesOfferPackageElement: SalesOfferPackageElement[] };
     };
 }

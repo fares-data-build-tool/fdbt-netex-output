@@ -117,16 +117,21 @@
 								<!--- ==== ClassOfUse========= -->
 
 								<!-- DYNAMIC HERE IN THE FUTURE -->
-								<TypeOfTravelDocument version="1.0" id="op:p-ticket">
+								<TypeOfTravelDocument version="1.0" id="op:paperTicket">
 									<Name>Bought on the bus with Cash</Name>
 									<Description>Paper ticket</Description>
 									<IsSmartCard>false</IsSmartCard>
 									<MediaType>paperTicket</MediaType>
 								</TypeOfTravelDocument>
-								<TypeOfTravelDocument version="1.0" id="op:m-ticket">
+								<TypeOfTravelDocument version="1.0" id="op:mobileApp">
 									<Name>Stored on your mobile phone as m-tickets</Name>
 									<IsSmartCard>false</IsSmartCard>
 									<MediaType>mobileApp</MediaType>
+								</TypeOfTravelDocument>
+								<TypeOfTravelDocument version="1.0" id="op:smartCard">
+									<Name>Stored on your smart card</Name>
+									<IsSmartCard>true</IsSmartCard>
+									<MediaType>smartCard</MediaType>
 								</TypeOfTravelDocument>
 								<!-- ...TO HERE -->
 
@@ -541,7 +546,7 @@
 							<DistributionChannelType>online</DistributionChannelType>
 							<IsObligatory>false</IsObligatory>
 						</DistributionChannel>
-						<DistributionChannel id="fxc:at_stop" version="fxc:v1.0">
+						<DistributionChannel id="fxc:atStop" version="fxc:v1.0">
 							<ShortName>In station sale by machine, counter or payg</ShortName>
 							<DistributionChannelType>atStop</DistributionChannelType>
 							<IsObligatory>false</IsObligatory>
@@ -567,7 +572,7 @@
 							<DistributionChannelType>atStop</DistributionChannelType>
 							<IsObligatory>false</IsObligatory>
 						</DistributionChannel>
-						<DistributionChannel id="fxc:on_board" version="fxc:v1.0">
+						<DistributionChannel id="fxc:onBoard" version="fxc:v1.0">
 							<ShortName>on_board</ShortName>
 							<DistributionChannelType>onBoard</DistributionChannelType>
 							<IsObligatory>false</IsObligatory>

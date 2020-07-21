@@ -493,7 +493,6 @@ describe('Netex Helpers', () => {
                 const actualSalesOfferPackages = netexHelpers.buildSalesOfferPackages(
                     ticket.products[0],
                     `${ticket.type}_${ticket.passengerType}`,
-                    ticket.nocCode,
                 );
                 expect(actualSalesOfferPackages.length).toEqual(ticket.products[0].salesOfferPackages.length);
             },
@@ -520,7 +519,6 @@ describe('Netex Helpers', () => {
             'should return a single salesOfferPackage with a distribution assignment for each purchase location and a sales offer package element for each ticket format for a %s',
             (_ticketType, ticket) => {
                 const returnedSalesOfferPackage = buildSalesOfferPackage(
-                    ticket.nocCode,
                     ticket.products[0].salesOfferPackages[0],
                     `${ticket.type}_${ticket.passengerType}`,
                 );
@@ -543,11 +541,7 @@ describe('Netex Helpers', () => {
         ])(
             'should return an array of sales Offer Packages for each sales offer package inside the ticket  %s',
             (_ticketType, ticket) => {
-                const returnedSalesOfferPackageArray = buildSalesOfferPackages(
-                    ticket.products[0],
-                    'a string',
-                    ticket.nocCode,
-                );
+                const returnedSalesOfferPackageArray = buildSalesOfferPackages(ticket.products[0], 'a string');
 
                 const testDataSalesOfferPackage = ticket.products[0].salesOfferPackages;
 

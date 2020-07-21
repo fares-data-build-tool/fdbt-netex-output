@@ -158,12 +158,7 @@ const pointToPointTicketNetexGenerator = (
         priceFareFrameToUpdate.fareProducts.PreassignedFareProduct = getPreassignedFareProduct(matchingData);
 
         const ticketUserConcat = `${matchingData.type}_${matchingData.passengerType}`;
-        const { nocCode } = matchingData;
-        priceFareFrameToUpdate.salesOfferPackages = buildSalesOfferPackages(
-            matchingData.products[0],
-            ticketUserConcat,
-            nocCode,
-        );
+        priceFareFrameToUpdate.salesOfferPackages = buildSalesOfferPackages(matchingData.products[0], ticketUserConcat);
 
         if (isReturnTicket(matchingData)) {
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[0].id =

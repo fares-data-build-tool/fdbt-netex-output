@@ -251,11 +251,10 @@ export const getPreassignedFareProduct = (matchingData: PointToPointTicket): Net
 };
 
 export const buildSalesOfferPackage = (
-    nocCode: string,
     salesOfferPackageInfo: SalesOfferPackage,
     ticketUserConcat: string,
 ): NetexSalesOfferPackage => {
-    const combineArrayedStrings = (strings: string[]): string => strings.join(', ');
+    const combineArrayedStrings = (strings: string[]): string => strings.join(' ');
 
     const buildDistributionAssignments = (): DistributionAssignment[] => {
         const distribAssignments = salesOfferPackageInfo.purchaseLocations.map(purchaseLocation => {
@@ -267,6 +266,7 @@ export const buildSalesOfferPackage = (
                     ref: `fxc:${purchaseLocation}`,
                     version: 'fxc:v1.0',
                 },
+                DistributionChannelType: { $t: `${purchaseLocation}` },
                 PaymentMethods: {
                     $t: combineArrayedStrings(salesOfferPackageInfo.paymentMethods),
                 },
@@ -283,7 +283,7 @@ export const buildSalesOfferPackage = (
                 order: '2',
                 TypeOfTravelDocumentRef: {
                     version: 'fxc:v1.0',
-                    ref: `fxc:${ticketFormat}`,
+                    ref: `op:${ticketFormat}`,
                 },
                 PreassignedFareProductRef: {
                     ref: `Trip@${ticketUserConcat}`,
@@ -303,9 +303,6 @@ export const buildSalesOfferPackage = (
             },
             version: '1.0',
             id: `Trip@${ticketUserConcat}-SOP@${salesOfferPackageInfo.name}`,
-            BrandingRef: {
-                ref: `${nocCode}@brand`,
-            },
             distributionAssignments: {
                 DistributionAssignment: buildDistributionAssignments(),
             },
@@ -316,13 +313,9 @@ export const buildSalesOfferPackage = (
     };
 };
 
-export const buildSalesOfferPackages = (
-    product: BaseProduct,
-    ticketUserConcat: string,
-    nocCode: string,
-): NetexSalesOfferPackage[] => {
+export const buildSalesOfferPackages = (product: BaseProduct, ticketUserConcat: string): NetexSalesOfferPackage[] => {
     return product.salesOfferPackages.map(salesOfferPackage => {
-        return buildSalesOfferPackage(nocCode, salesOfferPackage, ticketUserConcat);
+        return buildSalesOfferPackage(salesOfferPackage, ticketUserConcat);
     });
 };
 

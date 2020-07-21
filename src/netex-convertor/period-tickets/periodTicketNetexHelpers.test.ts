@@ -10,6 +10,7 @@ describe('periodTicketNetexHelpers', () => {
     const opData = operatorData;
     const placeHolderText = `${geoUserPeriodTicket.nocCode}_products`;
     const opString = expect.stringContaining('op:');
+    const tripString = expect.stringContaining('Trip');
 
     const getExpectedFareTableColumn = (representingObject: {} | null): jest.Expect =>
         expect.objectContaining({
@@ -86,7 +87,7 @@ describe('periodTicketNetexHelpers', () => {
                     },
                 },
                 pricesFor: {
-                    SalesOfferPackageRef: { ref: opString, version: '1.0' },
+                    SalesOfferPackageRef: { ref: tripString, version: '1.0' },
                 },
                 specifics: {
                     TypeOfTravelDocumentRef: { ref: opString, version: '1.0' },
@@ -188,7 +189,7 @@ describe('periodTicketNetexHelpers', () => {
                 representingObjectTimeIntervalDoc,
             );
             const expectedLength = geoUserPeriodTicket.products.length;
-            const geoZoneFareTables = netexHelpers.getGeoZoneFareTable(geoUserPeriodTicket, placeHolderText);
+            const geoZoneFareTables = netexHelpers.getGeoZoneFareTable(geoUserPeriodTicket, placeHolderText, 'test');
             expect(geoZoneFareTables).toHaveLength(expectedLength);
             geoZoneFareTables.forEach(fareTable => {
                 expect(fareTable).toEqual(geoZoneFareTableSchema);
@@ -211,7 +212,7 @@ describe('periodTicketNetexHelpers', () => {
                 representingObjectTimeIntervalDoc,
             );
             const expectedLength = periodMultipleServicesTicket.products.length;
-            const multiServiceFareTables = netexHelpers.getMultiServiceFareTable(periodMultipleServicesTicket);
+            const multiServiceFareTables = netexHelpers.getMultiServiceFareTable(periodMultipleServicesTicket, 'test');
             expect(multiServiceFareTables).toHaveLength(expectedLength);
             multiServiceFareTables.forEach(fareTable => {
                 expect(fareTable).toEqual(multiServiceFareTableSchema);
@@ -228,7 +229,7 @@ describe('periodTicketNetexHelpers', () => {
                         version: '1.0',
                         id: opString,
                         Name: { $t: expect.any(String) },
-                        pricesFor: { SalesOfferPackageRef: { version: '1.0', ref: opString } },
+                        pricesFor: { SalesOfferPackageRef: { version: '1.0', ref: tripString } },
                         limitations: { UserProfileRef: { version: '1.0', ref: opString } },
                         prices: {
                             DistanceMatrixElementPrice: {
@@ -243,6 +244,7 @@ describe('periodTicketNetexHelpers', () => {
             const expectedLength = flatFareTicket.products.length;
             const flatFareFareTables = netexHelpers.getMultiServiceFareTable(
                 flatFareTicket as PeriodMultipleServicesTicket,
+                'test',
             );
             expect(flatFareFareTables).toHaveLength(expectedLength);
             flatFareFareTables.forEach(fareTable => {
@@ -254,44 +256,53 @@ describe('periodTicketNetexHelpers', () => {
     describe('getSalesOfferPackageList', () => {
         it('returns a sales offer package for each product in the products array', () => {
             const expectedLength = geoUserPeriodTicket.products.length;
-            const result = netexHelpers.getSalesOfferPackageList(geoUserPeriodTicket);
+            const result = netexHelpers.getSalesOfferPackageList(geoUserPeriodTicket, 'test');
 
             const expectedFormat = {
-                Description: expect.objectContaining({ $t: expect.any(String) }),
-                Name: expect.objectContaining({ $t: expect.any(String) }),
-                distributionAssignments: expect.objectContaining({
-                    DistributionAssignment: expect.objectContaining({
-                        Description: expect.objectContaining({ $t: expect.any(String) }),
-                        DistributionChannelRef: expect.objectContaining({
-                            ref: expect.any(String),
-                            version: expect.any(String),
-                        }),
-                        DistributionChannelType: expect.objectContaining({ $t: expect.any(String) }),
-                        FulfilmentMethodRef: expect.objectContaining({
-                            ref: expect.any(String),
-                            version: expect.any(String),
-                        }),
-                        Name: expect.objectContaining({ $t: expect.any(String) }),
-                        PaymentMethods: expect.objectContaining({ $t: expect.any(String) }),
-                        id: expect.any(String),
-                        order: '1',
-                        version: '1.0',
+                SalesOfferPackage: {
+                    Description: expect.objectContaining({ $t: expect.any(String) }),
+                    Name: expect.objectContaining({ $t: expect.any(String) }),
+                    BrandingRef: expect.objectContaining({ ref: expect.any(String) }),
+                    id: expect.any(String),
+                    version: expect.any(String),
+                    distributionAssignments: expect.objectContaining({
+                        DistributionAssignment: expect.arrayContaining([
+                            expect.objectContaining({
+                                DistributionChannelRef: expect.objectContaining({
+                                    ref: expect.any(String),
+                                    version: expect.any(String),
+                                }),
+                                DistributionChannelType: expect.objectContaining({ $t: expect.any(String) }),
+                                PaymentMethods: expect.objectContaining({ $t: expect.any(String) }),
+                                id: expect.any(String),
+                                order: expect.any(String),
+                                version: expect.any(String),
+                            }),
+                        ]),
                     }),
-                }),
-                id: expect.any(String),
-                salesOfferPackageElements: expect.objectContaining({
-                    SalesOfferPackageElement: expect.objectContaining({
-                        PreassignedFareProductRef: expect.objectContaining({ ref: expect.any(String), version: '1.0' }),
-                        TypeOfTravelDocumentRef: expect.objectContaining({ ref: expect.any(String), version: '1.0' }),
-                        id: expect.any(String),
-                        order: '3',
-                        version: '1.0',
+                    salesOfferPackageElements: expect.objectContaining({
+                        SalesOfferPackageElement: expect.arrayContaining([
+                            expect.objectContaining({
+                                PreassignedFareProductRef: expect.objectContaining({
+                                    ref: expect.any(String),
+                                    version: expect.any(String),
+                                }),
+                                TypeOfTravelDocumentRef: expect.objectContaining({
+                                    ref: expect.any(String),
+                                    version: expect.any(String),
+                                }),
+                                id: expect.any(String),
+                                order: expect.any(String),
+                                version: expect.any(String),
+                            }),
+                        ]),
                     }),
-                }),
-                version: '1.0',
+                },
             };
 
-            result.forEach(salesOfferPackage => {
+            const flattenedArrays = result.flat();
+
+            flattenedArrays.forEach(salesOfferPackage => {
                 expect(salesOfferPackage).toEqual(expectedFormat);
             });
 
