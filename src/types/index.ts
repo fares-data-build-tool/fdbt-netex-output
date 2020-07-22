@@ -209,16 +209,14 @@ export interface SalesOfferPackageElement {
 }
 
 export interface NetexSalesOfferPackage {
-    SalesOfferPackage: {
-        Name: {
-            $t: string;
-        };
-        Description: {
-            $t: string;
-        };
-        version: string;
-        id: string;
-        distributionAssignments: { DistributionAssignment: DistributionAssignment[] };
-        salesOfferPackageElements: { SalesOfferPackageElement: SalesOfferPackageElement[] };
+    Name: {
+        $t: string;
     };
+    Description: {
+        $t: string;
+    };
+    version: string;
+    id: string;
+    distributionAssignments: { DistributionAssignment: DistributionAssignment[] };
+    salesOfferPackageElements: { SalesOfferPackageElement: SalesOfferPackageElement[] };
 }

@@ -103,21 +103,28 @@ export const getFareTableElements = (
     elementPrefix: string,
     type: string,
     userType: string,
+    salesOfferPackageName: string,
 ): {}[] =>
     fareZones.slice(0, -1).map((zone, index) => ({
         version: '1.0',
-        id: `Trip@${type}-SOP@p-ticket@${lineIdName}@${userType}@${elementPrefix}${index + 1}@${getIdName(zone.name)}`,
+        id: `Trip@${type}-SOP@${salesOfferPackageName}@${lineIdName}@${userType}@${elementPrefix}${index +
+            1}@${getIdName(zone.name)}`,
         order: index + 1,
         Name: { $t: zone.name },
     }));
 
-export const getInnerFareTables = (columns: FareZone[], lineIdName: string, type: string, userType: string): {}[] =>
+export const getInnerFareTables = (
+    columns: FareZone[],
+    lineIdName: string,
+    type: string,
+    userType: string,
+    salesOfferPackageName: string,
+): {}[] =>
     columns.flatMap((zone, columnNum) => {
         let rowCount = columns.length - columnNum;
         let order = 0;
-        const columnRef = `Trip@${type}-SOP@p-ticket@${lineIdName}@${userType}@c${columnNum + 1}@${getIdName(
-            zone.name,
-        )}`;
+        const columnRef = `Trip@${type}-SOP@${salesOfferPackageName}@${lineIdName}@${userType}@c${columnNum +
+            1}@${getIdName(zone.name)}`;
 
         return {
             id: columnRef,
@@ -132,11 +139,13 @@ export const getInnerFareTables = (columns: FareZone[], lineIdName: string, type
 
                         return {
                             version: '1.0',
-                            id: `Trip@${type}-SOP@p-ticket@${lineIdName}@${userType}@${getIdName(zone.name)}`,
+                            id: `Trip@${type}-SOP@${salesOfferPackageName}@${lineIdName}@${userType}@${getIdName(
+                                zone.name,
+                            )}`,
                             order,
                             DistanceMatrixElementPrice: {
                                 version: '1.0',
-                                id: `Trip@${type}-SOP@p-ticket@${lineIdName}@${userType}@${getIdName(
+                                id: `Trip@${type}-SOP@${salesOfferPackageName}@${lineIdName}@${userType}@${getIdName(
                                     zone.name,
                                 )}+${getIdName(secondZone)}`,
                                 GeographicalIntervalPriceRef: {
@@ -154,9 +163,8 @@ export const getInnerFareTables = (columns: FareZone[], lineIdName: string, type
                             },
                             RowRef: {
                                 versionRef: '1',
-                                ref: `Trip@${type}-SOP@p-ticket@${lineIdName}@${userType}@r${rowCount + 1}@${getIdName(
-                                    secondZone,
-                                )}`,
+                                ref: `Trip@${type}-SOP@${salesOfferPackageName}@${lineIdName}@${userType}@r${rowCount +
+                                    1}@${getIdName(secondZone)}`,
                             },
                         };
                     }),
@@ -278,7 +286,7 @@ export const buildSalesOfferPackage = (
     const buildSalesOfferPackageElements = (): SalesOfferPackageElement[] => {
         const salesOfferPackageElements = salesOfferPackageInfo.ticketFormats.map(ticketFormat => {
             return {
-                id: `Trip@${ticketUserConcat}-SOP@${ticketFormat}`,
+                id: `${salesOfferPackageInfo.name}@${ticketUserConcat}-SOP@${ticketFormat}`,
                 version: '1.0',
                 order: '2',
                 TypeOfTravelDocumentRef: {
@@ -294,21 +302,19 @@ export const buildSalesOfferPackage = (
     };
 
     return {
-        SalesOfferPackage: {
-            Name: {
-                $t: salesOfferPackageInfo.name,
-            },
-            Description: {
-                $t: salesOfferPackageInfo.description,
-            },
-            version: '1.0',
-            id: `Trip@${ticketUserConcat}-SOP@${salesOfferPackageInfo.name}`,
-            distributionAssignments: {
-                DistributionAssignment: buildDistributionAssignments(),
-            },
-            salesOfferPackageElements: {
-                SalesOfferPackageElement: buildSalesOfferPackageElements(),
-            },
+        Name: {
+            $t: salesOfferPackageInfo.name,
+        },
+        Description: {
+            $t: salesOfferPackageInfo.description,
+        },
+        version: '1.0',
+        id: `Trip@${ticketUserConcat}-SOP@${salesOfferPackageInfo.name}`,
+        distributionAssignments: {
+            DistributionAssignment: buildDistributionAssignments(),
+        },
+        salesOfferPackageElements: {
+            SalesOfferPackageElement: buildSalesOfferPackageElements(),
         },
     };
 };
@@ -326,58 +332,59 @@ export const getFareTables = (matchingData: PointToPointTicket): NetexObject[] =
 
     return matchingData.products[0].salesOfferPackages.map(salesOfferPackage => {
         return {
-            FareTable: {
-                id: `Trip@${matchingData.type}-SOP@${salesOfferPackage.name}@Line_${lineIdName}@${matchingData.passengerType}`,
-                version: '1.0',
-                Name: { $t: matchingData.serviceDescription },
-                Description: {
-                    $t: `${matchingData.passengerType} ${matchingData.type} fares - Organised as a fare triangle`,
+            id: `Trip@${matchingData.type}-SOP@${salesOfferPackage.name}@Line_${lineIdName}@${matchingData.passengerType}`,
+            version: '1.0',
+            Name: { $t: matchingData.serviceDescription },
+            Description: {
+                $t: `${matchingData.passengerType} ${matchingData.type} fares - Organised as a fare triangle`,
+            },
+            pricesFor: {
+                PreassignedFareProductRef: {
+                    ref: `Trip@${ticketUserConcat}`,
                 },
-                pricesFor: {
-                    PreassignedFareProductRef: {
-                        ref: `Trip@${ticketUserConcat}`,
-                    },
-                    SalesOfferPackageRef: {
-                        ref: `Trip@${ticketUserConcat}-SOP@${salesOfferPackage.name}`,
-                    },
-                    UserProfileRef: {
-                        ref: matchingData.passengerType,
-                    },
+                SalesOfferPackageRef: {
+                    ref: `Trip@${ticketUserConcat}-SOP@${salesOfferPackage.name}`,
                 },
-                usedIn: {
-                    TariffRef: { version: '1.0', ref: `Tariff@${matchingData.type}@${lineIdName}` },
+                UserProfileRef: {
+                    ref: matchingData.passengerType,
                 },
-                specifics: {
-                    LineRef: {
-                        ref: matchingData.lineName,
-                    },
+            },
+            usedIn: {
+                TariffRef: { version: '1.0', ref: `Tariff@${matchingData.type}@${lineIdName}` },
+            },
+            specifics: {
+                LineRef: {
+                    ref: matchingData.lineName,
                 },
-                columns: {
-                    FareTableColumn: getFareTableElements(
-                        [...fareZones],
-                        lineIdName,
-                        'c',
-                        matchingData.type,
-                        matchingData.passengerType,
-                    ),
-                },
-                rows: {
-                    FareTableRow: getFareTableElements(
-                        [...fareZones].reverse(),
-                        lineIdName,
-                        'r',
-                        matchingData.type,
-                        matchingData.passengerType,
-                    ),
-                },
-                includes: {
-                    FareTable: getInnerFareTables(
-                        [...fareZones].slice(0, -1),
-                        lineIdName,
-                        matchingData.type,
-                        matchingData.passengerType,
-                    ),
-                },
+            },
+            columns: {
+                FareTableColumn: getFareTableElements(
+                    [...fareZones],
+                    lineIdName,
+                    'c',
+                    matchingData.type,
+                    matchingData.passengerType,
+                    salesOfferPackage.name,
+                ),
+            },
+            rows: {
+                FareTableRow: getFareTableElements(
+                    [...fareZones].reverse(),
+                    lineIdName,
+                    'r',
+                    matchingData.type,
+                    matchingData.passengerType,
+                    salesOfferPackage.name,
+                ),
+            },
+            includes: {
+                FareTable: getInnerFareTables(
+                    [...fareZones].slice(0, -1),
+                    lineIdName,
+                    matchingData.type,
+                    matchingData.passengerType,
+                    salesOfferPackage.name,
+                ),
             },
         };
     });

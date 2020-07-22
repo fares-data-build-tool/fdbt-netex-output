@@ -387,7 +387,7 @@ export const getSalesOfferPackageList = (
 ): NetexSalesOfferPackage[][] =>
     userPeriodTicket.products.map(product => {
         return product.salesOfferPackages.map(salesOfferPackage => {
-            const combineArrayedStrings = (strings: string[]): string => strings.join(', ');
+            const combineArrayedStrings = (strings: string[]): string => strings.join(' ');
 
             const buildDistributionAssignments = (): DistributionAssignment[] => {
                 const distribAssignments = salesOfferPackage.purchaseLocations.map(purchaseLocation => {
@@ -411,11 +411,11 @@ export const getSalesOfferPackageList = (
             const buildSalesOfferPackageElements = (): SalesOfferPackageElement[] => {
                 const salesOfferPackageElements = salesOfferPackage.ticketFormats.map(ticketFormat => {
                     return {
-                        id: `Trip@${ticketUserConcat}-${product.productName}-SOP@${ticketFormat}`,
+                        id: `Trip@${ticketUserConcat}-${product.productName}-${salesOfferPackage.name}@${ticketFormat}`,
                         version: '1.0',
                         order: '3',
                         TypeOfTravelDocumentRef: {
-                            version: '1.0',
+                            version: 'fxc:v1.0',
                             ref: `fxc:${ticketFormat}`,
                         },
                         PreassignedFareProductRef: {
@@ -427,19 +427,14 @@ export const getSalesOfferPackageList = (
                 return salesOfferPackageElements;
             };
             return {
-                SalesOfferPackage: {
-                    version: '1.0',
-                    id: `Trip@${ticketUserConcat}-${product.productName}-SOP@${salesOfferPackage.name}`,
-                    Name: {
-                        $t: `${product.productName} - ${userPeriodTicket.passengerType} - ${salesOfferPackage.name}`,
-                    },
-                    Description: { $t: `${salesOfferPackage.description}` },
-                    BrandingRef: {
-                        ref: `${userPeriodTicket.nocCode}@brand`,
-                    },
-                    distributionAssignments: { DistributionAssignment: buildDistributionAssignments() },
-                    salesOfferPackageElements: { SalesOfferPackageElement: buildSalesOfferPackageElements() },
+                version: '1.0',
+                id: `Trip@${ticketUserConcat}-${product.productName}-SOP@${salesOfferPackage.name}`,
+                Name: {
+                    $t: `${product.productName} - ${userPeriodTicket.passengerType} - ${salesOfferPackage.name}`,
                 },
+                Description: { $t: `${salesOfferPackage.description}` },
+                distributionAssignments: { DistributionAssignment: buildDistributionAssignments() },
+                salesOfferPackageElements: { SalesOfferPackageElement: buildSalesOfferPackageElements() },
             };
         });
     });

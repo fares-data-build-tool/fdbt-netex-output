@@ -658,9 +658,9 @@
 							<DistributionChannelType>onBoard</DistributionChannelType>
 							<IsObligatory>false</IsObligatory>
 						</DistributionChannel>
-						<DistributionChannel id="fxc:call_centre" version="fxc:v1.0">
-							<ShortName>Call Centre</ShortName>
-							<DistributionChannelType>telephone</DistributionChannelType>
+						<DistributionChannel id="fxc:mobileDevice" version="fxc:v1.0">
+							<ShortName>Mobile Device</ShortName>
+							<DistributionChannelType>mobileDevice</DistributionChannelType>
 							<IsObligatory>false</IsObligatory>
 						</DistributionChannel>
 						<DistributionChannel id="fxc:operator_travel_shop" version="fxc:v1.0">

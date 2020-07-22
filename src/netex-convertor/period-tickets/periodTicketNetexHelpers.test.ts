@@ -259,45 +259,42 @@ describe('periodTicketNetexHelpers', () => {
             const result = netexHelpers.getSalesOfferPackageList(geoUserPeriodTicket, 'test');
 
             const expectedFormat = {
-                SalesOfferPackage: {
-                    Description: expect.objectContaining({ $t: expect.any(String) }),
-                    Name: expect.objectContaining({ $t: expect.any(String) }),
-                    BrandingRef: expect.objectContaining({ ref: expect.any(String) }),
-                    id: expect.any(String),
-                    version: expect.any(String),
-                    distributionAssignments: expect.objectContaining({
-                        DistributionAssignment: expect.arrayContaining([
-                            expect.objectContaining({
-                                DistributionChannelRef: expect.objectContaining({
-                                    ref: expect.any(String),
-                                    version: expect.any(String),
-                                }),
-                                DistributionChannelType: expect.objectContaining({ $t: expect.any(String) }),
-                                PaymentMethods: expect.objectContaining({ $t: expect.any(String) }),
-                                id: expect.any(String),
-                                order: expect.any(String),
+                Description: expect.objectContaining({ $t: expect.any(String) }),
+                Name: expect.objectContaining({ $t: expect.any(String) }),
+                id: expect.any(String),
+                version: expect.any(String),
+                distributionAssignments: expect.objectContaining({
+                    DistributionAssignment: expect.arrayContaining([
+                        expect.objectContaining({
+                            DistributionChannelRef: expect.objectContaining({
+                                ref: expect.any(String),
                                 version: expect.any(String),
                             }),
-                        ]),
-                    }),
-                    salesOfferPackageElements: expect.objectContaining({
-                        SalesOfferPackageElement: expect.arrayContaining([
-                            expect.objectContaining({
-                                PreassignedFareProductRef: expect.objectContaining({
-                                    ref: expect.any(String),
-                                    version: expect.any(String),
-                                }),
-                                TypeOfTravelDocumentRef: expect.objectContaining({
-                                    ref: expect.any(String),
-                                    version: expect.any(String),
-                                }),
-                                id: expect.any(String),
-                                order: expect.any(String),
+                            DistributionChannelType: expect.objectContaining({ $t: expect.any(String) }),
+                            PaymentMethods: expect.objectContaining({ $t: expect.any(String) }),
+                            id: expect.any(String),
+                            order: expect.any(String),
+                            version: expect.any(String),
+                        }),
+                    ]),
+                }),
+                salesOfferPackageElements: expect.objectContaining({
+                    SalesOfferPackageElement: expect.arrayContaining([
+                        expect.objectContaining({
+                            PreassignedFareProductRef: expect.objectContaining({
+                                ref: expect.any(String),
                                 version: expect.any(String),
                             }),
-                        ]),
-                    }),
-                },
+                            TypeOfTravelDocumentRef: expect.objectContaining({
+                                ref: expect.any(String),
+                                version: expect.any(String),
+                            }),
+                            id: expect.any(String),
+                            order: expect.any(String),
+                            version: expect.any(String),
+                        }),
+                    ]),
+                }),
             };
 
             const flattenedArrays = result.flat();

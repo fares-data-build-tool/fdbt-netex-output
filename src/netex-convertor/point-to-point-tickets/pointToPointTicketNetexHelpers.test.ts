@@ -279,6 +279,7 @@ describe('Netex Helpers', () => {
                 'c',
                 singleTicket.type,
                 singleTicket.passengerType,
+                'salesOfferPackageName',
             );
 
             expect(fareTableElements).toHaveLength(fareZones.length - 1);
@@ -291,6 +292,7 @@ describe('Netex Helpers', () => {
                 'c',
                 singleTicket.type,
                 singleTicket.passengerType,
+                'salesOfferPackageName',
             );
 
             expect(fareTableElements).toEqual([
@@ -317,6 +319,7 @@ describe('Netex Helpers', () => {
                 lineIdName,
                 singleTicket.type,
                 singleTicket.passengerType,
+                'salesOfferPackageName',
             );
 
             const cells = fareTables.flatMap((table: NetexObject) => {
@@ -522,13 +525,12 @@ describe('Netex Helpers', () => {
                     ticket.products[0].salesOfferPackages[0],
                     `${ticket.type}_${ticket.passengerType}`,
                 );
-                expect(
-                    returnedSalesOfferPackage.SalesOfferPackage.distributionAssignments.DistributionAssignment.length,
-                ).toBe(ticket.products[0].salesOfferPackages[0].purchaseLocations.length);
-                expect(
-                    returnedSalesOfferPackage.SalesOfferPackage.salesOfferPackageElements.SalesOfferPackageElement
-                        .length,
-                ).toBe(ticket.products[0].salesOfferPackages[0].ticketFormats.length);
+                expect(returnedSalesOfferPackage.distributionAssignments.DistributionAssignment.length).toBe(
+                    ticket.products[0].salesOfferPackages[0].purchaseLocations.length,
+                );
+                expect(returnedSalesOfferPackage.salesOfferPackageElements.SalesOfferPackageElement.length).toBe(
+                    ticket.products[0].salesOfferPackages[0].ticketFormats.length,
+                );
             },
         );
     });
@@ -548,10 +550,8 @@ describe('Netex Helpers', () => {
                 expect(returnedSalesOfferPackageArray.length).toBe(ticket.products[0].salesOfferPackages.length);
 
                 returnedSalesOfferPackageArray.forEach((salesOfferPackage, index) => {
-                    expect(salesOfferPackage.SalesOfferPackage.Name.$t).toBe(testDataSalesOfferPackage[index].name);
-                    expect(salesOfferPackage.SalesOfferPackage.Description.$t).toBe(
-                        testDataSalesOfferPackage[index].description,
-                    );
+                    expect(salesOfferPackage.Name.$t).toBe(testDataSalesOfferPackage[index].name);
+                    expect(salesOfferPackage.Description.$t).toBe(testDataSalesOfferPackage[index].description);
                 });
             },
         );

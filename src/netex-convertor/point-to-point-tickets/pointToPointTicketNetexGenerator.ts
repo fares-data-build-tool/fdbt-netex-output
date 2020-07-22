@@ -158,7 +158,10 @@ const pointToPointTicketNetexGenerator = (
         priceFareFrameToUpdate.fareProducts.PreassignedFareProduct = getPreassignedFareProduct(matchingData);
 
         const ticketUserConcat = `${matchingData.type}_${matchingData.passengerType}`;
-        priceFareFrameToUpdate.salesOfferPackages = buildSalesOfferPackages(matchingData.products[0], ticketUserConcat);
+        priceFareFrameToUpdate.salesOfferPackages.SalesOfferPackage = buildSalesOfferPackages(
+            matchingData.products[0],
+            ticketUserConcat,
+        );
 
         if (isReturnTicket(matchingData)) {
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[0].id =
@@ -197,7 +200,7 @@ const pointToPointTicketNetexGenerator = (
         fareTableFareFrameToUpdate.id = `epd:UK:${matchingData.nocCode}:FareFrame_UK_PI_FARE_PRICE:${lineIdName}:op`;
 
         fareTableFareFrameToUpdate.priceGroups.PriceGroup = getPriceGroups(matchingData);
-        fareTableFareFrameToUpdate.fareTables = getFareTables(matchingData);
+        fareTableFareFrameToUpdate.fareTables.FareTable = getFareTables(matchingData);
 
         return fareTableFareFrameToUpdate;
     };
