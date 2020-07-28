@@ -268,7 +268,7 @@ export const buildSalesOfferPackage = (
         const distribAssignments = salesOfferPackageInfo.purchaseLocations.map(purchaseLocation => {
             return {
                 version: '1.0',
-                id: `Trip@${ticketUserConcat}-SOP@${purchaseLocation}`,
+                id: `Trip@${ticketUserConcat}-SOP@${salesOfferPackageInfo.name}@${purchaseLocation}`,
                 order: '0',
                 DistributionChannelRef: {
                     ref: `fxc:${purchaseLocation}`,
