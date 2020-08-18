@@ -3,7 +3,7 @@ import capitalize from 'lodash/capitalize';
 import parser from 'xml2json';
 import fs from 'fs';
 import moment from 'moment';
-import { PeriodTicket, PointToPointTicket, GroupTicket, User, GroupCompanion, TimeRestrictions } from '../types';
+import { PeriodTicket, PointToPointTicket, GroupTicket, User, GroupCompanion, TimeRestriction } from '../types';
 
 export interface NetexObject {
     [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -120,6 +120,10 @@ export const getGroupElement = (userPeriodTicket: GroupTicket): NetexObject => {
     };
 };
 
+export const isValidTimeRestriction = (timeRestriction: TimeRestriction): boolean =>
+    (!!timeRestriction.startTime && !!timeRestriction.endTime) ||
+    (!!timeRestriction.validDays && timeRestriction.validDays.length > 0);
+
 const getTime = (time: string): string => moment(time, 'HHmm').format('HH:mm:ss');
 
 const getDayLength = (startTime: string, endTime: string): string => {
@@ -132,7 +136,7 @@ const getDayLength = (startTime: string, endTime: string): string => {
 
 const getDaysList = (list: string[]): string => list.map(capitalize).join(' ');
 
-export const getTimeRestrictions = (timeRestrictionData: TimeRestrictions): NetexObject => ({
+export const getTimeRestrictions = (timeRestrictionData: TimeRestriction): NetexObject => ({
     FareDemandFactor: {
         id: 'op@Tariff@Demand',
         version: '1.0',
@@ -148,7 +152,10 @@ export const getTimeRestrictions = (timeRestrictionData: TimeRestrictions): Nete
                         id: 'op@Tariff@DayType',
                         version: '1.0',
                         EarliestTime: {
-                            $t: timeRestrictionData.startTime ? getTime(timeRestrictionData.startTime) : null,
+                            $t:
+                                timeRestrictionData.startTime && timeRestrictionData.endTime
+                                    ? getTime(timeRestrictionData.startTime)
+                                    : null,
                         },
                         DayLength: {
                             $t:

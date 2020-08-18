@@ -18,6 +18,7 @@ import {
     getNetexTemplateAsJson,
     convertJsonToXml,
     getTimeRestrictions,
+    isValidTimeRestriction,
 } from '../sharedHelpers';
 
 const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData: Operator): { generate: Function } => {
@@ -168,9 +169,9 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
             priceFareFrameToUpdate.tariffs.Tariff.timeIntervals = null;
         }
 
-        if (userPeriodTicket.timeRestrictions) {
+        if (userPeriodTicket.timeRestriction && isValidTimeRestriction(userPeriodTicket.timeRestriction)) {
             priceFareFrameToUpdate.tariffs.Tariff.qualityStructureFactors = getTimeRestrictions(
-                userPeriodTicket.timeRestrictions,
+                userPeriodTicket.timeRestriction,
             );
         }
 

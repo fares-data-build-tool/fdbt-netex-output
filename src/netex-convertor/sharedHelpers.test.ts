@@ -1,20 +1,20 @@
-import { TimeRestrictions } from '../types';
+import { TimeRestriction } from '../types';
 import { getTimeRestrictions } from './sharedHelpers';
 
 describe('Shared Helpers', () => {
     describe('getTimeRestrictions', () => {
-        const fullTimeRestriction: TimeRestrictions = {
+        const fullTimeRestriction: TimeRestriction = {
             startTime: '0500',
             endTime: '1200',
             validDays: ['monday'],
         };
 
-        const timeOnlyTimeRestriction: TimeRestrictions = {
+        const timeOnlyTimeRestriction: TimeRestriction = {
             startTime: '0401',
             endTime: '2032',
         };
 
-        const validDaysOnlyTimeRestriction: TimeRestrictions = {
+        const validDaysOnlyTimeRestriction: TimeRestriction = {
             validDays: ['monday', 'tuesday', 'wednesday', 'sunday'],
         };
 
