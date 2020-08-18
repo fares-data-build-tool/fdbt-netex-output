@@ -12,7 +12,13 @@ import {
     isMultiServiceTicket,
     isGeoZoneTicket,
 } from './periodTicketNetexHelpers';
-import { NetexObject, getCleanWebsite, getNetexTemplateAsJson, convertJsonToXml } from '../sharedHelpers';
+import {
+    NetexObject,
+    getCleanWebsite,
+    getNetexTemplateAsJson,
+    convertJsonToXml,
+    getTimeRestrictions,
+} from '../sharedHelpers';
 
 const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData: Operator): { generate: Function } => {
     const opIdNocFormat = `noc:${operatorData.opId}`;
@@ -160,6 +166,12 @@ const periodTicketNetexGenerator = (userPeriodTicket: PeriodTicket, operatorData
             priceFareFrameToUpdate.tariffs.Tariff.timeIntervals.TimeInterval = getTimeIntervals(userPeriodTicket);
         } else {
             priceFareFrameToUpdate.tariffs.Tariff.timeIntervals = null;
+        }
+
+        if (userPeriodTicket.timeRestrictions) {
+            priceFareFrameToUpdate.tariffs.Tariff.qualityStructureFactors = getTimeRestrictions(
+                userPeriodTicket.timeRestrictions,
+            );
         }
 
         // Fare structure elements

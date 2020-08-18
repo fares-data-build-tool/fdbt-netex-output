@@ -10,6 +10,7 @@ import {
     isSingleTicket,
     buildSalesOfferPackages,
     getFareTables,
+    getAvailabilityElement,
 } from './pointToPointTicketNetexHelpers';
 import {
     convertJsonToXml,
@@ -19,6 +20,7 @@ import {
     getUserProfile,
     isGroupTicket,
     getGroupElement,
+    getTimeRestrictions,
 } from '../sharedHelpers';
 
 const pointToPointTicketNetexGenerator = (
@@ -153,6 +155,13 @@ const pointToPointTicketNetexGenerator = (
         priceFareFrameToUpdate.tariffs.Tariff.OperatorRef.ref = nocCodeNocFormat;
         priceFareFrameToUpdate.tariffs.Tariff.OperatorRef.$t = opIdNocFormat;
         priceFareFrameToUpdate.tariffs.Tariff.LineRef.ref = matchingData.lineName;
+
+        if (matchingData.timeRestrictions) {
+            priceFareFrameToUpdate.tariffs.Tariff.qualityStructureFactors = getTimeRestrictions(
+                matchingData.timeRestrictions,
+            );
+        }
+
         priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[0].Name.$t = `O/D pairs for ${matchingData.lineName}`;
         priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement[0].distanceMatrixElements.DistanceMatrixElement = getDistanceMatrixElements(
             fareZones,
@@ -213,6 +222,12 @@ const pointToPointTicketNetexGenerator = (
         if (isGroupTicket(matchingData)) {
             priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement.push(
                 getGroupElement(matchingData),
+            );
+        }
+
+        if (matchingData.timeRestrictions) {
+            priceFareFrameToUpdate.tariffs.Tariff.fareStructureElements.FareStructureElement.push(
+                getAvailabilityElement(`Tariff@${matchingData.type}@availability`),
             );
         }
 
