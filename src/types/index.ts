@@ -55,6 +55,12 @@ export interface BaseTicket {
     email: string;
     uuid: string;
     timeRestriction?: TimeRestriction;
+    ticketPeriod: TicketPeriod;
+}
+
+export interface TicketPeriod {
+    startDate: string;
+    endDate: string;
 }
 
 type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';

@@ -101,6 +101,10 @@ export const singleTicket: SingleTicket = {
         },
     ],
     passengerType: 'anyone',
+    ticketPeriod: {
+        startDate: '2010-12-17T09:30:46.0Z',
+        endDate: '2020-12-17T09:30:46.0Z',
+    },
 };
 
 export const returnNonCircularTicket: ReturnTicket = {
@@ -438,6 +442,10 @@ export const returnNonCircularTicket: ReturnTicket = {
         },
     ],
     passengerType: 'anyone',
+    ticketPeriod: {
+        startDate: '2010-12-17T09:30:46.0Z',
+        endDate: '2020-12-17T09:30:46.0Z',
+    },
 };
 
 export const returnCircularTicket: ReturnTicket = {
@@ -645,6 +653,10 @@ export const returnCircularTicket: ReturnTicket = {
     passengerType: 'student',
     proof: 'No',
     ageRange: 'No',
+    ticketPeriod: {
+        startDate: '2010-12-17T09:30:46.0Z',
+        endDate: '2030-12-17T09:30:46.0Z',
+    },
 };
 
 export const periodGeoZoneTicket: PeriodGeoZoneTicket = {
@@ -954,6 +966,10 @@ export const periodGeoZoneTicket: PeriodGeoZoneTicket = {
             street: 'Midgley Road',
         },
     ],
+    ticketPeriod: {
+        startDate: '2010-12-17T09:30:46.0Z',
+        endDate: '2030-12-17T09:30:46.0Z',
+    },
 };
 
 export const periodMultipleServicesTicket: PeriodMultipleServicesTicket = {
@@ -1210,6 +1226,10 @@ export const periodMultipleServicesTicket: PeriodMultipleServicesTicket = {
             serviceDescription: 'FRIARGATE - CORPUS CHRISTI RCHS  ',
         },
     ],
+    ticketPeriod: {
+        startDate: '2015-12-17T09:30:46.0Z',
+        endDate: '2025-12-17T09:30:46.0Z',
+    },
 };
 
 export const flatFareTicket: FlatFareTicket = {
@@ -1717,6 +1737,10 @@ export const flatFareTicket: FlatFareTicket = {
         },
     ],
     passengerType: 'anyone',
+    ticketPeriod: {
+        startDate: '2010-12-17T09:30:46.0Z',
+        endDate: '2022-12-17T09:30:46.0Z',
+    },
 };
 
 export const periodGeoZoneTicketWithNoType = {
@@ -1747,4 +1771,8 @@ export const periodGeoZoneTicketWithNoType = {
     ageRange: 'Yes',
     ageRangeMax: '30',
     proof: 'No',
+    ticketPeriod: {
+        startDate: '2010-12-17T09:30:46.0Z',
+        endDate: '2028-12-17T09:30:46.0Z',
+    },
 };
