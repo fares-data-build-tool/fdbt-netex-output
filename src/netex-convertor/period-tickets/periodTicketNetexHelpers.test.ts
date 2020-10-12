@@ -3,6 +3,8 @@ import { PeriodMultipleServicesTicket, PeriodGeoZoneTicket, PeriodTicket } from 
 import * as netexHelpers from './periodTicketNetexHelpers';
 import { periodGeoZoneTicket, periodMultipleServicesTicket, flatFareTicket } from '../../test-data/matchingData';
 import operatorData from '../test-data/operatorData';
+import { getGroupOfOperators, getOrganisations } from './periodTicketNetexHelpers';
+import * as db from '../data/auroradb';
 
 describe('periodTicketNetexHelpers', () => {
     const { stops } = periodGeoZoneTicket;
@@ -148,7 +150,7 @@ describe('periodTicketNetexHelpers', () => {
             };
             const expectedLength = periodMultipleServicesTicket.selectedServices.length;
 
-            const linesList = netexHelpers.getLinesList(periodMultipleServicesTicket, opData);
+            const linesList = netexHelpers.getLinesList(periodMultipleServicesTicket, opData.website);
 
             expect(linesList).toHaveLength(expectedLength);
             linesList.forEach(line => {
@@ -508,6 +510,154 @@ describe('periodTicketNetexHelpers', () => {
                     expect(fareStructureElement).toEqual(expectedConditionsOfTravelFareStructureElement);
                 }
             });
+        });
+    });
+    describe('getGroupOfOperators', () => {
+        beforeEach(() => {
+            jest.spyOn(db, 'getOperatorDataByNocCode')
+                .mockImplementationOnce(() =>
+                    Promise.resolve([
+                        {
+                            website: 'www.unittest.com',
+                            ttrteEnq: 'aaaaaa',
+                            operatorPublicName: 'Test Buses',
+                            opId: '7Z',
+                            vosaPsvLicenseName: 'CCD',
+                            fareEnq: 'SSSS',
+                            complEnq: '334',
+                            mode: 'test',
+                        },
+                    ]),
+                )
+                .mockImplementationOnce(() =>
+                    Promise.resolve([
+                        {
+                            website: 'www.besttest.com',
+                            ttrteEnq: 'bbbbbbb',
+                            operatorPublicName: 'Super Buses',
+                            opId: '8H',
+                            vosaPsvLicenseName: 'CVD',
+                            fareEnq: 'DDDD',
+                            complEnq: '445',
+                            mode: 'bus',
+                        },
+                    ]),
+                )
+                .mockImplementationOnce(() =>
+                    Promise.resolve([
+                        {
+                            website: 'www.anothertest.com',
+                            ttrteEnq: 'zzzzzzb',
+                            operatorPublicName: 'Another Buses',
+                            opId: '0H',
+                            vosaPsvLicenseName: 'CCQ',
+                            fareEnq: 'QQQQQ',
+                            complEnq: '556',
+                            mode: 'bus',
+                        },
+                    ]),
+                );
+        });
+        it('returns a group of operators object with a populated members array', async () => {
+            const result = await getGroupOfOperators(['aaa', 'bbb', 'ccc']);
+            expect(result).toStrictEqual({
+                GroupOfOperators: {
+                    Name: { $t: 'Bus Operators' },
+                    id: 'operators@bus',
+                    members: [
+                        { OperatorRef: { $t: 'Test Buses', ref: 'noc:aaa', version: '1.0' } },
+                        { OperatorRef: { $t: 'Super Buses', ref: 'noc:bbb', version: '1.0' } },
+                        { OperatorRef: { $t: 'Another Buses', ref: 'noc:ccc', version: '1.0' } },
+                    ],
+                    version: '1.0',
+                },
+            });
+        });
+    });
+    describe.only('getOrganisations', () => {
+        beforeEach(() => {
+            jest.spyOn(db, 'getOperatorShortNameByNocCode').mockImplementation(() => Promise.resolve('shortName'));
+            jest.spyOn(db, 'getOperatorDataByNocCode')
+                .mockImplementationOnce(() =>
+                    Promise.resolve([
+                        {
+                            website: 'www.unittest.com',
+                            ttrteEnq: 'aaaaaa',
+                            operatorPublicName: 'Test Buses',
+                            opId: '7Z',
+                            vosaPsvLicenseName: 'CCD',
+                            fareEnq: 'SSSS',
+                            complEnq: '334',
+                            mode: 'test',
+                        },
+                    ]),
+                )
+                .mockImplementationOnce(() =>
+                    Promise.resolve([
+                        {
+                            website: 'www.besttest.com',
+                            ttrteEnq: 'bbbbbbb',
+                            operatorPublicName: 'Super Buses',
+                            opId: '8H',
+                            vosaPsvLicenseName: 'CVD',
+                            fareEnq: 'DDDD',
+                            complEnq: '445',
+                            mode: 'bus',
+                        },
+                    ]),
+                )
+                .mockImplementationOnce(() =>
+                    Promise.resolve([
+                        {
+                            website: 'www.anothertest.com',
+                            ttrteEnq: 'zzzzzzb',
+                            operatorPublicName: 'Another Buses',
+                            opId: '0H',
+                            vosaPsvLicenseName: 'CCQ',
+                            fareEnq: 'QQQQQ',
+                            complEnq: '556',
+                            mode: 'bus',
+                        },
+                    ]),
+                );
+        });
+        it('returns an array of operators with length equal to the length of arrays passed in', async () => {
+            const result = await getOrganisations(['aaa', 'bbb', 'ccc']);
+            expect(result).toStrictEqual([
+                {
+                    Address: { Street: { $t: '334' } },
+                    ContactDetails: { Phone: { $t: 'SSSS' }, Url: { $t: 'www.unittest.com' } },
+                    Name: { $t: 'Test Buses' },
+                    PrimaryMode: { $t: 'bus' },
+                    PublicCode: { $t: 'aaa' },
+                    ShortName: { $t: 'shortName' },
+                    TradingName: { $t: 'CCD' },
+                    id: 'noc:aaa',
+                    version: '1.0',
+                },
+                {
+                    Address: { Street: { $t: '445' } },
+                    ContactDetails: { Phone: { $t: 'DDDD' }, Url: { $t: 'www.besttest.com' } },
+                    Name: { $t: 'Super Buses' },
+                    PrimaryMode: { $t: 'bus' },
+                    PublicCode: { $t: 'bbb' },
+                    ShortName: { $t: 'shortName' },
+                    TradingName: { $t: 'CVD' },
+                    id: 'noc:bbb',
+                    version: '1.0',
+                },
+                {
+                    Address: { Street: { $t: '556' } },
+                    ContactDetails: { Phone: { $t: 'QQQQQ' }, Url: { $t: 'www.anothertest.com' } },
+                    Name: { $t: 'Another Buses' },
+                    PrimaryMode: { $t: 'bus' },
+                    PublicCode: { $t: 'ccc' },
+                    ShortName: { $t: 'shortName' },
+                    TradingName: { $t: 'CCQ' },
+                    id: 'noc:ccc',
+                    version: '1.0',
+                },
+            ]);
         });
     });
 });
