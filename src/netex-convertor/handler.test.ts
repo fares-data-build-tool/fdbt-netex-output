@@ -29,6 +29,7 @@ describe('netexConvertorHandler', () => {
         jest.spyOn(db, 'getOperatorDataByNocCode').mockImplementation(() =>
             Promise.resolve([
                 {
+                    nocCode: 'aaa',
                     website: 'www.unittest.com',
                     ttrteEnq: 'aaaaaa',
                     operatorPublicName: 'Test Buses',
