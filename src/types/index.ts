@@ -3,6 +3,7 @@ import { NetexObject } from '../netex-convertor/sharedHelpers';
 // Reference Data (from NOC, TNDS, NaPTAN datasets)
 
 export interface Operator {
+    nocCode: string;
     website: string;
     ttrteEnq: string;
     operatorPublicName: string;

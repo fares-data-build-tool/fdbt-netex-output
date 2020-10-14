@@ -57,7 +57,7 @@ const periodTicketNetexGenerator = (
             isGeoZoneTicket(userPeriodTicket) ? 'NETWORK' : 'LINE'
         }_FARE_OFFER:FXCP`;
 
-        if (userPeriodTicket.type === 'multOp') {
+        if (userPeriodTicket.type === 'multiOp') {
             publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.GroupOfOperatorsRef = {
                 version: '1.0',
                 ref: 'operators@bus',
@@ -97,7 +97,7 @@ const periodTicketNetexGenerator = (
         return compositeFrameToUpdate;
     };
 
-    const updateResourceFrame = async (resourceFrame: NetexObject): Promise<NetexObject> => {
+    const updateResourceFrame = (resourceFrame: NetexObject): NetexObject => {
         const resourceFrameToUpdate = { ...resourceFrame };
 
         resourceFrameToUpdate.id = `epd:UK:${userPeriodTicket.nocCode}:ResourceFrame_UK_PI_COMMON:${userPeriodTicket.nocCode}:op`;
@@ -113,11 +113,12 @@ const periodTicketNetexGenerator = (
         resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.Name.$t = baseOperatorInfo.operatorPublicName;
         resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.Url.$t = website;
 
-        if (userPeriodTicket.type === 'multOp' && userPeriodTicket.additionalNocs) {
+        if (userPeriodTicket.type === 'multiOp' && userPeriodTicket.additionalNocs) {
             const nocs = [...userPeriodTicket.additionalNocs];
             nocs.push(userPeriodTicket.nocCode);
-            resourceFrameToUpdate.organisations.Operator = await getOrganisations(nocs);
-            resourceFrameToUpdate.groupsOfOperators = await getGroupOfOperators(nocs);
+
+            resourceFrameToUpdate.organisations.Operator = getOrganisations(operatorData);
+            resourceFrameToUpdate.groupsOfOperators = getGroupOfOperators(operatorData);
         } else {
             resourceFrameToUpdate.organisations.Operator.id = nocCodeNocFormat;
             resourceFrameToUpdate.organisations.Operator.PublicCode.$t = userPeriodTicket.nocCode;
@@ -190,7 +191,7 @@ const periodTicketNetexGenerator = (
         priceFareFrameToUpdate.tariffs.Tariff.Name.$t = `${placeHolderGroupOfProductsName} - Tariff`;
         priceFareFrameToUpdate.tariffs.Tariff.Description.$t = `${placeHolderGroupOfProductsName} single zone tariff`;
 
-        if (userPeriodTicket.type === 'multOp') {
+        if (userPeriodTicket.type === 'multiOp') {
             priceFareFrameToUpdate.tariffs.Tariff.GroupOfOperatorsRef = {
                 version: '1.0',
                 ref: 'operators@bus',
@@ -272,7 +273,7 @@ const periodTicketNetexGenerator = (
         );
 
         const netexFrames = netexJson.PublicationDelivery.dataObjects.CompositeFrame[0].frames;
-        netexFrames.ResourceFrame = await updateResourceFrame(netexFrames.ResourceFrame);
+        netexFrames.ResourceFrame = updateResourceFrame(netexFrames.ResourceFrame);
 
         netexFrames.ServiceFrame = updateServiceFrame(netexFrames.ServiceFrame);
 
