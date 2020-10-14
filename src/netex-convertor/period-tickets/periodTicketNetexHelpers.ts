@@ -58,7 +58,7 @@ export const getLinesList = (userPeriodTicket: PeriodMultipleServicesTicket, web
               Url: { $t: website },
               PublicCode: { $t: service.lineName },
               PrivateCode: { type: 'noc', $t: `${userPeriodTicket.nocCode}_${service.lineName}` },
-              [userPeriodTicket.type === 'multiOp' ? 'GroupOfOperatorsRef' : 'OperatorRef']: {
+              [userPeriodTicket.type === 'multiOperator' ? 'GroupOfOperatorsRef' : 'OperatorRef']: {
                   version: '1.0',
                   ref: `noc:${userPeriodTicket.nocCode}`,
               },

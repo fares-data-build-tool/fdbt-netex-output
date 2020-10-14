@@ -72,11 +72,15 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
             type === 'periodGeoZone' ||
             type === 'periodMultipleServices' ||
             type === 'flatFare' ||
-            type === 'multiOp'
+            type === 'multiOperator'
         ) {
             const userPeriodTicket: PeriodTicket = s3Data;
             let operatorData: Operator[] = [];
-            if (type === 'multiOp' && userPeriodTicket.additionalNocs && userPeriodTicket.additionalNocs.length > 0) {
+            if (
+                type === 'multiOperator' &&
+                userPeriodTicket.additionalNocs &&
+                userPeriodTicket.additionalNocs.length > 0
+            ) {
                 const nocs: string[] = [...userPeriodTicket.additionalNocs];
                 nocs.push(userPeriodTicket.nocCode);
                 operatorData = await db.getOperatorDataByNocCode(nocs);

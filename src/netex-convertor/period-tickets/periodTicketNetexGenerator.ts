@@ -57,7 +57,7 @@ const periodTicketNetexGenerator = (
             isGeoZoneTicket(userPeriodTicket) ? 'NETWORK' : 'LINE'
         }_FARE_OFFER:FXCP`;
 
-        if (userPeriodTicket.type === 'multiOp') {
+        if (userPeriodTicket.type === 'multiOperator') {
             publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.GroupOfOperatorsRef = {
                 version: '1.0',
                 ref: 'operators@bus',
@@ -113,7 +113,7 @@ const periodTicketNetexGenerator = (
         resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.Name.$t = baseOperatorInfo.operatorPublicName;
         resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.Url.$t = website;
 
-        if (userPeriodTicket.type === 'multiOp' && userPeriodTicket.additionalNocs) {
+        if (userPeriodTicket.type === 'multiOperator' && userPeriodTicket.additionalNocs) {
             const nocs = [...userPeriodTicket.additionalNocs];
             nocs.push(userPeriodTicket.nocCode);
 
@@ -191,7 +191,7 @@ const periodTicketNetexGenerator = (
         priceFareFrameToUpdate.tariffs.Tariff.Name.$t = `${placeHolderGroupOfProductsName} - Tariff`;
         priceFareFrameToUpdate.tariffs.Tariff.Description.$t = `${placeHolderGroupOfProductsName} single zone tariff`;
 
-        if (userPeriodTicket.type === 'multiOp') {
+        if (userPeriodTicket.type === 'multiOperator') {
             priceFareFrameToUpdate.tariffs.Tariff.GroupOfOperatorsRef = {
                 version: '1.0',
                 ref: 'operators@bus',
