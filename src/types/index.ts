@@ -137,6 +137,12 @@ export interface PeriodGeoZoneTicket extends BasePeriodTicket {
     stops: Stop[];
 }
 
+export interface MultiOperatorGeoZoneTicket extends PeriodGeoZoneTicket {
+    additionalNocs: string[];
+}
+
+export type GeoZoneTicket = PeriodGeoZoneTicket | MultiOperatorGeoZoneTicket;
+
 export interface PeriodMultipleServicesTicket extends BasePeriodTicket {
     selectedServices: SelectedService[];
 }
