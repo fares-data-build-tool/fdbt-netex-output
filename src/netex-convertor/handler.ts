@@ -68,12 +68,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
             if (matchingData.nocCode !== 'IWBusCo') {
                 console.info(`NeTEx generation complete for type ${type}`);
             }
-        } else if (
-            type === 'periodGeoZone' ||
-            type === 'periodMultipleServices' ||
-            type === 'flatFare' ||
-            type === 'multiOperator'
-        ) {
+        } else if (type === 'period' || type === 'flatFare' || type === 'multiOperator') {
             const userPeriodTicket: PeriodTicket = s3Data;
             let operatorData: Operator[] = [];
             if (
