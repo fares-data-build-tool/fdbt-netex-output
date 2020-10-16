@@ -151,7 +151,19 @@ export interface PeriodMultipleServicesTicket extends BasePeriodTicket {
     selectedServices: SelectedService[];
 }
 
-export type MultipleServicesTicket = PeriodMultipleServicesTicket;
+export interface MultiOperatorMultipleServicesTicket extends PeriodMultipleServicesTicket {
+    additionalOperators: {
+        nocCode: string;
+        selectedServices: SelectedService[];
+    }[];
+}
+
+export const isMultiOperatorMultipleServicesTicket = (
+    userPeriodTicket: PeriodTicket,
+): userPeriodTicket is MultiOperatorMultipleServicesTicket =>
+    (userPeriodTicket as MultiOperatorMultipleServicesTicket).additionalOperators.length > 0;
+
+export type MultipleServicesTicket = PeriodMultipleServicesTicket | MultiOperatorMultipleServicesTicket;
 
 export interface FlatFareTicket extends BaseTicket {
     operatorName: string;

@@ -518,7 +518,6 @@ describe('periodTicketNetexHelpers', () => {
         });
         it('returns a group of operators object with a populated members array', () => {
             const result = getGroupOfOperators(multiOperatorList);
-            console.log(result);
             expect(result).toStrictEqual({
                 GroupOfOperators: {
                     Name: { $t: 'Bus Operators' },
