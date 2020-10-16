@@ -59,7 +59,6 @@ export interface BaseTicket {
     uuid: string;
     timeRestriction?: TimeRestriction;
     ticketPeriod: TicketPeriod;
-    additionalNocs?: string[];
 }
 
 export interface TicketPeriod {
@@ -125,7 +124,7 @@ export interface FareZonePrices {
     fareZones: string[];
 }
 
-export type PeriodTicket = PeriodGeoZoneTicket | PeriodMultipleServicesTicket;
+export type PeriodTicket = GeoZoneTicket | MultipleServicesTicket;
 
 export interface BasePeriodTicket extends BaseTicket {
     operatorName: string;
@@ -141,11 +140,18 @@ export interface MultiOperatorGeoZoneTicket extends PeriodGeoZoneTicket {
     additionalNocs: string[];
 }
 
+export const isMultiOperatorGeoZoneTicket = (
+    userPeriodTicket: PeriodTicket,
+): userPeriodTicket is MultiOperatorGeoZoneTicket =>
+    (userPeriodTicket as MultiOperatorGeoZoneTicket).additionalNocs.length > 0;
+
 export type GeoZoneTicket = PeriodGeoZoneTicket | MultiOperatorGeoZoneTicket;
 
 export interface PeriodMultipleServicesTicket extends BasePeriodTicket {
     selectedServices: SelectedService[];
 }
+
+export type MultipleServicesTicket = PeriodMultipleServicesTicket;
 
 export interface FlatFareTicket extends BaseTicket {
     operatorName: string;
