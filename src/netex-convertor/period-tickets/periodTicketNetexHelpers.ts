@@ -60,15 +60,11 @@ export const getLinesList = async (
         const multiOperatorLines: Line[][] = await Promise.all(
             userPeriodTicket.additionalOperators.map(
                 async (operator): Promise<Line[]> => {
-                    let websiteToUse = '';
                     const individualWebsite = getCleanWebsite(
                         (await getOperatorDataByNocCode([operator.nocCode]))[0].website,
                     );
-                    if (!individualWebsite) {
-                        websiteToUse = 'n/a';
-                    } else {
-                        websiteToUse = individualWebsite;
-                    }
+                    const websiteToUse = !individualWebsite ? 'n/a' : individualWebsite;
+
                     return operator.selectedServices.map(service => ({
                         version: '1.0',
                         id: `op:${service.lineName}#${service.serviceCode}#${service.startDate}`,
