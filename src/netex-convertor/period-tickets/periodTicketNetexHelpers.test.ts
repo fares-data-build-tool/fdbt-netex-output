@@ -1,4 +1,4 @@
-import { PeriodMultipleServicesTicket, GeoZoneTicket, PeriodTicket } from '../../types/index';
+import { PeriodMultipleServicesTicket, GeoZoneTicket, PeriodTicket, SchemeOperator } from '../../types/index';
 
 import * as netexHelpers from './periodTicketNetexHelpers';
 import { periodGeoZoneTicket, periodMultipleServicesTicket, flatFareTicket } from '../../test-data/matchingData';
@@ -528,6 +528,7 @@ describe('periodTicketNetexHelpers', () => {
             });
         });
     });
+
     describe('getGroupOfOperators', () => {
         beforeEach(() => {
             jest.spyOn(db, 'getOperatorDataByNocCode').mockImplementationOnce(() => Promise.resolve(multiOperatorList));
@@ -549,11 +550,43 @@ describe('periodTicketNetexHelpers', () => {
                 },
             });
         });
+
+        it('returns a group of operators containing the scheme operator if scheme operator info is supplied', () => {
+            const mockSchemeOperatorInfo: SchemeOperator = {
+                schemeOperatorName: 'Some Random Bus Co',
+                schemeOperatorRegionCode: 'Y',
+                website: '',
+                ttrteEnq: '',
+                opId: 'Some Random Bus Co-Y',
+                vosaPsvLicenseName: '',
+                fareEnq: '',
+                complEnq: '',
+                mode: 'bus',
+            };
+            const result = getGroupOfOperators(multiOperatorList, mockSchemeOperatorInfo);
+            expect(result).toStrictEqual({
+                GroupOfOperators: {
+                    Name: { $t: 'Bus Operators' },
+                    id: 'operators@bus',
+                    members: {
+                        OperatorRef: [
+                            { $t: 'Test Buses', ref: 'noc:aaa', version: '1.0' },
+                            { $t: 'Super Buses', ref: 'noc:bbb', version: '1.0' },
+                            { $t: 'Another Buses', ref: 'noc:ccc', version: '1.0' },
+                            { $t: 'Some Random Bus Co', ref: 'noc:Some Random Bus Co-Y', version: '1.0' },
+                        ],
+                    },
+                    version: '1.0',
+                },
+            });
+        });
     });
+
     describe('getOrganisations', () => {
         beforeEach(() => {
             jest.spyOn(db, 'getOperatorDataByNocCode').mockImplementationOnce(() => Promise.resolve(multiOperatorList));
         });
+
         it('returns an array of operators with length equal to the length of arrays passed in', () => {
             const result = getOrganisations(multiOperatorList);
             expect(result).toStrictEqual([
@@ -588,6 +621,67 @@ describe('periodTicketNetexHelpers', () => {
                     ShortName: { $t: 'Another Buses' },
                     TradingName: { $t: 'CCQ' },
                     id: 'noc:ccc',
+                    version: '1.0',
+                },
+            ]);
+        });
+
+        it('returns an array of operators with length equal to the length of arrays passed in, plus additional scheme operator info', () => {
+            const mockSchemeOperatorInfo: SchemeOperator = {
+                schemeOperatorName: 'Some Random Bus Co',
+                schemeOperatorRegionCode: 'Y',
+                website: '',
+                ttrteEnq: '',
+                opId: 'Some Random Bus Co-Y',
+                vosaPsvLicenseName: '',
+                fareEnq: '',
+                complEnq: '',
+                mode: 'bus',
+            };
+            const result = getOrganisations(multiOperatorList, mockSchemeOperatorInfo);
+            expect(result).toStrictEqual([
+                {
+                    Address: { Street: { $t: '334' } },
+                    ContactDetails: { Phone: { $t: 'SSSS' }, Url: { $t: 'www.unittest.com' } },
+                    Name: { $t: 'Test Buses' },
+                    PrimaryMode: { $t: 'bus' },
+                    PublicCode: { $t: 'aaa' },
+                    ShortName: { $t: 'Test Buses' },
+                    TradingName: { $t: 'CCD' },
+                    id: 'noc:aaa',
+                    version: '1.0',
+                },
+                {
+                    Address: { Street: { $t: '445' } },
+                    ContactDetails: { Phone: { $t: 'DDDD' }, Url: { $t: 'www.besttest.com' } },
+                    Name: { $t: 'Super Buses' },
+                    PrimaryMode: { $t: 'bus' },
+                    PublicCode: { $t: 'bbb' },
+                    ShortName: { $t: 'Super Buses' },
+                    TradingName: { $t: 'CVD' },
+                    id: 'noc:bbb',
+                    version: '1.0',
+                },
+                {
+                    Address: { Street: { $t: '556' } },
+                    ContactDetails: { Phone: { $t: 'QQQQQ' }, Url: { $t: 'www.anothertest.com' } },
+                    Name: { $t: 'Another Buses' },
+                    PrimaryMode: { $t: 'bus' },
+                    PublicCode: { $t: 'ccc' },
+                    ShortName: { $t: 'Another Buses' },
+                    TradingName: { $t: 'CCQ' },
+                    id: 'noc:ccc',
+                    version: '1.0',
+                },
+                {
+                    Address: { Street: { $t: '' } },
+                    ContactDetails: { Phone: { $t: '' }, Url: { $t: '' } },
+                    Name: { $t: 'Some Random Bus Co' },
+                    PrimaryMode: { $t: 'bus' },
+                    PublicCode: { $t: 'Some Random Bus Co-Y' },
+                    ShortName: { $t: 'Some Random Bus Co' },
+                    TradingName: { $t: '' },
+                    id: 'noc:Some Random Bus Co-Y',
                     version: '1.0',
                 },
             ]);
