@@ -160,6 +160,7 @@ export interface MultiOperatorGeoZoneTicket extends PeriodGeoZoneTicket {
 }
 
 export const isMultiOperatorGeoZoneTicket = (ticketData: Ticket): ticketData is MultiOperatorGeoZoneTicket =>
+    !!(ticketData as MultiOperatorGeoZoneTicket).nocCode &&
     (ticketData as MultiOperatorGeoZoneTicket).additionalNocs &&
     (ticketData as MultiOperatorGeoZoneTicket).additionalNocs.length > 0;
 

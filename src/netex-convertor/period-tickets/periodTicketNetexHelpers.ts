@@ -51,11 +51,11 @@ export const getBaseSchemeOperatorInfo = (userPeriodTicket: SchemeOperatorTicket
     schemeOperatorRegionCode: userPeriodTicket.schemeOperatorRegionCode,
     website: '',
     ttrteEnq: '',
-    opId: '',
+    opId: `${userPeriodTicket.schemeOperatorName}-${userPeriodTicket.schemeOperatorRegionCode}-opId`,
     vosaPsvLicenseName: '',
     fareEnq: '',
     complEnq: '',
-    mode: '',
+    mode: 'bus',
 });
 
 export const getScheduledStopPointsList = (stops: Stop[]): ScheduledStopPoint[] =>
@@ -650,7 +650,7 @@ export const getTimeIntervals = (userPeriodTicket: PeriodTicket | SchemeOperator
         return {
             version: '1.0',
             id: `op:Tariff@${product.productName}@${product.productDuration.replace(' ', '-')}`,
-            Name: { $t: `${product.productDuration}}` },
+            Name: { $t: `${product.productDuration}` },
             Description: { $t: `P${finalAmount}${firstLetterOfType}` },
         };
     });
@@ -849,8 +849,11 @@ export const getFareStructuresElements = (
     return fareStructureElements;
 };
 
-export const getOrganisations = (operatorData: Operator[]): NetexOrganisationOperator[] =>
-    operatorData.map(operator => ({
+export const getOrganisations = (
+    operatorData: Operator[],
+    baseOperatorInfo?: SchemeOperator,
+): NetexOrganisationOperator[] => {
+    const organisations = operatorData.map(operator => ({
         version: '1.0',
         id: `noc:${operator.nocCode}`,
         PublicCode: {
@@ -882,8 +885,44 @@ export const getOrganisations = (operatorData: Operator[]): NetexOrganisationOpe
             $t: getNetexMode(operator.mode),
         },
     }));
+    if (baseOperatorInfo) {
+        organisations.push({
+            version: '1.0',
+            id: `noc:${baseOperatorInfo.schemeOperatorName}-${baseOperatorInfo.schemeOperatorRegionCode}`,
+            PublicCode: {
+                $t: `${baseOperatorInfo.schemeOperatorName}-${baseOperatorInfo.schemeOperatorRegionCode}`,
+            },
+            Name: {
+                $t: baseOperatorInfo.schemeOperatorName,
+            },
+            ShortName: {
+                $t: baseOperatorInfo.schemeOperatorName,
+            },
+            TradingName: {
+                $t: baseOperatorInfo.vosaPsvLicenseName,
+            },
+            ContactDetails: {
+                Phone: {
+                    $t: baseOperatorInfo.fareEnq,
+                },
+                Url: {
+                    $t: baseOperatorInfo.website,
+                },
+            },
+            Address: {
+                Street: {
+                    $t: baseOperatorInfo.complEnq,
+                },
+            },
+            PrimaryMode: {
+                $t: getNetexMode(baseOperatorInfo.mode),
+            },
+        });
+    }
+    return organisations;
+};
 
-export const getGroupOfOperators = (operatorData: Operator[]): GroupOfOperators => {
+export const getGroupOfOperators = (operatorData: Operator[], baseOperatorInfo?: SchemeOperator): GroupOfOperators => {
     const group: GroupOfOperators = {
         GroupOfOperators: {
             version: '1.0',
@@ -901,6 +940,14 @@ export const getGroupOfOperators = (operatorData: Operator[]): GroupOfOperators 
         ref: `noc:${operator.nocCode}`,
         $t: operator.operatorPublicName,
     }));
+
+    if (baseOperatorInfo) {
+        members.push({
+            version: '1.0',
+            ref: `noc:${baseOperatorInfo.schemeOperatorName}-${baseOperatorInfo.schemeOperatorRegionCode}`,
+            $t: baseOperatorInfo.schemeOperatorName,
+        });
+    }
 
     group.GroupOfOperators.members.OperatorRef = members;
     return group;
