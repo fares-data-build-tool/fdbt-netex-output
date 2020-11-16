@@ -550,36 +550,6 @@ describe('periodTicketNetexHelpers', () => {
                 },
             });
         });
-
-        it('returns a group of operators containing the scheme operator if scheme operator info is supplied', () => {
-            const mockSchemeOperatorInfo: SchemeOperator = {
-                schemeOperatorName: 'Some Random Bus Co',
-                schemeOperatorRegionCode: 'Y',
-                website: '',
-                ttrteEnq: '',
-                opId: 'Some Random Bus Co-Y',
-                vosaPsvLicenseName: '',
-                fareEnq: '',
-                complEnq: '',
-                mode: 'bus',
-            };
-            const result = getGroupOfOperators(multiOperatorList, mockSchemeOperatorInfo);
-            expect(result).toStrictEqual({
-                GroupOfOperators: {
-                    Name: { $t: 'Bus Operators' },
-                    id: 'operators@bus',
-                    members: {
-                        OperatorRef: [
-                            { $t: 'Test Buses', ref: 'noc:aaa', version: '1.0' },
-                            { $t: 'Super Buses', ref: 'noc:bbb', version: '1.0' },
-                            { $t: 'Another Buses', ref: 'noc:ccc', version: '1.0' },
-                            { $t: 'Some Random Bus Co', ref: 'noc:Some Random Bus Co-Y', version: '1.0' },
-                        ],
-                    },
-                    version: '1.0',
-                },
-            });
-        });
     });
 
     describe('getOrganisations', () => {

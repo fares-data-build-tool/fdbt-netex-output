@@ -922,7 +922,7 @@ export const getOrganisations = (
     return organisations;
 };
 
-export const getGroupOfOperators = (operatorData: Operator[], baseOperatorInfo?: SchemeOperator): GroupOfOperators => {
+export const getGroupOfOperators = (operatorData: Operator[]): GroupOfOperators => {
     const group: GroupOfOperators = {
         GroupOfOperators: {
             version: '1.0',
@@ -940,14 +940,6 @@ export const getGroupOfOperators = (operatorData: Operator[], baseOperatorInfo?:
         ref: `noc:${operator.nocCode}`,
         $t: operator.operatorPublicName,
     }));
-
-    if (baseOperatorInfo) {
-        members.push({
-            version: '1.0',
-            ref: `noc:${baseOperatorInfo.schemeOperatorName}-${baseOperatorInfo.schemeOperatorRegionCode}`,
-            $t: baseOperatorInfo.schemeOperatorName,
-        });
-    }
 
     group.GroupOfOperators.members.OperatorRef = members;
     return group;

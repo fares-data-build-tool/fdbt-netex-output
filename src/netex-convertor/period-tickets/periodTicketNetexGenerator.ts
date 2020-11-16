@@ -145,9 +145,6 @@ const periodTicketNetexGenerator = (
                 nocs.push(userPeriodTicket.nocCode);
                 resourceFrameToUpdate.organisations.Operator = getOrganisations(operatorData);
                 resourceFrameToUpdate.groupsOfOperators = getGroupOfOperators(operatorData);
-            } else if (isSchemeOperatorTicket(userPeriodTicket) && isBaseSchemeOperatorInfo(baseOperatorInfo)) {
-                resourceFrameToUpdate.organisations.Operator = getOrganisations(operatorData, baseOperatorInfo);
-                resourceFrameToUpdate.groupsOfOperators = getGroupOfOperators(operatorData, baseOperatorInfo);
             }
         } else if (
             userPeriodTicket.type === 'multiOperator' &&
