@@ -2124,7 +2124,7 @@ export const periodGeoZoneTicketWithNoType = {
 };
 
 export const schemeOperatorTicket: SchemeOperatorTicket = {
-    schemeOperatorName: 'DannysBuses',
+    schemeOperatorName: 'IW Buses',
     schemeOperatorRegionCode: 'Y',
     additionalNocs: ['WBTR', 'DCCL', 'HCTY'],
     type: 'multiOperator',
