@@ -121,7 +121,7 @@ const emailTemplate = (
                   <p
                     style="color: #0b0c0c; font-family: Arial,sans-serif; -webkit-font-smoothing: antialiased; font-weight: 400; margin-bottom: 20px;"
                   >
-                    You can return to our service if you wish to create additional fares data or go straight to the <a href="https://fares-data.dft.gov.uk/home">Bus Open Data Service (BODS)</a> to upload your file.
+                    You can return to our service if you wish to create additional fares data or go straight to the <a href="https://fares-data.dft.gov.uk/home" aria-label="Bus Open Data Service (BODS) link">Bus Open Data Service (BODS)</a> to upload your file.
                   </p>
                 </div>
               </div>
