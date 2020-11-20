@@ -1,4 +1,6 @@
 import {
+    MultiOperatorMultipleServicesTicket,
+    isMultiOperatorMultipleServicesTicket,
     GroupOfOperators,
     NetexOrganisationOperator,
     NetexSalesOfferPackage,
@@ -16,6 +18,11 @@ import {
     User,
     GroupCompanion,
     Operator,
+    SelectedService,
+    SchemeOperator,
+    SchemeOperatorTicket,
+    Ticket,
+    isSchemeOperatorTicket,
 } from '../../types/index';
 import {
     getNetexMode,
@@ -24,15 +31,31 @@ import {
     getUserProfile,
     getGroupElement,
     getProfileRef,
-    isValidTimeRestriction,
     getCleanWebsite,
+    replaceIWBusCoNocCode,
 } from '../sharedHelpers';
 
-export const isGeoZoneTicket = (ticket: PeriodTicket): ticket is GeoZoneTicket =>
+export const isGeoZoneTicket = (ticket: Ticket): ticket is GeoZoneTicket =>
     (ticket as GeoZoneTicket).zoneName !== undefined;
 
-export const isMultiServiceTicket = (ticket: PeriodTicket): ticket is PeriodMultipleServicesTicket =>
+export const isMultiServiceTicket = (ticket: Ticket): ticket is PeriodMultipleServicesTicket =>
     (ticket as PeriodMultipleServicesTicket).selectedServices !== undefined;
+
+export const isBaseSchemeOperatorInfo = (operatorInfo: Operator | SchemeOperator): operatorInfo is SchemeOperator =>
+    (operatorInfo as SchemeOperator).schemeOperatorName !== undefined &&
+    (operatorInfo as SchemeOperator).schemeOperatorRegionCode !== undefined;
+
+export const getBaseSchemeOperatorInfo = (userPeriodTicket: SchemeOperatorTicket): SchemeOperator => ({
+    schemeOperatorName: userPeriodTicket.schemeOperatorName,
+    schemeOperatorRegionCode: userPeriodTicket.schemeOperatorRegionCode,
+    website: '',
+    ttrteEnq: '',
+    opId: `${userPeriodTicket.schemeOperatorName}-${userPeriodTicket.schemeOperatorRegionCode}-opId`,
+    vosaPsvLicenseName: '',
+    fareEnq: '',
+    complEnq: '',
+    mode: 'bus',
+});
 
 export const getScheduledStopPointsList = (stops: Stop[]): ScheduledStopPoint[] =>
     stops.map((stop: Stop) => ({
@@ -48,28 +71,70 @@ export const getTopographicProjectionRefList = (stops: Stop[]): TopographicProje
         $t: `${stop.street}, ${stop.localityName}, ${stop.parentLocalityName}`,
     }));
 
-export const getLinesList = (userPeriodTicket: PeriodMultipleServicesTicket, website: string): Line[] => {
-    return userPeriodTicket.selectedServices
-        ? userPeriodTicket.selectedServices.map(service => ({
-              version: '1.0',
-              id: `op:${service.lineName}#${service.serviceCode}#${service.startDate}`,
-              Name: { $t: `Line ${service.lineName}` },
-              Description: { $t: service.serviceDescription },
-              Url: { $t: website },
-              PublicCode: { $t: service.lineName },
-              PrivateCode: { type: 'noc', $t: `${userPeriodTicket.nocCode}_${service.lineName}` },
-              [userPeriodTicket.type === 'multiOperator' ? 'GroupOfOperatorsRef' : 'OperatorRef']: {
+const getFullServicesList = (
+    userPeriodTicket: PeriodMultipleServicesTicket | MultiOperatorMultipleServicesTicket,
+): SelectedService[] => {
+    let servicesList: SelectedService[] = [];
+
+    if (isMultiOperatorMultipleServicesTicket(userPeriodTicket)) {
+        servicesList = userPeriodTicket.additionalOperators.flatMap(operator => operator.selectedServices);
+    }
+
+    return servicesList.concat(userPeriodTicket.selectedServices);
+};
+
+export const getLinesList = (
+    userPeriodTicket: PeriodMultipleServicesTicket | MultiOperatorMultipleServicesTicket,
+    website: string,
+    operatorData: Operator[],
+): Line[] => {
+    let linesList: Line[] = [];
+
+    if (isMultiOperatorMultipleServicesTicket(userPeriodTicket)) {
+        linesList = userPeriodTicket.additionalOperators.flatMap((operator): Line[] => {
+            const currentOperator = operatorData.find(o => o.nocCode === operator.nocCode);
+
+            return operator.selectedServices.map(service => ({
+                version: '1.0',
+                id: `op:${service.lineName}#${service.serviceCode}#${service.startDate}`,
+                Name: { $t: `Line ${service.lineName}` },
+                Description: { $t: service.serviceDescription },
+                Url: { $t: currentOperator ? getCleanWebsite(currentOperator.website) : '' },
+                PublicCode: { $t: service.lineName },
+                PrivateCode: { type: 'noc', $t: `${operator.nocCode}_${service.lineName}` },
+                OperatorRef: {
+                    version: '1.0',
+                    ref: `noc:${operator.nocCode}`,
+                },
+                LineType: { $t: 'local' },
+            }));
+        });
+    }
+
+    linesList = linesList.concat(
+        userPeriodTicket.selectedServices
+            ? userPeriodTicket.selectedServices.map(service => ({
                   version: '1.0',
-                  ref: `noc:${userPeriodTicket.nocCode}`,
-              },
-              LineType: { $t: 'local' },
-          }))
-        : [];
+                  id: `op:${service.lineName}#${service.serviceCode}#${service.startDate}`,
+                  Name: { $t: `Line ${service.lineName}` },
+                  Description: { $t: service.serviceDescription },
+                  Url: { $t: website },
+                  PublicCode: { $t: service.lineName },
+                  PrivateCode: { type: 'noc', $t: `${userPeriodTicket.nocCode}_${service.lineName}` },
+                  OperatorRef: {
+                      version: '1.0',
+                      ref: `noc:${replaceIWBusCoNocCode(userPeriodTicket.nocCode)}`,
+                  },
+                  LineType: { $t: 'local' },
+              }))
+            : [],
+    );
+    return linesList;
 };
 
 export const getLineRefList = (userPeriodTicket: PeriodMultipleServicesTicket): LineRef[] =>
     userPeriodTicket.selectedServices
-        ? userPeriodTicket.selectedServices.map(service => ({
+        ? getFullServicesList(userPeriodTicket).map(service => ({
               version: '1.0',
               ref: `op:${service.lineName}#${service.serviceCode}#${service.startDate}`,
           }))
@@ -80,7 +145,10 @@ export const getGeoZoneFareTable = (
     placeHolderGroupOfProductsName: string,
     ticketUserConcat: string,
 ): NetexObject[] => {
-    const name = `${userPeriodTicket.nocCode}-geo-zone`;
+    const operatorIdentifier = isSchemeOperatorTicket(userPeriodTicket)
+        ? `${userPeriodTicket.schemeOperatorName}-${userPeriodTicket.schemeOperatorRegionCode}`
+        : userPeriodTicket.nocCode;
+    const name = `${operatorIdentifier}-geo-zone`;
     const profileRef = getProfileRef(userPeriodTicket);
 
     return userPeriodTicket.products.map(product => ({
@@ -162,14 +230,18 @@ export const getGeoZoneFareTable = (
                         rows: {
                             FareTableRow: {
                                 version: '1.0',
-                                id: `op:${product.productName}@${name}@p-ticket@${product.productDuration}`,
+                                id: `op:${product.productName}@${name}@p-ticket@${product.productDuration.replace(
+                                    ' ',
+                                    '-',
+                                )}`,
                                 Name: { $t: product.productDuration },
                                 representing: {
                                     TimeIntervalRef: {
                                         version: '1.0',
-                                        ref: `op:Tariff@${product.productName}@${product.productDuration}${
-                                            product.productDuration === '1' ? 'day' : 'days'
-                                        }`,
+                                        ref: `op:Tariff@${product.productName}@${product.productDuration.replace(
+                                            ' ',
+                                            '-',
+                                        )}`,
                                     },
                                 },
                             },
@@ -179,19 +251,20 @@ export const getGeoZoneFareTable = (
                                 version: '1.0',
                                 id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@${
                                     userPeriodTicket.passengerType
-                                }@${product.productDuration}${product.productDuration === '1' ? 'day' : 'days'}`,
+                                }@${product.productDuration.replace(' ', '-')}`,
                                 order: '1',
                                 TimeIntervalPrice: {
                                     version: '1.0',
                                     id: `op:${product.productName}@${userPeriodTicket.zoneName}@p-ticket@${
                                         userPeriodTicket.passengerType
-                                    }@${product.productDuration}${product.productDuration === '1' ? 'day' : 'days'}`,
+                                    }@${product.productDuration.replace(' ', '-')}`,
                                     Amount: { $t: `${product.productPrice}` },
                                     TimeIntervalRef: {
                                         version: '1.0',
-                                        ref: `op:Tariff@${product.productName}@${product.productDuration}${
-                                            product.productDuration === '1' ? 'day' : 'days'
-                                        }`,
+                                        ref: `op:Tariff@${product.productName}@${product.productDuration.replace(
+                                            ' ',
+                                            '-',
+                                        )}`,
                                     },
                                 },
                                 ColumnRef: {
@@ -200,7 +273,10 @@ export const getGeoZoneFareTable = (
                                 },
                                 RowRef: {
                                     version: '1.0',
-                                    ref: `op:${product.productName}@${name}@p-ticket@${product.productDuration}`,
+                                    ref: `op:${product.productName}@${name}@p-ticket@${product.productDuration.replace(
+                                        ' ',
+                                        '-',
+                                    )}`,
                                 },
                             },
                         },
@@ -287,14 +363,18 @@ const getMultiServiceList = (
                         rows: {
                             FareTableRow: {
                                 version: '1.0',
-                                id: `op:${product.productName}@${name}@p-ticket@${product.productDuration}`,
+                                id: `op:${product.productName}@${name}@p-ticket@${product.productDuration.replace(
+                                    ' ',
+                                    '-',
+                                )}`,
                                 Name: { $t: product.productDuration },
                                 representing: {
                                     TimeIntervalRef: {
                                         version: '1.0',
-                                        ref: `op:Tariff@${product.productName}@${product.productDuration}${
-                                            product.productDuration === '1' ? 'day' : 'days'
-                                        }`,
+                                        ref: `op:Tariff@${product.productName}@${product.productDuration.replace(
+                                            ' ',
+                                            '-',
+                                        )}`,
                                     },
                                 },
                             },
@@ -302,21 +382,22 @@ const getMultiServiceList = (
                         cells: {
                             Cell: {
                                 version: '1.0',
-                                id: `op:${product.productName}@${name}@p-ticket@${userPeriodTicket.passengerType}@${
-                                    product.productDuration
-                                }${product.productDuration === '1' ? 'day' : 'days'}`,
+                                id: `op:${product.productName}@${name}@p-ticket@${
+                                    userPeriodTicket.passengerType
+                                }@${product.productDuration.replace(' ', '-')}`,
                                 order: '1',
                                 TimeIntervalPrice: {
                                     version: '1.0',
-                                    id: `op:${product.productName}@${name}@p-ticket@${userPeriodTicket.passengerType}@${
-                                        product.productDuration
-                                    }${product.productDuration === '1' ? 'day' : 'days'}`,
+                                    id: `op:${product.productName}@${name}@p-ticket@${
+                                        userPeriodTicket.passengerType
+                                    }@${product.productDuration.replace(' ', '-')}`,
                                     Amount: { $t: `${product.productPrice}` },
                                     TimeIntervalRef: {
                                         version: '1.0',
-                                        ref: `op:Tariff@${product.productName}@${product.productDuration}${
-                                            product.productDuration === '1' ? 'day' : 'days'
-                                        }`,
+                                        ref: `op:Tariff@${product.productName}@${product.productDuration.replace(
+                                            ' ',
+                                            '-',
+                                        )}`,
                                     },
                                 },
                                 ColumnRef: {
@@ -325,7 +406,10 @@ const getMultiServiceList = (
                                 },
                                 RowRef: {
                                     version: '1.0',
-                                    ref: `op:${product.productName}@${name}@p-ticket@${product.productDuration}`,
+                                    ref: `op:${product.productName}@${name}@p-ticket@${product.productDuration.replace(
+                                        ' ',
+                                        '-',
+                                    )}`,
                                 },
                             },
                         },
@@ -378,7 +462,7 @@ export const getMultiServiceFareTable = (
 };
 
 export const getSalesOfferPackageList = (
-    userPeriodTicket: PeriodTicket,
+    userPeriodTicket: PeriodTicket | SchemeOperatorTicket,
     ticketUserConcat: string,
 ): NetexSalesOfferPackage[][] =>
     userPeriodTicket.products.map(product => {
@@ -466,7 +550,7 @@ const getFlatFareFareStructureElementRefs = (elementZeroRef: string, product: Pr
 ];
 
 export const getPreassignedFareProducts = (
-    userPeriodTicket: PeriodTicket,
+    userPeriodTicket: PeriodTicket | SchemeOperatorTicket,
     nocCodeNocFormat: string,
     opIdNocFormat: string,
 ): NetexObject[] => {
@@ -552,14 +636,21 @@ export const getPreassignedFareProducts = (
     });
 };
 
-export const getTimeIntervals = (userPeriodTicket: PeriodTicket): NetexObject[] => {
+export const getTimeIntervals = (userPeriodTicket: PeriodTicket | SchemeOperatorTicket): NetexObject[] => {
     const timeIntervals = userPeriodTicket.products.map(product => {
-        const dayOrDays = product.productDuration === '1' ? 'day' : 'days';
+        const amount = product.productDuration.split(' ')[0];
+        const type = product.productDuration.split(' ')[1];
+        let firstLetterOfType = type.charAt(0).toUpperCase();
+        let finalAmount = amount;
+        if (firstLetterOfType === 'W') {
+            finalAmount = (Number(amount) * 7).toString();
+            firstLetterOfType = 'D';
+        }
         return {
             version: '1.0',
-            id: `op:Tariff@${product.productName}@${product.productDuration}${dayOrDays}`,
-            Name: { $t: `${product.productDuration} ${dayOrDays}` },
-            Description: { $t: `P${product.productDuration}D` },
+            id: `op:Tariff@${product.productName}@${product.productDuration.replace(' ', '-')}`,
+            Name: { $t: `${product.productDuration}` },
+            Description: { $t: `P${finalAmount}${firstLetterOfType}` },
         };
     });
 
@@ -600,7 +691,10 @@ const getAvailabilityElement = (
     },
 });
 
-const getDurationElement = (userPeriodTicket: PeriodTicket, product: ProductDetails): NetexObject => ({
+const getDurationElement = (
+    userPeriodTicket: PeriodTicket | SchemeOperatorTicket,
+    product: ProductDetails,
+): NetexObject => ({
     version: '1.0',
     id: `op:Tariff@${product.productName}@durations@${userPeriodTicket.passengerType}`,
     Name: { $t: `Available duration combination - ${userPeriodTicket.passengerType} ticket` },
@@ -612,15 +706,13 @@ const getDurationElement = (userPeriodTicket: PeriodTicket, product: ProductDeta
         TimeIntervalRef: [
             {
                 version: '1.0',
-                ref: `op:Tariff@${product.productName}@${product.productDuration}${
-                    product.productDuration === '1' ? 'day' : 'days'
-                }`,
+                ref: `op:Tariff@${product.productName}@${product.productDuration.replace(' ', '-')}`,
             },
         ],
     },
 });
 
-const getEligibilityElement = (userPeriodTicket: PeriodTicket): NetexObject[] => {
+const getEligibilityElement = (userPeriodTicket: PeriodTicket | SchemeOperatorTicket): NetexObject[] => {
     const users = isGroupTicket(userPeriodTicket)
         ? userPeriodTicket.groupDefinition.companions
         : [
@@ -708,14 +800,13 @@ const getConditionsElement = (product: ProductDetails): NetexObject => {
 };
 
 export const getFareStructuresElements = (
-    userPeriodTicket: PeriodTicket,
+    userPeriodTicket: PeriodTicket | SchemeOperatorTicket,
     placeHolderGroupOfProductsName: string,
 ): NetexObject[] => {
     const fareStructureElements = userPeriodTicket.products.flatMap((product: ProductDetails) => {
         let availabilityElementId = '';
         let validityParametersObject = {};
-        const hasTimeRestriction =
-            !!userPeriodTicket.timeRestriction && isValidTimeRestriction(userPeriodTicket.timeRestriction);
+        const hasTimeRestriction = !!userPeriodTicket.timeRestriction && userPeriodTicket.timeRestriction.length > 0;
 
         if (isGeoZoneTicket(userPeriodTicket)) {
             availabilityElementId = `Tariff@${product.productName}@access_zones`;
@@ -756,8 +847,11 @@ export const getFareStructuresElements = (
     return fareStructureElements;
 };
 
-export const getOrganisations = (operatorData: Operator[]): NetexOrganisationOperator[] =>
-    operatorData.map(operator => ({
+export const getOrganisations = (
+    operatorData: Operator[],
+    baseOperatorInfo?: SchemeOperator,
+): NetexOrganisationOperator[] => {
+    const organisations = operatorData.map(operator => ({
         version: '1.0',
         id: `noc:${operator.nocCode}`,
         PublicCode: {
@@ -789,6 +883,42 @@ export const getOrganisations = (operatorData: Operator[]): NetexOrganisationOpe
             $t: getNetexMode(operator.mode),
         },
     }));
+    if (baseOperatorInfo) {
+        organisations.push({
+            version: '1.0',
+            id: `noc:${baseOperatorInfo.schemeOperatorName}-${baseOperatorInfo.schemeOperatorRegionCode}`,
+            PublicCode: {
+                $t: `${baseOperatorInfo.schemeOperatorName}-${baseOperatorInfo.schemeOperatorRegionCode}`,
+            },
+            Name: {
+                $t: baseOperatorInfo.schemeOperatorName,
+            },
+            ShortName: {
+                $t: baseOperatorInfo.schemeOperatorName,
+            },
+            TradingName: {
+                $t: baseOperatorInfo.vosaPsvLicenseName,
+            },
+            ContactDetails: {
+                Phone: {
+                    $t: baseOperatorInfo.fareEnq,
+                },
+                Url: {
+                    $t: baseOperatorInfo.website,
+                },
+            },
+            Address: {
+                Street: {
+                    $t: baseOperatorInfo.complEnq,
+                },
+            },
+            PrimaryMode: {
+                $t: getNetexMode(baseOperatorInfo.mode),
+            },
+        });
+    }
+    return organisations;
+};
 
 export const getGroupOfOperators = (operatorData: Operator[]): GroupOfOperators => {
     const group: GroupOfOperators = {

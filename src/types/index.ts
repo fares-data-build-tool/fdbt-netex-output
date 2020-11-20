@@ -14,6 +14,18 @@ export interface Operator {
     mode: string;
 }
 
+export interface SchemeOperator {
+    schemeOperatorName: string;
+    schemeOperatorRegionCode: string;
+    website: string;
+    ttrteEnq: string;
+    opId: string;
+    vosaPsvLicenseName: string;
+    fareEnq: string;
+    complEnq: string;
+    mode: string;
+}
+
 export interface Service {
     description: string;
 }
@@ -32,6 +44,13 @@ export interface Stop {
 
 // Matching Data (created by the user on the site)
 
+export type Ticket =
+    | PointToPointTicket
+    | GeoZoneTicket
+    | PeriodMultipleServicesTicket
+    | FlatFareTicket
+    | SchemeOperatorTicket;
+
 export interface SalesOfferPackage {
     name: string;
     description: string;
@@ -40,10 +59,10 @@ export interface SalesOfferPackage {
     ticketFormats: string[];
 }
 
-export interface TimeRestriction {
-    startTime?: string;
-    endTime?: string;
-    validDays?: DayOfWeek[];
+export interface FullTimeRestriction {
+    day: string;
+    startTime: string;
+    endTime: string;
 }
 
 export interface BaseTicket {
@@ -57,7 +76,7 @@ export interface BaseTicket {
     proofDocuments?: string[];
     email: string;
     uuid: string;
-    timeRestriction?: TimeRestriction;
+    timeRestriction: FullTimeRestriction[];
     ticketPeriod: TicketPeriod;
 }
 
@@ -65,8 +84,6 @@ export interface TicketPeriod {
     startDate: string;
     endDate: string;
 }
-
-type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
 
 export interface User {
     passengerType: string;
@@ -140,12 +157,12 @@ export interface MultiOperatorGeoZoneTicket extends PeriodGeoZoneTicket {
     additionalNocs: string[];
 }
 
-export const isMultiOperatorGeoZoneTicket = (
-    userPeriodTicket: PeriodTicket,
-): userPeriodTicket is MultiOperatorGeoZoneTicket =>
-    (userPeriodTicket as MultiOperatorGeoZoneTicket).additionalNocs.length > 0;
+export const isMultiOperatorGeoZoneTicket = (ticketData: Ticket): ticketData is MultiOperatorGeoZoneTicket =>
+    !!(ticketData as MultiOperatorGeoZoneTicket).nocCode &&
+    (ticketData as MultiOperatorGeoZoneTicket).additionalNocs &&
+    (ticketData as MultiOperatorGeoZoneTicket).additionalNocs.length > 0;
 
-export type GeoZoneTicket = PeriodGeoZoneTicket | MultiOperatorGeoZoneTicket;
+export type GeoZoneTicket = PeriodGeoZoneTicket | MultiOperatorGeoZoneTicket | SchemeOperatorTicket;
 
 export interface PeriodMultipleServicesTicket extends BasePeriodTicket {
     selectedServices: SelectedService[];
@@ -159,9 +176,10 @@ export interface MultiOperatorMultipleServicesTicket extends PeriodMultipleServi
 }
 
 export const isMultiOperatorMultipleServicesTicket = (
-    userPeriodTicket: PeriodTicket,
-): userPeriodTicket is MultiOperatorMultipleServicesTicket =>
-    (userPeriodTicket as MultiOperatorMultipleServicesTicket).additionalOperators.length > 0;
+    ticketData: Ticket,
+): ticketData is MultiOperatorMultipleServicesTicket =>
+    (ticketData as MultiOperatorMultipleServicesTicket).additionalOperators &&
+    (ticketData as MultiOperatorMultipleServicesTicket).additionalOperators.length > 0;
 
 export type MultipleServicesTicket = PeriodMultipleServicesTicket | MultiOperatorMultipleServicesTicket;
 
@@ -182,7 +200,7 @@ export interface BaseProduct {
     salesOfferPackages: SalesOfferPackage[];
 }
 
-interface FlatFareProductDetails extends BaseProduct {
+export interface FlatFareProductDetails extends BaseProduct {
     productName: string;
     productPrice: string;
 }
@@ -193,6 +211,30 @@ export interface ProductDetails extends BaseProduct {
     productDuration: string;
     productValidity: string;
 }
+
+export interface SchemeOperatorTicket {
+    schemeOperatorName: string;
+    schemeOperatorRegionCode: string;
+    type: string;
+    passengerType: string;
+    ageRange?: string;
+    ageRangeMin?: string;
+    ageRangeMax?: string;
+    proof?: string;
+    proofDocuments?: string[];
+    email: string;
+    uuid: string;
+    timeRestriction?: FullTimeRestriction[];
+    ticketPeriod: TicketPeriod;
+    products: ProductDetails[];
+    zoneName: string;
+    stops: Stop[];
+    additionalNocs: string[];
+}
+
+export const isSchemeOperatorTicket = (data: Ticket): data is SchemeOperatorTicket =>
+    (data as SchemeOperatorTicket).schemeOperatorName !== undefined &&
+    (data as SchemeOperatorTicket).schemeOperatorRegionCode !== undefined;
 
 // NeTEx
 
@@ -216,8 +258,7 @@ export interface Line {
     Url: object;
     PublicCode: object;
     PrivateCode: object;
-    OperatorRef?: object;
-    GroupOfOperatorsRef?: object;
+    OperatorRef: object;
     LineType: object;
 }
 

@@ -3,7 +3,7 @@ import capitalize from 'lodash/capitalize';
 import parser from 'xml2json';
 import fs from 'fs';
 import moment from 'moment';
-import { PeriodTicket, PointToPointTicket, GroupTicket, User, GroupCompanion, TimeRestriction } from '../types';
+import { PeriodTicket, PointToPointTicket, GroupTicket, User, GroupCompanion, FullTimeRestriction } from '../types';
 
 export interface NetexObject {
     [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -120,10 +120,6 @@ export const getGroupElement = (userPeriodTicket: GroupTicket): NetexObject => {
     };
 };
 
-export const isValidTimeRestriction = (timeRestriction: TimeRestriction): boolean =>
-    (!!timeRestriction.startTime && !!timeRestriction.endTime) ||
-    (!!timeRestriction.validDays && timeRestriction.validDays.length > 0);
-
 const getTime = (time: string): string => moment(time, 'HHmm').format('HH:mm:ss');
 
 const getDayLength = (startTime: string, endTime: string): string => {
@@ -134,50 +130,52 @@ const getDayLength = (startTime: string, endTime: string): string => {
     return moment.duration(diff, 'minute').toISOString();
 };
 
-const getDaysList = (list: string[]): string => list.map(capitalize).join(' ');
-
-export const getTimeRestrictions = (timeRestrictionData: TimeRestriction): NetexObject => ({
-    FareDemandFactor: {
-        id: 'op@Tariff@Demand',
-        version: '1.0',
-        validityConditions: {
-            AvailabilityCondition: {
-                id: 'op@Tariff@Condition',
-                version: '1.0',
-                IsAvailable: {
-                    $t: true,
-                },
-                dayTypes: {
-                    FareDayType: {
-                        id: 'op@Tariff@DayType',
-                        version: '1.0',
-                        EarliestTime: {
-                            $t:
-                                timeRestrictionData.startTime && timeRestrictionData.endTime
-                                    ? getTime(timeRestrictionData.startTime)
-                                    : null,
-                        },
-                        DayLength: {
-                            $t:
-                                timeRestrictionData.startTime && timeRestrictionData.endTime
-                                    ? getDayLength(timeRestrictionData.startTime, timeRestrictionData.endTime)
-                                    : null,
-                        },
-                        properties: timeRestrictionData.validDays
-                            ? {
-                                  PropertyOfDay: {
-                                      DaysOfWeek: {
-                                          $t: getDaysList(timeRestrictionData.validDays),
-                                      },
-                                  },
-                              }
-                            : null,
-                    },
-                },
+export const getFareDayTypeElements = (timeRestriction: FullTimeRestriction): NetexObject => ({
+    id: `op@Tariff@DayType@${timeRestriction.day}`,
+    version: '1.0',
+    EarliestTime: {
+        $t: timeRestriction.startTime ? getTime(timeRestriction.startTime) : null,
+    },
+    DayLength: {
+        $t:
+            timeRestriction.startTime && timeRestriction.endTime
+                ? getDayLength(timeRestriction.startTime, timeRestriction.endTime)
+                : null,
+    },
+    properties: {
+        PropertyOfDay: {
+            DaysOfWeek: {
+                $t: timeRestriction.day === 'bankHoliday' ? 'Everyday' : capitalize(timeRestriction.day),
+            },
+            HolidayTypes: {
+                $t: timeRestriction.day === 'bankHoliday' ? 'NationalHoliday' : null,
             },
         },
     },
 });
+
+export const getTimeRestrictions = (timeRestrictionData: FullTimeRestriction[]): NetexObject => {
+    return {
+        FareDemandFactor: {
+            id: 'op@Tariff@Demand',
+            version: '1.0',
+            validityConditions: {
+                AvailabilityCondition: {
+                    id: 'op@Tariff@Condition',
+                    version: '1.0',
+                    IsAvailable: {
+                        $t: true,
+                    },
+                    dayTypes: {
+                        FareDayType: timeRestrictionData.map(timeRestriction =>
+                            getFareDayTypeElements(timeRestriction),
+                        ),
+                    },
+                },
+            },
+        },
+    };
+};
 
 export const getNetexMode = (mode: string): string => {
     const modeMap: { [key: string]: string } = {
@@ -188,4 +186,12 @@ export const getNetexMode = (mode: string): string => {
     };
 
     return modeMap[mode] ?? 'bus';
+};
+
+export const replaceIWBusCoNocCode = (nocCode: string): string => {
+    if (nocCode === 'IWBusCo') {
+        return 'WBTR';
+    }
+
+    return nocCode;
 };

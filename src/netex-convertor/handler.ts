@@ -1,10 +1,18 @@
 import { S3Event } from 'aws-lambda';
 import libxslt from 'libxslt';
+import {
+    isMultiOperatorMultipleServicesTicket,
+    PointToPointTicket,
+    PeriodTicket,
+    Operator,
+    isMultiOperatorGeoZoneTicket,
+    isSchemeOperatorTicket,
+    SchemeOperatorTicket,
+} from '../types/index';
 import pointToPointTicketNetexGenerator from './point-to-point-tickets/pointToPointTicketNetexGenerator';
 import periodTicketNetexGenerator from './period-tickets/periodTicketNetexGenerator';
 import * as db from './data/auroradb';
 import * as s3 from './data/s3';
-import { PointToPointTicket, PeriodTicket, Operator, isMultiOperatorGeoZoneTicket } from '../types';
 
 const xsl = `
     <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -69,13 +77,27 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
                 console.info(`NeTEx generation complete for type ${type}`);
             }
         } else if (type === 'period' || type === 'flatFare' || type === 'multiOperator') {
-            const userPeriodTicket: PeriodTicket = s3Data;
+            const userPeriodTicket: PeriodTicket | SchemeOperatorTicket = s3Data;
             let operatorData: Operator[] = [];
-            if (type === 'multiOperator' && isMultiOperatorGeoZoneTicket(userPeriodTicket)) {
-                const nocs: string[] = [...userPeriodTicket.additionalNocs];
-                nocs.push(userPeriodTicket.nocCode);
-                operatorData = await db.getOperatorDataByNocCode(nocs);
-            } else {
+            if (type === 'multiOperator') {
+                if (isMultiOperatorGeoZoneTicket(userPeriodTicket) || isSchemeOperatorTicket(userPeriodTicket)) {
+                    const nocs: string[] = [...userPeriodTicket.additionalNocs];
+                    if (isMultiOperatorGeoZoneTicket(userPeriodTicket)) {
+                        nocs.push(userPeriodTicket.nocCode);
+                    }
+                    operatorData = await db.getOperatorDataByNocCode(nocs);
+                } else if (isMultiOperatorMultipleServicesTicket(userPeriodTicket)) {
+                    const nocs: string[] = userPeriodTicket.additionalOperators.map(
+                        additionalOperator => additionalOperator.nocCode,
+                    );
+                    nocs.push(userPeriodTicket.nocCode);
+                    operatorData = await db.getOperatorDataByNocCode(nocs);
+                }
+            } else if (
+                !isMultiOperatorGeoZoneTicket(userPeriodTicket) &&
+                !isMultiOperatorMultipleServicesTicket(userPeriodTicket) &&
+                !isSchemeOperatorTicket(userPeriodTicket)
+            ) {
                 operatorData = await db.getOperatorDataByNocCode([userPeriodTicket.nocCode]);
             }
             const netexGen = periodTicketNetexGenerator(userPeriodTicket, operatorData);
@@ -85,7 +107,7 @@ export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
 
             await uploadToS3(generatedNetex, fileName);
 
-            if (userPeriodTicket.nocCode !== 'IWBusCo') {
+            if (!isSchemeOperatorTicket(userPeriodTicket) && userPeriodTicket.nocCode !== 'IWBusCo') {
                 console.info(`NeTEx generation complete for type ${type}`);
             }
         } else {

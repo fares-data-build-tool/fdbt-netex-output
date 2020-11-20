@@ -211,13 +211,6 @@
 							<OperatorRef version="1.0" ref=""></OperatorRef>
 							<TypeOfTariffRef version="fxc:v1.0" ref="fxc:zonal" />
 							<!--- ====Fare Structure======= -->
-							<geographicalIntervals>
-								<GeographicalInterval version="1.0" id="">
-									<Name>Travel in one zone</Name>
-									<NumberOfUnits>1</NumberOfUnits>
-									<IntervalType>tariffZone</IntervalType>
-								</GeographicalInterval>
-							</geographicalIntervals>
 							<timeIntervals></timeIntervals>
 							<!-- ==FARE STRUCTURE ELEMENTS -->
 							<qualityStructureFactors></qualityStructureFactors>
@@ -444,12 +437,10 @@
 						<priceUnits>
 							<PriceUnit id="fxc:GBP" version="fxc:v1.0">
 								<Name>Pound Sterling</Name>
-								<PrivateCode>&#163;</PrivateCode>
 								<Precision>2</Precision>
 							</PriceUnit>
 							<PriceUnit id="fxc:EUR" version="fxc:v1.0">
 								<Name>Euro</Name>
-								<PrivateCode>&#8364;</PrivateCode>
 								<Precision>2</Precision>
 							</PriceUnit>
 						</priceUnits>
