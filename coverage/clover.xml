@@ -1,0 +1,810 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1608118476819" clover="3.2.0">
+  <project timestamp="1608118476819" name="All files">
+    <metrics statements="723" coveredstatements="608" conditionals="319" coveredconditionals="200" methods="160" coveredmethods="132" elements="1202" coveredelements="940" complexity="0" loc="723" ncloc="723" packages="11" files="16" classes="16"/>
+    <package name="netex-convertor">
+      <metrics statements="102" coveredstatements="87" conditionals="74" coveredconditionals="57" methods="19" coveredmethods="16"/>
+      <file name="handler.ts" path="/Users/dannydavies/Documents/tfn/fares-data-build-tool/repos/fdbt-netex-output/src/netex-convertor/handler.ts">
+        <metrics statements="55" coveredstatements="46" conditionals="32" coveredconditionals="25" methods="4" coveredmethods="3"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="45" count="9" type="cond" truecount="1" falsecount="1"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="51" count="9" type="stmt"/>
+        <line num="55" count="10" type="stmt"/>
+        <line num="57" count="1" type="stmt"/>
+        <line num="58" count="10" type="stmt"/>
+        <line num="59" count="10" type="stmt"/>
+        <line num="60" count="10" type="stmt"/>
+        <line num="61" count="10" type="stmt"/>
+        <line num="63" count="10" type="stmt"/>
+        <line num="65" count="10" type="cond" truecount="4" falsecount="0"/>
+        <line num="66" count="2" type="stmt"/>
+        <line num="67" count="2" type="stmt"/>
+        <line num="69" count="2" type="stmt"/>
+        <line num="70" count="2" type="stmt"/>
+        <line num="72" count="2" type="stmt"/>
+        <line num="74" count="2" type="stmt"/>
+        <line num="76" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="77" count="2" type="stmt"/>
+        <line num="79" count="8" type="cond" truecount="5" falsecount="0"/>
+        <line num="80" count="7" type="stmt"/>
+        <line num="81" count="7" type="stmt"/>
+        <line num="82" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="83" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="84" count="1" type="stmt"/>
+        <line num="85" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="88" count="1" type="stmt"/>
+        <line num="89" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="90" count="0" type="stmt"/>
+        <line num="91" count="0" type="stmt"/>
+        <line num="93" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="96" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="101" count="6" type="stmt"/>
+        <line num="103" count="7" type="stmt"/>
+        <line num="104" count="7" type="stmt"/>
+        <line num="106" count="7" type="stmt"/>
+        <line num="108" count="7" type="stmt"/>
+        <line num="110" count="7" type="cond" truecount="4" falsecount="0"/>
+        <line num="111" count="6" type="stmt"/>
+        <line num="114" count="1" type="stmt"/>
+        <line num="121" count="1" type="stmt"/>
+        <line num="122" count="1" type="stmt"/>
+        <line num="126" count="1" type="stmt"/>
+      </file>
+      <file name="sharedHelpers.ts" path="/Users/dannydavies/Documents/tfn/fares-data-build-tool/repos/fdbt-netex-output/src/netex-convertor/sharedHelpers.ts">
+        <metrics statements="47" coveredstatements="41" conditionals="42" coveredconditionals="32" methods="15" coveredmethods="13"/>
+        <line num="1" count="5" type="stmt"/>
+        <line num="2" count="5" type="stmt"/>
+        <line num="3" count="5" type="stmt"/>
+        <line num="4" count="5" type="stmt"/>
+        <line num="5" count="5" type="stmt"/>
+        <line num="21" count="5" type="stmt"/>
+        <line num="22" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="23" count="10" type="stmt"/>
+        <line num="25" count="10" type="cond" truecount="2" falsecount="2"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="30" count="5" type="stmt"/>
+        <line num="31" count="4" type="stmt"/>
+        <line num="32" count="4" type="stmt"/>
+        <line num="33" count="4" type="stmt"/>
+        <line num="35" count="4" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="41" count="5" type="stmt"/>
+        <line num="42" count="4" type="stmt"/>
+        <line num="43" count="4" type="stmt"/>
+        <line num="45" count="4" type="stmt"/>
+        <line num="48" count="5" type="stmt"/>
+        <line num="49" count="45" type="stmt"/>
+        <line num="51" count="5" type="stmt"/>
+        <line num="52" count="12" type="cond" truecount="1" falsecount="1"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="61" count="12" type="stmt"/>
+        <line num="69" count="17" type="stmt"/>
+        <line num="84" count="5" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="110" count="0" type="stmt"/>
+        <line num="131" count="5" type="stmt"/>
+        <line num="133" count="5" type="stmt"/>
+        <line num="134" count="5" type="stmt"/>
+        <line num="135" count="5" type="stmt"/>
+        <line num="136" count="5" type="stmt"/>
+        <line num="138" count="5" type="stmt"/>
+        <line num="141" count="9" type="stmt"/>
+        <line num="165" count="5" type="stmt"/>
+        <line num="166" count="2" type="stmt"/>
+        <line num="179" count="9" type="stmt"/>
+        <line num="188" count="5" type="stmt"/>
+        <line num="189" count="11" type="stmt"/>
+        <line num="196" count="11" type="cond" truecount="3" falsecount="1"/>
+        <line num="199" count="5" type="stmt"/>
+        <line num="200" count="141" type="cond" truecount="1" falsecount="1"/>
+        <line num="201" count="0" type="stmt"/>
+        <line num="204" count="141" type="stmt"/>
+      </file>
+    </package>
+    <package name="netex-convertor.data">
+      <metrics statements="53" coveredstatements="15" conditionals="20" coveredconditionals="1" methods="9" coveredmethods="1"/>
+      <file name="auroradb.ts" path="/Users/dannydavies/Documents/tfn/fares-data-build-tool/repos/fdbt-netex-output/src/netex-convertor/data/auroradb.ts">
+        <metrics statements="33" coveredstatements="7" conditionals="10" coveredconditionals="0" methods="6" coveredmethods="0"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="9" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="36" count="2" type="stmt"/>
+        <line num="37" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="44" count="2" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="59" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="69" count="2" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="78" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="84" count="0" type="stmt"/>
+      </file>
+      <file name="s3.ts" path="/Users/dannydavies/Documents/tfn/fares-data-build-tool/repos/fdbt-netex-output/src/netex-convertor/data/s3.ts">
+        <metrics statements="20" coveredstatements="8" conditionals="10" coveredconditionals="1" methods="3" coveredmethods="1"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="7" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="41" count="1" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="netex-convertor.period-tickets">
+      <metrics statements="281" coveredstatements="256" conditionals="123" coveredconditionals="85" methods="63" coveredmethods="57"/>
+      <file name="periodTicketNetexGenerator.ts" path="/Users/dannydavies/Documents/tfn/fares-data-build-tool/repos/fdbt-netex-output/src/netex-convertor/period-tickets/periodTicketNetexGenerator.ts">
+        <metrics statements="154" coveredstatements="136" conditionals="69" coveredconditionals="45" methods="13" coveredmethods="12"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="41" count="3" type="stmt"/>
+        <line num="43" count="3" type="stmt"/>
+        <line num="44" count="3" type="stmt"/>
+        <line num="48" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="52" count="3" type="stmt"/>
+        <line num="53" count="3" type="stmt"/>
+        <line num="56" count="3" type="stmt"/>
+        <line num="57" count="3" type="stmt"/>
+        <line num="58" count="3" type="stmt"/>
+        <line num="59" count="3" type="stmt"/>
+        <line num="60" count="3" type="stmt"/>
+        <line num="62" count="3" type="stmt"/>
+        <line num="63" count="3" type="stmt"/>
+        <line num="64" count="3" type="stmt"/>
+        <line num="66" count="3" type="stmt"/>
+        <line num="69" count="3" type="stmt"/>
+        <line num="70" count="3" type="stmt"/>
+        <line num="71" count="3" type="stmt"/>
+        <line num="72" count="3" type="stmt"/>
+        <line num="73" count="3" type="stmt"/>
+        <line num="77" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="85" count="3" type="stmt"/>
+        <line num="86" count="3" type="stmt"/>
+        <line num="87" count="3" type="stmt"/>
+        <line num="91" count="3" type="stmt"/>
+        <line num="92" count="7" type="stmt"/>
+        <line num="98" count="3" type="stmt"/>
+        <line num="103" count="3" type="stmt"/>
+        <line num="106" count="3" type="stmt"/>
+        <line num="107" count="3" type="stmt"/>
+        <line num="108" count="3" type="stmt"/>
+        <line num="112" count="3" type="stmt"/>
+        <line num="115" count="3" type="stmt"/>
+        <line num="116" count="3" type="stmt"/>
+        <line num="118" count="3" type="stmt"/>
+        <line num="121" count="3" type="stmt"/>
+        <line num="122" count="3" type="stmt"/>
+        <line num="123" count="3" type="stmt"/>
+        <line num="127" count="3" type="stmt"/>
+        <line num="128" count="3" type="stmt"/>
+        <line num="129" count="3" type="stmt"/>
+        <line num="130" count="3" type="stmt"/>
+        <line num="131" count="3" type="stmt"/>
+        <line num="132" count="3" type="stmt"/>
+        <line num="133" count="3" type="stmt"/>
+        <line num="134" count="3" type="stmt"/>
+        <line num="135" count="3" type="stmt"/>
+        <line num="136" count="3" type="stmt"/>
+        <line num="138" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="142" count="0" type="stmt"/>
+        <line num="143" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="144" count="0" type="stmt"/>
+        <line num="145" count="0" type="stmt"/>
+        <line num="146" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="147" count="0" type="stmt"/>
+        <line num="149" count="0" type="stmt"/>
+        <line num="150" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="154" count="0" type="stmt"/>
+        <line num="155" count="0" type="stmt"/>
+        <line num="157" count="0" type="stmt"/>
+        <line num="158" count="0" type="stmt"/>
+        <line num="159" count="0" type="stmt"/>
+        <line num="160" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="165" count="3" type="stmt"/>
+        <line num="166" count="3" type="stmt"/>
+        <line num="167" count="3" type="stmt"/>
+        <line num="168" count="3" type="stmt"/>
+        <line num="169" count="3" type="stmt"/>
+        <line num="170" count="3" type="stmt"/>
+        <line num="171" count="3" type="stmt"/>
+        <line num="172" count="3" type="stmt"/>
+        <line num="173" count="3" type="stmt"/>
+        <line num="176" count="3" type="stmt"/>
+        <line num="179" count="3" type="stmt"/>
+        <line num="180" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="181" count="2" type="stmt"/>
+        <line num="182" count="2" type="stmt"/>
+        <line num="184" count="2" type="stmt"/>
+        <line num="186" count="2" type="stmt"/>
+        <line num="189" count="1" type="stmt"/>
+        <line num="192" count="3" type="stmt"/>
+        <line num="193" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="194" count="1" type="stmt"/>
+        <line num="196" count="1" type="stmt"/>
+        <line num="197" count="1" type="stmt"/>
+        <line num="198" count="1" type="stmt"/>
+        <line num="200" count="1" type="stmt"/>
+        <line num="201" count="1" type="stmt"/>
+        <line num="202" count="1" type="stmt"/>
+        <line num="203" count="1" type="stmt"/>
+        <line num="206" count="1" type="stmt"/>
+        <line num="210" count="1" type="stmt"/>
+        <line num="213" count="0" type="stmt"/>
+        <line num="216" count="3" type="stmt"/>
+        <line num="217" count="3" type="stmt"/>
+        <line num="219" count="3" type="stmt"/>
+        <line num="221" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="222" count="1" type="stmt"/>
+        <line num="223" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="224" count="2" type="stmt"/>
+        <line num="226" count="3" type="stmt"/>
+        <line num="228" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="229" count="1" type="stmt"/>
+        <line num="237" count="3" type="stmt"/>
+        <line num="244" count="3" type="stmt"/>
+        <line num="245" count="3" type="stmt"/>
+        <line num="247" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="248" count="0" type="stmt"/>
+        <line num="252" count="0" type="stmt"/>
+        <line num="254" count="3" type="stmt"/>
+        <line num="255" count="3" type="stmt"/>
+        <line num="256" count="3" type="stmt"/>
+        <line num="260" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="264" count="2" type="stmt"/>
+        <line num="266" count="1" type="stmt"/>
+        <line num="269" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="270" count="1" type="stmt"/>
+        <line num="276" count="3" type="stmt"/>
+        <line num="282" count="3" type="stmt"/>
+        <line num="289" count="3" type="stmt"/>
+        <line num="290" count="3" type="stmt"/>
+        <line num="292" count="3" type="stmt"/>
+        <line num="295" count="3" type="stmt"/>
+        <line num="296" count="3" type="stmt"/>
+        <line num="298" count="3" type="stmt"/>
+        <line num="299" count="3" type="stmt"/>
+        <line num="300" count="3" type="stmt"/>
+        <line num="302" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="303" count="1" type="stmt"/>
+        <line num="308" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="309" count="2" type="stmt"/>
+        <line num="314" count="3" type="stmt"/>
+        <line num="317" count="3" type="stmt"/>
+        <line num="318" count="3" type="stmt"/>
+        <line num="320" count="3" type="stmt"/>
+        <line num="321" count="3" type="stmt"/>
+        <line num="324" count="3" type="stmt"/>
+        <line num="328" count="3" type="stmt"/>
+        <line num="329" count="3" type="stmt"/>
+        <line num="331" count="3" type="stmt"/>
+        <line num="334" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="335" count="1" type="stmt"/>
+        <line num="340" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="341" count="2" type="stmt"/>
+        <line num="347" count="3" type="stmt"/>
+        <line num="350" count="3" type="stmt"/>
+        <line num="353" count="1" type="stmt"/>
+      </file>
+      <file name="periodTicketNetexHelpers.ts" path="/Users/dannydavies/Documents/tfn/fares-data-build-tool/repos/fdbt-netex-output/src/netex-convertor/period-tickets/periodTicketNetexHelpers.ts">
+        <metrics statements="127" coveredstatements="120" conditionals="54" coveredconditionals="40" methods="50" coveredmethods="45"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="29" count="2" type="stmt"/>
+        <line num="40" count="2" type="stmt"/>
+        <line num="41" count="85" type="stmt"/>
+        <line num="43" count="2" type="stmt"/>
+        <line num="44" count="36" type="stmt"/>
+        <line num="46" count="2" type="stmt"/>
+        <line num="47" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="50" count="2" type="stmt"/>
+        <line num="62" count="2" type="stmt"/>
+        <line num="63" count="36" type="stmt"/>
+        <line num="69" count="2" type="stmt"/>
+        <line num="70" count="36" type="stmt"/>
+        <line num="76" count="2" type="stmt"/>
+        <line num="79" count="7" type="stmt"/>
+        <line num="81" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="85" count="7" type="stmt"/>
+        <line num="88" count="2" type="stmt"/>
+        <line num="93" count="3" type="stmt"/>
+        <line num="95" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="96" count="0" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="116" count="3" type="stmt"/>
+        <line num="118" count="138" type="cond" truecount="1" falsecount="1"/>
+        <line num="134" count="3" type="stmt"/>
+        <line num="137" count="2" type="stmt"/>
+        <line num="138" count="7" type="stmt"/>
+        <line num="139" count="306" type="cond" truecount="1" falsecount="1"/>
+        <line num="145" count="2" type="stmt"/>
+        <line num="150" count="2" type="stmt"/>
+        <line num="153" count="2" type="stmt"/>
+        <line num="154" count="2" type="stmt"/>
+        <line num="156" count="8" type="stmt"/>
+        <line num="292" count="2" type="stmt"/>
+        <line num="296" count="2" type="stmt"/>
+        <line num="297" count="2" type="stmt"/>
+        <line num="299" count="4" type="stmt"/>
+        <line num="425" count="2" type="stmt"/>
+        <line num="426" count="2" type="stmt"/>
+        <line num="455" count="2" type="stmt"/>
+        <line num="459" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="460" count="2" type="stmt"/>
+        <line num="463" count="2" type="stmt"/>
+        <line num="466" count="2" type="stmt"/>
+        <line num="470" count="4" type="stmt"/>
+        <line num="471" count="11" type="stmt"/>
+        <line num="472" count="88" type="stmt"/>
+        <line num="474" count="22" type="stmt"/>
+        <line num="475" count="22" type="stmt"/>
+        <line num="476" count="88" type="stmt"/>
+        <line num="490" count="22" type="stmt"/>
+        <line num="493" count="22" type="stmt"/>
+        <line num="494" count="22" type="stmt"/>
+        <line num="495" count="66" type="stmt"/>
+        <line num="509" count="22" type="stmt"/>
+        <line num="511" count="22" type="stmt"/>
+        <line num="524" count="2" type="stmt"/>
+        <line num="528" count="12" type="stmt"/>
+        <line num="543" count="2" type="stmt"/>
+        <line num="554" count="2" type="stmt"/>
+        <line num="559" count="5" type="stmt"/>
+        <line num="560" count="5" type="stmt"/>
+        <line num="564" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="565" count="8" type="stmt"/>
+        <line num="566" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="567" count="5" type="stmt"/>
+        <line num="569" count="0" type="stmt"/>
+        <line num="572" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="576" count="12" type="stmt"/>
+        <line num="578" count="1" type="stmt"/>
+        <line num="581" count="13" type="cond" truecount="1" falsecount="1"/>
+        <line num="582" count="0" type="stmt"/>
+        <line num="587" count="13" type="stmt"/>
+        <line num="593" count="13" type="stmt"/>
+        <line num="641" count="2" type="stmt"/>
+        <line num="642" count="3" type="stmt"/>
+        <line num="643" count="8" type="stmt"/>
+        <line num="644" count="8" type="stmt"/>
+        <line num="645" count="8" type="stmt"/>
+        <line num="646" count="8" type="stmt"/>
+        <line num="647" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="648" count="2" type="stmt"/>
+        <line num="649" count="2" type="stmt"/>
+        <line num="651" count="8" type="stmt"/>
+        <line num="659" count="8" type="stmt"/>
+        <line num="662" count="2" type="stmt"/>
+        <line num="666" count="18" type="stmt"/>
+        <line num="696" count="2" type="stmt"/>
+        <line num="699" count="16" type="stmt"/>
+        <line num="717" count="2" type="stmt"/>
+        <line num="718" count="7" type="stmt"/>
+        <line num="729" count="7" type="stmt"/>
+        <line num="753" count="2" type="stmt"/>
+        <line num="754" count="18" type="stmt"/>
+        <line num="756" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="757" count="16" type="stmt"/>
+        <line num="773" count="18" type="stmt"/>
+        <line num="809" count="2" type="stmt"/>
+        <line num="813" count="7" type="stmt"/>
+        <line num="814" count="18" type="stmt"/>
+        <line num="815" count="18" type="stmt"/>
+        <line num="816" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="818" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="819" count="12" type="stmt"/>
+        <line num="820" count="12" type="stmt"/>
+        <line num="826" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="827" count="6" type="stmt"/>
+        <line num="828" count="6" type="stmt"/>
+        <line num="831" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="835" count="16" type="stmt"/>
+        <line num="842" count="2" type="stmt"/>
+        <line num="848" count="7" type="stmt"/>
+        <line num="850" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="851" count="0" type="stmt"/>
+        <line num="854" count="7" type="stmt"/>
+        <line num="857" count="2" type="stmt"/>
+        <line num="861" count="6" type="stmt"/>
+        <line num="893" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="894" count="1" type="stmt"/>
+        <line num="927" count="2" type="stmt"/>
+        <line num="930" count="2" type="stmt"/>
+        <line num="931" count="1" type="stmt"/>
+        <line num="943" count="3" type="stmt"/>
+        <line num="949" count="1" type="stmt"/>
+        <line num="950" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="netex-convertor.point-to-point-tickets">
+      <metrics statements="208" coveredstatements="186" conditionals="54" coveredconditionals="34" methods="54" coveredmethods="47"/>
+      <file name="pointToPointTicketNetexGenerator.ts" path="/Users/dannydavies/Documents/tfn/fares-data-build-tool/repos/fdbt-netex-output/src/netex-convertor/point-to-point-tickets/pointToPointTicketNetexGenerator.ts">
+        <metrics statements="135" coveredstatements="116" conditionals="24" coveredconditionals="13" methods="16" coveredmethods="10"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="31" count="1" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="41" count="1" type="stmt"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="48" count="1" type="stmt"/>
+        <line num="49" count="1" type="stmt"/>
+        <line num="50" count="1" type="stmt"/>
+        <line num="51" count="1" type="stmt"/>
+        <line num="52" count="1" type="stmt"/>
+        <line num="53" count="1" type="stmt"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="63" count="1" type="stmt"/>
+        <line num="64" count="1" type="stmt"/>
+        <line num="65" count="1" type="stmt"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="67" count="1" type="stmt"/>
+        <line num="69" count="1" type="stmt"/>
+        <line num="72" count="1" type="stmt"/>
+        <line num="73" count="1" type="stmt"/>
+        <line num="74" count="1" type="stmt"/>
+        <line num="75" count="1" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
+        <line num="77" count="1" type="stmt"/>
+        <line num="78" count="1" type="stmt"/>
+        <line num="80" count="1" type="stmt"/>
+        <line num="81" count="1" type="stmt"/>
+        <line num="83" count="1" type="stmt"/>
+        <line num="84" count="1" type="stmt"/>
+        <line num="85" count="1" type="stmt"/>
+        <line num="86" count="1" type="stmt"/>
+        <line num="87" count="1" type="stmt"/>
+        <line num="88" count="1" type="stmt"/>
+        <line num="89" count="1" type="stmt"/>
+        <line num="90" count="1" type="stmt"/>
+        <line num="91" count="1" type="stmt"/>
+        <line num="92" count="1" type="stmt"/>
+        <line num="94" count="1" type="stmt"/>
+        <line num="97" count="1" type="stmt"/>
+        <line num="98" count="1" type="stmt"/>
+        <line num="99" count="1" type="stmt"/>
+        <line num="100" count="1" type="stmt"/>
+        <line num="101" count="1" type="stmt"/>
+        <line num="102" count="1" type="stmt"/>
+        <line num="103" count="1" type="stmt"/>
+        <line num="104" count="1" type="stmt"/>
+        <line num="105" count="1" type="stmt"/>
+        <line num="106" count="1" type="stmt"/>
+        <line num="108" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="109" count="0" type="stmt"/>
+        <line num="110" count="0" type="stmt"/>
+        <line num="111" count="0" type="stmt"/>
+        <line num="112" count="0" type="stmt"/>
+        <line num="113" count="0" type="stmt"/>
+        <line num="114" count="0" type="stmt"/>
+        <line num="115" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="116" count="1" type="stmt"/>
+        <line num="121" count="1" type="stmt"/>
+        <line num="124" count="1" type="stmt"/>
+        <line num="125" count="1" type="stmt"/>
+        <line num="126" count="1" type="stmt"/>
+        <line num="128" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="129" count="0" type="stmt"/>
+        <line num="130" count="0" type="stmt"/>
+        <line num="132" count="0" type="stmt"/>
+        <line num="134" count="0" type="stmt"/>
+        <line num="135" count="0" type="stmt"/>
+        <line num="137" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="138" count="1" type="stmt"/>
+        <line num="141" count="1" type="stmt"/>
+        <line num="144" count="1" type="stmt"/>
+        <line num="145" count="1" type="stmt"/>
+        <line num="146" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="148" count="1" type="stmt"/>
+        <line num="149" count="1" type="stmt"/>
+        <line num="150" count="1" type="stmt"/>
+        <line num="153" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="154" count="1" type="stmt"/>
+        <line num="163" count="1" type="stmt"/>
+        <line num="170" count="1" type="stmt"/>
+        <line num="171" count="1" type="stmt"/>
+        <line num="172" count="1" type="stmt"/>
+        <line num="174" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="175" count="0" type="stmt"/>
+        <line num="180" count="1" type="stmt"/>
+        <line num="181" count="1" type="stmt"/>
+        <line num="184" count="1" type="stmt"/>
+        <line num="187" count="1" type="stmt"/>
+        <line num="197" count="1" type="stmt"/>
+        <line num="200" count="1" type="stmt"/>
+        <line num="202" count="1" type="stmt"/>
+        <line num="203" count="1" type="stmt"/>
+        <line num="208" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="209" count="0" type="stmt"/>
+        <line num="211" count="0" type="stmt"/>
+        <line num="214" count="0" type="stmt"/>
+        <line num="216" count="0" type="stmt"/>
+        <line num="219" count="0" type="stmt"/>
+        <line num="224" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="225" count="0" type="stmt"/>
+        <line num="230" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="231" count="0" type="stmt"/>
+        <line num="236" count="1" type="stmt"/>
+        <line num="239" count="1" type="stmt"/>
+        <line num="240" count="1" type="stmt"/>
+        <line num="241" count="1" type="stmt"/>
+        <line num="243" count="1" type="stmt"/>
+        <line num="244" count="1" type="stmt"/>
+        <line num="246" count="1" type="stmt"/>
+        <line num="249" count="1" type="stmt"/>
+        <line num="250" count="1" type="stmt"/>
+        <line num="254" count="1" type="stmt"/>
+        <line num="255" count="1" type="stmt"/>
+        <line num="258" count="1" type="stmt"/>
+        <line num="262" count="1" type="stmt"/>
+        <line num="263" count="1" type="stmt"/>
+        <line num="264" count="1" type="stmt"/>
+        <line num="265" count="1" type="stmt"/>
+        <line num="266" count="1" type="stmt"/>
+        <line num="267" count="1" type="stmt"/>
+        <line num="269" count="1" type="stmt"/>
+        <line num="272" count="1" type="stmt"/>
+        <line num="275" count="1" type="stmt"/>
+      </file>
+      <file name="pointToPointTicketNetexHelpers.ts" path="/Users/dannydavies/Documents/tfn/fares-data-build-tool/repos/fdbt-netex-output/src/netex-convertor/point-to-point-tickets/pointToPointTicketNetexHelpers.ts">
+        <metrics statements="73" coveredstatements="70" conditionals="30" coveredconditionals="21" methods="38" coveredmethods="37"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="19" count="10" type="cond" truecount="4" falsecount="0"/>
+        <line num="22" count="2" type="stmt"/>
+        <line num="23" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="9" type="stmt"/>
+        <line num="27" count="3" type="stmt"/>
+        <line num="28" count="9" type="stmt"/>
+        <line num="31" count="842" type="stmt"/>
+        <line num="33" count="2" type="stmt"/>
+        <line num="34" count="8" type="stmt"/>
+        <line num="45" count="2" type="stmt"/>
+        <line num="46" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="47" count="6" type="stmt"/>
+        <line num="60" count="2" type="stmt"/>
+        <line num="63" count="2" type="stmt"/>
+        <line num="64" count="6" type="stmt"/>
+        <line num="69" count="8" type="stmt"/>
+        <line num="77" count="2" type="stmt"/>
+        <line num="78" count="2" type="stmt"/>
+        <line num="79" count="6" type="stmt"/>
+        <line num="80" count="6" type="stmt"/>
+        <line num="101" count="2" type="stmt"/>
+        <line num="109" count="68" type="stmt"/>
+        <line num="117" count="2" type="stmt"/>
+        <line num="124" count="7" type="stmt"/>
+        <line num="125" count="34" type="stmt"/>
+        <line num="126" count="34" type="stmt"/>
+        <line num="127" count="34" type="stmt"/>
+        <line num="130" count="34" type="stmt"/>
+        <line num="137" count="50" type="stmt"/>
+        <line num="138" count="118" type="stmt"/>
+        <line num="139" count="118" type="stmt"/>
+        <line num="141" count="118" type="stmt"/>
+        <line num="177" count="2" type="stmt"/>
+        <line num="192" count="2" type="stmt"/>
+        <line num="193" count="4" type="stmt"/>
+        <line num="194" count="4" type="stmt"/>
+        <line num="209" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="210" count="0" type="stmt"/>
+        <line num="216" count="4" type="stmt"/>
+        <line num="250" count="2" type="stmt"/>
+        <line num="254" count="62" type="stmt"/>
+        <line num="256" count="14" type="stmt"/>
+        <line num="257" count="14" type="stmt"/>
+        <line num="258" count="62" type="stmt"/>
+        <line num="272" count="14" type="stmt"/>
+        <line num="275" count="14" type="stmt"/>
+        <line num="276" count="14" type="stmt"/>
+        <line num="277" count="42" type="stmt"/>
+        <line num="291" count="14" type="stmt"/>
+        <line num="294" count="14" type="stmt"/>
+        <line num="312" count="2" type="stmt"/>
+        <line num="313" count="7" type="stmt"/>
+        <line num="314" count="11" type="stmt"/>
+        <line num="318" count="2" type="stmt"/>
+        <line num="319" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="320" count="4" type="stmt"/>
+        <line num="321" count="4" type="stmt"/>
+        <line num="323" count="4" type="stmt"/>
+        <line num="324" count="6" type="stmt"/>
+        <line num="384" count="2" type="stmt"/>
+        <line num="385" count="2" type="stmt"/>
+        <line num="387" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="389" count="1" type="stmt"/>
+        <line num="393" count="1" type="stmt"/>
+        <line num="396" count="1" type="stmt"/>
+        <line num="398" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="399" count="0" type="stmt"/>
+        <line num="400" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="401" count="0" type="stmt"/>
+        <line num="404" count="1" type="stmt"/>
+        <line num="419" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="netex-convertor.test-data">
+      <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="mockS3Event.ts" path="/Users/dannydavies/Documents/tfn/fares-data-build-tool/repos/fdbt-netex-output/src/netex-convertor/test-data/mockS3Event.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="3" count="1" type="stmt"/>
+      </file>
+      <file name="operatorData.ts" path="/Users/dannydavies/Documents/tfn/fares-data-build-tool/repos/fdbt-netex-output/src/netex-convertor/test-data/operatorData.ts">
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="netex-emailer">
+      <metrics statements="34" coveredstatements="30" conditionals="12" coveredconditionals="8" methods="4" coveredmethods="3"/>
+      <file name="handler.ts" path="/Users/dannydavies/Documents/tfn/fares-data-build-tool/repos/fdbt-netex-output/src/netex-emailer/handler.ts">
+        <metrics statements="34" coveredstatements="30" conditionals="12" coveredconditionals="8" methods="4" coveredmethods="3"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="51" count="1" type="stmt"/>
+        <line num="56" count="1" type="stmt"/>
+        <line num="58" count="1" type="stmt"/>
+        <line num="82" count="1" type="stmt"/>
+        <line num="83" count="1" type="stmt"/>
+        <line num="84" count="1" type="stmt"/>
+        <line num="85" count="1" type="stmt"/>
+        <line num="86" count="1" type="stmt"/>
+        <line num="87" count="1" type="stmt"/>
+        <line num="89" count="1" type="stmt"/>
+        <line num="91" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="95" count="1" type="stmt"/>
+        <line num="97" count="1" type="stmt"/>
+        <line num="99" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="100" count="0" type="stmt"/>
+        <line num="103" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="104" count="1" type="stmt"/>
+        <line num="105" count="1" type="stmt"/>
+        <line num="107" count="1" type="stmt"/>
+        <line num="110" count="0" type="stmt"/>
+        <line num="114" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="netex-emailer.template">
+      <metrics statements="7" coveredstatements="6" conditionals="12" coveredconditionals="9" methods="3" coveredmethods="2"/>
+      <file name="emailTemplate.ts" path="/Users/dannydavies/Documents/tfn/fares-data-build-tool/repos/fdbt-netex-output/src/netex-emailer/template/emailTemplate.ts">
+        <metrics statements="7" coveredstatements="6" conditionals="12" coveredconditionals="9" methods="3" coveredmethods="2"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="13" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="16" count="4" type="stmt"/>
+        <line num="21" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="135" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="netex-emailer.testData">
+      <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="testData.ts" path="/Users/dannydavies/Documents/tfn/fares-data-build-tool/repos/fdbt-netex-output/src/netex-emailer/testData/testData.ts">
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="test-data">
+      <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="matchingData.ts" path="/Users/dannydavies/Documents/tfn/fares-data-build-tool/repos/fdbt-netex-output/src/test-data/matchingData.ts">
+        <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="10" count="4" type="stmt"/>
+        <line num="113" count="4" type="stmt"/>
+        <line num="455" count="4" type="stmt"/>
+        <line num="801" count="4" type="stmt"/>
+        <line num="1013" count="4" type="stmt"/>
+        <line num="1327" count="4" type="stmt"/>
+        <line num="1610" count="4" type="stmt"/>
+        <line num="2123" count="4" type="stmt"/>
+        <line num="2157" count="4" type="stmt"/>
+      </file>
+    </package>
+    <package name="types">
+      <metrics statements="6" coveredstatements="6" conditionals="7" coveredconditionals="5" methods="3" coveredmethods="3"/>
+      <file name="index.ts" path="/Users/dannydavies/Documents/tfn/fares-data-build-tool/repos/fdbt-netex-output/src/types/index.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="7" coveredconditionals="5" methods="3" coveredmethods="3"/>
+        <line num="161" count="2" type="stmt"/>
+        <line num="162" count="11" type="cond" truecount="2" falsecount="1"/>
+        <line num="180" count="2" type="stmt"/>
+        <line num="183" count="19" type="cond" truecount="1" falsecount="1"/>
+        <line num="238" count="2" type="stmt"/>
+        <line num="239" count="31" type="cond" truecount="2" falsecount="0"/>
+      </file>
+    </package>
+    <package name="utils">
+      <metrics statements="18" coveredstatements="8" conditionals="17" coveredconditionals="1" methods="3" coveredmethods="1"/>
+      <file name="s3.ts" path="/Users/dannydavies/Documents/tfn/fares-data-build-tool/repos/fdbt-netex-output/src/utils/s3.ts">
+        <metrics statements="18" coveredstatements="8" conditionals="17" coveredconditionals="1" methods="3" coveredmethods="1"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="12" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="cond" truecount="0" falsecount="8"/>
+        <line num="31" count="1" type="cond" truecount="0" falsecount="1"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
