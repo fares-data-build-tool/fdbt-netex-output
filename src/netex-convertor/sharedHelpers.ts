@@ -4,6 +4,9 @@ import parser from 'xml2json';
 import fs from 'fs';
 import moment from 'moment';
 import {
+    CoreData,
+    SchemeOperatorTicket,
+    isSchemeOperatorTicket,
     FlatFareTicket,
     PeriodTicket,
     PointToPointTicket,
@@ -11,7 +14,10 @@ import {
     User,
     GroupCompanion,
     FullTimeRestriction,
+    Operator,
 } from '../types/index';
+
+import { getBaseSchemeOperatorInfo } from './period-tickets/periodTicketNetexHelpers';
 
 export interface NetexObject {
     [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -202,4 +208,78 @@ export const replaceIWBusCoNocCode = (nocCode: string): string => {
     }
 
     return nocCode;
+};
+
+export const getCoreData = (
+    operators: Operator[],
+    matchingData: PointToPointTicket | PeriodTicket | SchemeOperatorTicket,
+    pointToPoint: boolean,
+): CoreData => {
+    if (pointToPoint) {
+        const pointToPointMatchingData: PointToPointTicket = matchingData as PointToPointTicket;
+        const operatorData = operators[0];
+        const opIdNocFormat = `noc:${operatorData.opId}`;
+        const nocCodeFormat = `noc:${pointToPointMatchingData.nocCode}`;
+        const operatorPublicNameLineNameFormat = `${operatorData.operatorPublicName} ${pointToPointMatchingData.lineName}`;
+        const nocCodeLineNameFormat = `${pointToPointMatchingData.nocCode}_${pointToPointMatchingData.lineName}`;
+        const lineIdName = `Line_${pointToPointMatchingData.lineName}`;
+        const currentDate = new Date(Date.now());
+        const website = getCleanWebsite(operatorData.website);
+        const brandingId = `op:${pointToPointMatchingData.nocCode}@brand`;
+        const operatorIdentifier = pointToPointMatchingData.nocCode;
+
+        return {
+            opIdNocFormat,
+            nocCodeFormat,
+            currentDate,
+            website,
+            brandingId,
+            operatorIdentifier,
+            baseOperatorInfo: [],
+            placeholderGroupOfProductsName: '',
+            ticketUserConcat: '',
+            operatorPublicNameLineNameFormat,
+            nocCodeLineNameFormat,
+            lineIdName,
+        };
+    }
+    const periodMatchingData: PeriodTicket | SchemeOperatorTicket = matchingData as PeriodTicket | SchemeOperatorTicket;
+    const baseOperatorInfo = isSchemeOperatorTicket(periodMatchingData)
+        ? getBaseSchemeOperatorInfo(periodMatchingData)
+        : operators.find(operator => operator.operatorPublicName === periodMatchingData.operatorName);
+
+    const operatorIdentifier = isSchemeOperatorTicket(periodMatchingData)
+        ? `${periodMatchingData.schemeOperatorName}-${periodMatchingData.schemeOperatorRegionCode}`
+        : periodMatchingData.nocCode;
+
+    if (!baseOperatorInfo) {
+        throw new Error('Could not find base operator');
+    }
+
+    const opIdNocFormat = `noc:${baseOperatorInfo.opId}`;
+    const nocCodeFormat = `noc:${
+        isSchemeOperatorTicket(periodMatchingData)
+            ? operatorIdentifier
+            : replaceIWBusCoNocCode(periodMatchingData.nocCode)
+    }`;
+    const currentDate = new Date(Date.now());
+    const website = getCleanWebsite(baseOperatorInfo.website);
+    const placeholderGroupOfProductsName = `${operatorIdentifier}_products`;
+    const brandingId = `op:${operatorIdentifier}@brand`;
+    const ticketUserConcat = `${periodMatchingData.type}_${periodMatchingData.passengerType}`;
+
+    return {
+        opIdNocFormat,
+        nocCodeFormat,
+        currentDate,
+        website,
+        brandingId,
+        operatorIdentifier,
+        baseOperatorInfo: [baseOperatorInfo],
+        placeholderGroupOfProductsName,
+        ticketUserConcat,
+        operatorPublicNameLineNameFormat: '',
+        nocCodeLineNameFormat: '',
+        lineIdName: '',
+    };
 };
