@@ -48,40 +48,50 @@ const netexGenerator = (
     };
 
     const updatePublicationRequest = (publicationRequest: NetexObject): NetexObject => {
+        // get the pub request
         const publicationRequestToUpdate = { ...publicationRequest };
+        // update the things that are always there
         publicationRequestToUpdate.RequestTimestamp.$t = coreData.currentDate;
-        publicationRequestToUpdate.Description.$t = `Request for ${coreData.operatorIdentifier} bus pass fares`;
-        publicationRequestToUpdate.topics.NetworkFrameTopic.TypeOfFrameRef.ref = `fxc:UK:DFT:TypeOfFrame_UK_PI_${
-            isGeoZoneTicket(ticket) ? 'NETWORK' : 'LINE'
-        }_FARE_OFFER:FXCP`;
-
-        if (ticket.type === 'multiOperator') {
-            publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.GroupOfOperatorsRef = {
-                version: '1.0',
-                ref: 'operators@bus',
-            };
-            delete publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences
-                .OperatorRef;
-        } else {
-            publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.OperatorRef.ref =
-                coreData.nocCodeFormat;
-            publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.OperatorRef.$t =
-                coreData.opIdNocFormat;
-            delete publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences
-                .GroupOfOperatorsRef;
-        }
-
-        publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.PreassignedFareProductRef = ticket.products.map(
-            (product: { productName: any }) => ({
-                version: '1.0',
-                ref: `op:Pass@${product.productName}_${ticket.passengerType}`,
-            }),
-        );
-
+        publicationRequestToUpdate.Description.$t = `Request for ${
+            coreData.isPointToPoint ? `${ticket.nocCode} ${coreData.lineIdName}` : coreData.operatorIdentifier
+        } bus pass fares`;
         publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.BrandingRef = {
             version: '1.0',
             ref: coreData.brandingId,
         };
+        // update point to point only
+        if (coreData.isPointToPoint) {
+            publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.LineRef.ref =
+                coreData.lineName;
+        } else {
+            // update period only
+            publicationRequestToUpdate.topics.NetworkFrameTopic.TypeOfFrameRef.ref = `fxc:UK:DFT:TypeOfFrame_UK_PI_${
+                coreData.isGeoZone ? 'NETWORK' : 'LINE'
+            }_FARE_OFFER:FXCP`;
+
+            publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.PreassignedFareProductRef = ticket.products.map(
+                (product: { productName: any }) => ({
+                    version: '1.0',
+                    ref: `op:Pass@${product.productName}_${ticket.passengerType}`,
+                }),
+            );
+            // check if multiOperator and delete as required
+            if (coreData.isMultiOperator) {
+                publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.GroupOfOperatorsRef = {
+                    version: '1.0',
+                    ref: 'operators@bus',
+                };
+                delete publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences
+                    .OperatorRef;
+            } else {
+                publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.OperatorRef.ref =
+                    coreData.nocCodeFormat;
+                publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.OperatorRef.$t =
+                    coreData.opIdNocFormat;
+                delete publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences
+                    .GroupOfOperatorsRef;
+            }
+        }
 
         return publicationRequestToUpdate;
     };

@@ -15,6 +15,11 @@ export interface CoreData {
     operatorPublicNameLineNameFormat: string;
     nocCodeLineNameFormat: string;
     lineIdName: string;
+    lineName: string;
+    isGeoZone: boolean;
+    isMultiProduct: boolean;
+    isMultiOperator: boolean;
+    isPointToPoint: boolean;
 }
 
 // Reference Data (from NOC, TNDS, NaPTAN datasets)

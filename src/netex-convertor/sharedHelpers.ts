@@ -17,7 +17,11 @@ import {
     Operator,
 } from '../types/index';
 
-import { getBaseSchemeOperatorInfo } from './period-tickets/periodTicketNetexHelpers';
+import {
+    getBaseSchemeOperatorInfo,
+    isGeoZoneTicket,
+    isMultiServiceTicket,
+} from './period-tickets/periodTicketNetexHelpers';
 
 export interface NetexObject {
     [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -217,30 +221,25 @@ export const getCoreData = (
 ): CoreData => {
     if (pointToPoint) {
         const pointToPointMatchingData: PointToPointTicket = matchingData as PointToPointTicket;
-        const operatorData = operators[0];
-        const opIdNocFormat = `noc:${operatorData.opId}`;
-        const nocCodeFormat = `noc:${pointToPointMatchingData.nocCode}`;
-        const operatorPublicNameLineNameFormat = `${operatorData.operatorPublicName} ${pointToPointMatchingData.lineName}`;
-        const nocCodeLineNameFormat = `${pointToPointMatchingData.nocCode}_${pointToPointMatchingData.lineName}`;
-        const lineIdName = `Line_${pointToPointMatchingData.lineName}`;
-        const currentDate = new Date(Date.now());
-        const website = getCleanWebsite(operatorData.website);
-        const brandingId = `op:${pointToPointMatchingData.nocCode}@brand`;
-        const operatorIdentifier = pointToPointMatchingData.nocCode;
 
         return {
-            opIdNocFormat,
-            nocCodeFormat,
-            currentDate,
-            website,
-            brandingId,
-            operatorIdentifier,
+            opIdNocFormat: `noc:${operators[0].opId}`,
+            nocCodeFormat: `noc:${pointToPointMatchingData.nocCode}`,
+            currentDate: new Date(Date.now()),
+            website: getCleanWebsite(operators[0].website),
+            brandingId: `op:${pointToPointMatchingData.nocCode}@brand`,
+            operatorIdentifier: pointToPointMatchingData.nocCode,
             baseOperatorInfo: [],
             placeholderGroupOfProductsName: '',
             ticketUserConcat: '',
-            operatorPublicNameLineNameFormat,
-            nocCodeLineNameFormat,
-            lineIdName,
+            operatorPublicNameLineNameFormat: `${operators[0].operatorPublicName} ${pointToPointMatchingData.lineName}`,
+            nocCodeLineNameFormat: `${pointToPointMatchingData.nocCode}_${pointToPointMatchingData.lineName}`,
+            lineIdName: `Line_${pointToPointMatchingData.lineName}`,
+            lineName: pointToPointMatchingData.lineName,
+            isGeoZone: false,
+            isMultiProduct: false,
+            isMultiOperator: false,
+            isPointToPoint: pointToPoint,
         };
     }
     const periodMatchingData: PeriodTicket | SchemeOperatorTicket = matchingData as PeriodTicket | SchemeOperatorTicket;
@@ -256,30 +255,29 @@ export const getCoreData = (
         throw new Error('Could not find base operator');
     }
 
-    const opIdNocFormat = `noc:${baseOperatorInfo.opId}`;
     const nocCodeFormat = `noc:${
         isSchemeOperatorTicket(periodMatchingData)
             ? operatorIdentifier
             : replaceIWBusCoNocCode(periodMatchingData.nocCode)
     }`;
-    const currentDate = new Date(Date.now());
-    const website = getCleanWebsite(baseOperatorInfo.website);
-    const placeholderGroupOfProductsName = `${operatorIdentifier}_products`;
-    const brandingId = `op:${operatorIdentifier}@brand`;
-    const ticketUserConcat = `${periodMatchingData.type}_${periodMatchingData.passengerType}`;
 
     return {
-        opIdNocFormat,
+        opIdNocFormat: `noc:${baseOperatorInfo.opId}`,
         nocCodeFormat,
-        currentDate,
-        website,
-        brandingId,
+        currentDate: new Date(Date.now()),
+        website: getCleanWebsite(baseOperatorInfo.website),
+        brandingId: `op:${operatorIdentifier}@brand`,
         operatorIdentifier,
         baseOperatorInfo: [baseOperatorInfo],
-        placeholderGroupOfProductsName,
-        ticketUserConcat,
+        placeholderGroupOfProductsName: `${operatorIdentifier}_products`,
+        ticketUserConcat: `${periodMatchingData.type}_${periodMatchingData.passengerType}`,
         operatorPublicNameLineNameFormat: '',
         nocCodeLineNameFormat: '',
         lineIdName: '',
+        lineName: '',
+        isGeoZone: isGeoZoneTicket(matchingData),
+        isMultiProduct: isMultiServiceTicket(matchingData),
+        isMultiOperator: matchingData.type === 'multiOperator',
+        isPointToPoint: pointToPoint,
     };
 };
