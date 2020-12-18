@@ -35,9 +35,8 @@ const netexGenerator = (
     // userPeriodTicket: PeriodTicket | SchemeOperatorTicket,
     ticket: any,
     operatorData: Operator[],
-    pointToPoint: boolean,
 ): { generate: Function } => {
-    const coreData = getCoreData(operatorData, ticket, pointToPoint);
+    const coreData = getCoreData(operatorData, ticket);
     const baseOperatorInfo = coreData.baseOperatorInfo[0];
 
     const updatePublicationTimeStamp = (publicationTimeStamp: NetexObject): NetexObject => {

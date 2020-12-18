@@ -217,8 +217,9 @@ export const replaceIWBusCoNocCode = (nocCode: string): string => {
 export const getCoreData = (
     operators: Operator[],
     matchingData: PointToPointTicket | PeriodTicket | SchemeOperatorTicket,
-    pointToPoint: boolean,
 ): CoreData => {
+    const pointToPoint: boolean = matchingData.type === 'single' || matchingData.type === 'return';
+
     if (pointToPoint) {
         const pointToPointMatchingData: PointToPointTicket = matchingData as PointToPointTicket;
 
