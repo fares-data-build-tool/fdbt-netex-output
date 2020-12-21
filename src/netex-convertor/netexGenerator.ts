@@ -8,10 +8,10 @@ import {
 } from './sharedHelpers';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-    isMultiOperatorMultipleServicesTicket,
     isMultiOperatorGeoZoneTicket,
     Operator,
     isSchemeOperatorTicket,
+    MultiOperatorGeoZoneTicket,
 } from '../types/index';
 
 import {
@@ -117,49 +117,47 @@ const netexGenerator = (
 
     const updateResourceFrame = (resourceFrame: NetexObject): NetexObject => {
         const resourceFrameToUpdate = { ...resourceFrame };
-        const operatorPublicName = isBaseSchemeOperatorInfo(baseOperatorInfo)
-            ? baseOperatorInfo.schemeOperatorName
-            : baseOperatorInfo.operatorPublicName;
 
-        resourceFrameToUpdate.id = `epd:UK:${coreData.operatorIdentifier}:ResourceFrame_UK_PI_COMMON:${coreData.operatorIdentifier}:op`;
+        resourceFrameToUpdate.id = `epd:UK:${coreData.nocCode}:ResourceFrame_UK_PI_COMMON${`:${
+            !coreData.isPointToPoint ? `${coreData.operatorIdentifier}:` : ''
+        }`}op`;
         resourceFrameToUpdate.codespaces.Codespace.XmlnsUrl.$t = coreData.website;
         resourceFrameToUpdate.dataSources.DataSource.Email.$t = baseOperatorInfo.ttrteEnq;
         resourceFrameToUpdate.responsibilitySets.ResponsibilitySet[0].roles.ResponsibilityRoleAssignment.ResponsibleOrganisationRef.ref =
             coreData.nocCodeFormat;
-        resourceFrameToUpdate.responsibilitySets.ResponsibilitySet[0].roles.ResponsibilityRoleAssignment.ResponsibleOrganisationRef.$t = operatorPublicName;
+        resourceFrameToUpdate.responsibilitySets.ResponsibilitySet[0].roles.ResponsibilityRoleAssignment.ResponsibleOrganisationRef.$t =
+            coreData.operatorName;
         resourceFrameToUpdate.responsibilitySets.ResponsibilitySet[1].roles.ResponsibilityRoleAssignment.ResponsibleOrganisationRef.ref =
             coreData.nocCodeFormat;
-        resourceFrameToUpdate.responsibilitySets.ResponsibilitySet[1].roles.ResponsibilityRoleAssignment.ResponsibleOrganisationRef.$t = operatorPublicName;
+        resourceFrameToUpdate.responsibilitySets.ResponsibilitySet[1].roles.ResponsibilityRoleAssignment.ResponsibleOrganisationRef.$t =
+            coreData.operatorName;
+
         resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.id = coreData.brandingId;
-        resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.Name.$t = operatorPublicName;
+        // below 2 branding attributes, name and url, are new to point to point, but should not break anything
+        resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.Name.$t = coreData.operatorName;
         resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.Url.$t = coreData.website;
 
-        if (
-            ticket.type === 'multiOperator' &&
-            (isMultiOperatorGeoZoneTicket(ticket) || isSchemeOperatorTicket(ticket))
-        ) {
+        if (coreData.isMultiOperator && (isMultiOperatorGeoZoneTicket(ticket) || isSchemeOperatorTicket(ticket))) {
             const nocs = [...ticket.additionalNocs];
-            if (isMultiOperatorGeoZoneTicket(ticket)) {
-                nocs.push(ticket.nocCode);
+            if (coreData.isGeoZone) {
+                nocs.push((ticket as MultiOperatorGeoZoneTicket).nocCode);
                 resourceFrameToUpdate.organisations.Operator = getOrganisations(operatorData);
-            } else if (isBaseSchemeOperatorInfo(baseOperatorInfo) && isSchemeOperatorTicket(ticket)) {
+            } else if (isBaseSchemeOperatorInfo(baseOperatorInfo) && coreData.isSchemeOperator) {
                 resourceFrameToUpdate.organisations.Operator = getOrganisations(operatorData, baseOperatorInfo);
             }
             resourceFrameToUpdate.groupsOfOperators = getGroupOfOperators(operatorData);
-        } else if (ticket.type === 'multiOperator' && isMultiOperatorMultipleServicesTicket(ticket)) {
-            const nocs: string[] = ticket.additionalOperators.map(additionalOperator => additionalOperator.nocCode);
+        } else if (coreData.isMultiOperator && coreData.isMultiOperatorMultiServices) {
+            const nocs: string[] = ticket.additionalOperators.map(
+                (additionalOperator: { nocCode: any }) => additionalOperator.nocCode,
+            );
             nocs.push(ticket.nocCode);
             resourceFrameToUpdate.organisations.Operator = getOrganisations(operatorData);
             resourceFrameToUpdate.groupsOfOperators = getGroupOfOperators(operatorData);
-        } else if (
-            !isMultiOperatorGeoZoneTicket(ticket) &&
-            !isSchemeOperatorTicket(ticket) &&
-            !isMultiOperatorMultipleServicesTicket(ticket)
-        ) {
+        } else if (!coreData.isMultiOperator && !coreData.isSchemeOperator && !coreData.isMultiOperatorMultiServices) {
             resourceFrameToUpdate.organisations.Operator.id = coreData.nocCodeFormat;
             resourceFrameToUpdate.organisations.Operator.PublicCode.$t = coreData.operatorIdentifier;
-            resourceFrameToUpdate.organisations.Operator.Name.$t = operatorPublicName;
-            resourceFrameToUpdate.organisations.Operator.ShortName.$t = ticket.operatorName;
+            resourceFrameToUpdate.organisations.Operator.Name.$t = coreData.operatorName;
+            resourceFrameToUpdate.organisations.Operator.ShortName.$t = coreData.operatorName;
             resourceFrameToUpdate.organisations.Operator.TradingName.$t = baseOperatorInfo.vosaPsvLicenseName;
             resourceFrameToUpdate.organisations.Operator.ContactDetails.Phone.$t = baseOperatorInfo.fareEnq;
             resourceFrameToUpdate.organisations.Operator.ContactDetails.Url.$t = coreData.website;

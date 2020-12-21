@@ -4,6 +4,7 @@ import { NetexObject } from '../netex-convertor/sharedHelpers';
 
 export interface CoreData {
     opIdNocFormat: string;
+    nocCode: string;
     nocCodeFormat: string;
     currentDate: Date;
     website: string;
@@ -21,7 +22,9 @@ export interface CoreData {
     isMultiOperator: boolean;
     isPointToPoint: boolean;
     isSchemeOperator: boolean;
+    isMultiOperatorMultiServices: boolean;
     type: string;
+    operatorName: string;
 }
 
 // Reference Data (from NOC, TNDS, NaPTAN datasets)
