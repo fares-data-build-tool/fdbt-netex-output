@@ -16,6 +16,7 @@ import {
     GroupCompanion,
     FullTimeRestriction,
     Operator,
+    isMultiOperatorGeoZoneTicket,
 } from '../types/index';
 
 import {
@@ -226,7 +227,6 @@ export const getCoreData = (
 
         return {
             opIdNocFormat: `noc:${operators[0].opId}`,
-            nocCode: pointToPointTicket.nocCode,
             nocCodeFormat: `noc:${pointToPointTicket.nocCode}`,
             currentDate: new Date(Date.now()),
             website: getCleanWebsite(operators[0].website),
@@ -239,14 +239,17 @@ export const getCoreData = (
             nocCodeLineNameFormat: `${pointToPointTicket.nocCode}_${pointToPointTicket.lineName}`,
             lineIdName: `Line_${pointToPointTicket.lineName}`,
             lineName: pointToPointTicket.lineName,
-            isGeoZone: false,
-            isMultiProduct: false,
-            isMultiOperator: false,
-            isPointToPoint: pointToPoint,
-            type: ticket.type,
-            isSchemeOperator: false,
-            operatorName: operators[0].operatorPublicName,
-            isMultiOperatorMultiServices: false,
+            operatorName: pointToPointTicket.operatorShortName,
+            types: {
+                isGeoZone: false,
+                isMultiProduct: false,
+                isMultiOperator: false,
+                isPointToPoint: pointToPoint,
+                ticketType: pointToPointTicket.type,
+                isSchemeOperator: false,
+                isMultiOperatorMultiServices: false,
+                isMultiOperatorGeoZoneTicket: false,
+            },
         };
     }
     const periodTicket: PeriodTicket | SchemeOperatorTicket = ticket as PeriodTicket | SchemeOperatorTicket;
@@ -269,9 +272,6 @@ export const getCoreData = (
     return {
         opIdNocFormat: `noc:${baseOperatorInfo.opId}`,
         nocCodeFormat,
-        nocCode: isSchemeOperatorTicket(periodTicket)
-            ? operatorIdentifier
-            : replaceIWBusCoNocCode(periodTicket.nocCode),
         currentDate: new Date(Date.now()),
         website: getCleanWebsite(baseOperatorInfo.website),
         brandingId: `op:${operatorIdentifier}@brand`,
@@ -283,15 +283,18 @@ export const getCoreData = (
         nocCodeLineNameFormat: '',
         lineIdName: '',
         lineName: '',
-        isGeoZone: isGeoZoneTicket(periodTicket),
-        isMultiProduct: isMultiServiceTicket(periodTicket),
-        isMultiOperator: periodTicket.type === 'multiOperator',
-        isMultiOperatorMultiServices: isMultiOperatorMultipleServicesTicket(periodTicket),
-        isPointToPoint: pointToPoint,
-        type: periodTicket.type,
-        isSchemeOperator: isSchemeOperatorTicket(periodTicket),
         operatorName: isSchemeOperatorTicket(periodTicket)
             ? periodTicket.schemeOperatorName
             : periodTicket.operatorName,
+        types: {
+            isGeoZone: isGeoZoneTicket(periodTicket),
+            isMultiProduct: isMultiServiceTicket(periodTicket),
+            isMultiOperator: periodTicket.type === 'multiOperator',
+            isMultiOperatorMultiServices: isMultiOperatorMultipleServicesTicket(periodTicket),
+            isMultiOperatorGeoZoneTicket: isMultiOperatorGeoZoneTicket(periodTicket),
+            isPointToPoint: pointToPoint,
+            ticketType: periodTicket.type,
+            isSchemeOperator: isSchemeOperatorTicket(periodTicket),
+        },
     };
 };
