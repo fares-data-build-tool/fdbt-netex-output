@@ -4,7 +4,6 @@ import parser from 'xml2json';
 import fs from 'fs';
 import moment from 'moment';
 import {
-    isMultiOperatorMultipleServicesTicket,
     CoreData,
     SchemeOperatorTicket,
     isSchemeOperatorTicket,
@@ -16,14 +15,9 @@ import {
     GroupCompanion,
     FullTimeRestriction,
     Operator,
-    isMultiOperatorGeoZoneTicket,
 } from '../types/index';
 
-import {
-    getBaseSchemeOperatorInfo,
-    isGeoZoneTicket,
-    isMultiServiceTicket,
-} from './period-tickets/periodTicketNetexHelpers';
+import { getBaseSchemeOperatorInfo } from './period-tickets/periodTicketNetexHelpers';
 
 export interface NetexObject {
     [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -240,16 +234,7 @@ export const getCoreData = (
             lineIdName: `Line_${pointToPointTicket.lineName}`,
             lineName: pointToPointTicket.lineName,
             operatorName: pointToPointTicket.operatorShortName,
-            types: {
-                isGeoZone: false,
-                isMultiProduct: false,
-                isMultiOperator: false,
-                isPointToPoint: pointToPoint,
-                ticketType: pointToPointTicket.type,
-                isSchemeOperator: false,
-                isMultiOperatorMultiServices: false,
-                isMultiOperatorGeoZoneTicket: false,
-            },
+            ticketType: pointToPointTicket.type,
         };
     }
     const periodTicket: PeriodTicket | SchemeOperatorTicket = ticket as PeriodTicket | SchemeOperatorTicket;
@@ -286,15 +271,6 @@ export const getCoreData = (
         operatorName: isSchemeOperatorTicket(periodTicket)
             ? periodTicket.schemeOperatorName
             : periodTicket.operatorName,
-        types: {
-            isGeoZone: isGeoZoneTicket(periodTicket),
-            isMultiProduct: isMultiServiceTicket(periodTicket),
-            isMultiOperator: periodTicket.type === 'multiOperator',
-            isMultiOperatorMultiServices: isMultiOperatorMultipleServicesTicket(periodTicket),
-            isMultiOperatorGeoZoneTicket: isMultiOperatorGeoZoneTicket(periodTicket),
-            isPointToPoint: pointToPoint,
-            ticketType: periodTicket.type,
-            isSchemeOperator: isSchemeOperatorTicket(periodTicket),
-        },
+        ticketType: periodTicket.type,
     };
 };

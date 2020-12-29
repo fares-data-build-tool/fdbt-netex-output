@@ -3,16 +3,7 @@ import { NetexObject } from '../netex-convertor/sharedHelpers';
 // Misc
 
 export interface CoreData {
-    types: {
-        ticketType: string;
-        isGeoZone: boolean;
-        isMultiProduct: boolean;
-        isMultiOperator: boolean;
-        isPointToPoint: boolean;
-        isSchemeOperator: boolean;
-        isMultiOperatorMultiServices: boolean;
-        isMultiOperatorGeoZoneTicket: boolean;
-    };
+    ticketType: string;
     opIdNocFormat: string;
     nocCodeFormat: string;
     currentDate: Date;
