@@ -1,4 +1,3 @@
-/* eslint-disable no-else-return */
 import {
     isReturnTicket,
     getPointToPointScheduledStopPointsList,
@@ -186,7 +185,8 @@ const netexGenerator = (
             serviceFrameToUpdate.lines.Line = getLinesList(ticket, coreData.website, operatorData);
 
             return serviceFrameToUpdate;
-        } else if (isPointToPointTicket(ticket)) {
+        }
+        if (isPointToPointTicket(ticket)) {
             serviceFrameToUpdate.id = `epd:UK:${ticket.nocCode}:ServiceFrame_UK_PI_NETWORK:${coreData.lineIdName}:op`;
             serviceFrameToUpdate.lines.Line.id = coreData.lineName;
             serviceFrameToUpdate.lines.Line.Name.$t = coreData.operatorPublicNameLineNameFormat;
