@@ -140,9 +140,9 @@ const netexGenerator = (
         resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.Name.$t = coreData.operatorName;
         resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.Url.$t = coreData.website;
 
-        if (isMultiOperatorTicket(ticket) && (isMultiOperatorGeoZoneTicket(ticket) || isSchemeOperatorTicket(ticket))) {
+        if (isMultiOperatorGeoZoneTicket(ticket) || isSchemeOperatorTicket(ticket)) {
             const nocs = [...ticket.additionalNocs];
-            if (isGeoZoneTicket(ticket)) {
+            if (!isSchemeOperatorTicket(ticket)) {
                 nocs.push(ticket.nocCode);
                 resourceFrameToUpdate.organisations.Operator = getOrganisations(operatorData);
             } else if (isBaseSchemeOperatorInfo(baseOperatorInfo) && isSchemeOperatorTicket(ticket)) {

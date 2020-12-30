@@ -15,6 +15,7 @@ import {
     GroupCompanion,
     FullTimeRestriction,
     Operator,
+    isPointToPointTicket,
 } from '../types/index';
 
 import { getBaseSchemeOperatorInfo } from './period-tickets/periodTicketNetexHelpers';
@@ -214,30 +215,26 @@ export const getCoreData = (
     operators: Operator[],
     ticket: PointToPointTicket | PeriodTicket | SchemeOperatorTicket,
 ): CoreData => {
-    const pointToPoint: boolean = ticket.type === 'single' || ticket.type === 'return';
-
-    if (pointToPoint) {
-        const pointToPointTicket: PointToPointTicket = ticket as PointToPointTicket;
-
+    if (isPointToPointTicket(ticket)) {
         return {
             opIdNocFormat: `noc:${operators[0].opId}`,
-            nocCodeFormat: `noc:${pointToPointTicket.nocCode}`,
+            nocCodeFormat: `noc:${ticket.nocCode}`,
             currentDate: new Date(Date.now()),
             website: getCleanWebsite(operators[0].website),
-            brandingId: `op:${pointToPointTicket.nocCode}@brand`,
-            operatorIdentifier: pointToPointTicket.nocCode,
+            brandingId: `op:${ticket.nocCode}@brand`,
+            operatorIdentifier: ticket.nocCode,
             baseOperatorInfo: [],
             placeholderGroupOfProductsName: '',
             ticketUserConcat: '',
-            operatorPublicNameLineNameFormat: `${operators[0].operatorPublicName} ${pointToPointTicket.lineName}`,
-            nocCodeLineNameFormat: `${pointToPointTicket.nocCode}_${pointToPointTicket.lineName}`,
-            lineIdName: `Line_${pointToPointTicket.lineName}`,
-            lineName: pointToPointTicket.lineName,
-            operatorName: pointToPointTicket.operatorShortName,
-            ticketType: pointToPointTicket.type,
+            operatorPublicNameLineNameFormat: `${operators[0].operatorPublicName} ${ticket.lineName}`,
+            nocCodeLineNameFormat: `${ticket.nocCode}_${ticket.lineName}`,
+            lineIdName: `Line_${ticket.lineName}`,
+            lineName: ticket.lineName,
+            operatorName: ticket.operatorShortName,
+            ticketType: ticket.type,
         };
     }
-    const periodTicket: PeriodTicket | SchemeOperatorTicket = ticket as PeriodTicket | SchemeOperatorTicket;
+    const periodTicket: PeriodTicket | SchemeOperatorTicket = ticket;
     const baseOperatorInfo = isSchemeOperatorTicket(periodTicket)
         ? getBaseSchemeOperatorInfo(periodTicket)
         : operators.find(operator => operator.operatorPublicName === periodTicket.operatorName);
