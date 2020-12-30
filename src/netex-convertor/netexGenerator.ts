@@ -210,9 +210,8 @@ const netexGenerator = (
             }
 
             return serviceFrameToUpdate;
-        } else {
-            return null;
         }
+        return null;
     };
 
     const updateNetworkFareFrame = (networkFareFrame: NetexObject): NetexObject | null => {
