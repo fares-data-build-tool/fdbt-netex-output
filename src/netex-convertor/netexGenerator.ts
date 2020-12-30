@@ -6,16 +6,16 @@ import {
     getTimeRestrictions,
     getNetexMode,
 } from './sharedHelpers';
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     Operator,
-    MultiOperatorGeoZoneTicket,
     PeriodTicket,
     PointToPointTicket,
     isSchemeOperatorTicket,
     isMultiOperatorGeoZoneTicket,
     isMultiOperatorMultipleServicesTicket,
     SchemeOperatorTicket,
+    isPointToPointTicket,
+    isMultiOperatorTicket,
 } from '../types/index';
 
 import {
@@ -42,9 +42,6 @@ const netexGenerator = (
 ): { generate: Function } => {
     const coreData = getCoreData(operatorData, ticket);
     const baseOperatorInfo = coreData.baseOperatorInfo[0];
-    const pointToPoint: boolean = ticket.type === 'single' || ticket.type === 'return';
-    const isMultiOperator: boolean =
-        isMultiOperatorGeoZoneTicket(ticket) || isMultiOperatorMultipleServicesTicket(ticket);
 
     const updatePublicationTimeStamp = (publicationTimeStamp: NetexObject): NetexObject => {
         const publicationTimeStampToUpdate = { ...publicationTimeStamp };
@@ -59,16 +56,14 @@ const netexGenerator = (
         // update the things that are always there
         publicationRequestToUpdate.RequestTimestamp.$t = coreData.currentDate;
         publicationRequestToUpdate.Description.$t = `Request for ${
-            pointToPoint
-                ? `${(ticket as PointToPointTicket).nocCode} ${coreData.lineIdName}`
-                : coreData.operatorIdentifier
+            isPointToPointTicket(ticket) ? `${ticket.nocCode} ${coreData.lineIdName}` : coreData.operatorIdentifier
         } bus pass fares`;
         publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.BrandingRef = {
             version: '1.0',
             ref: coreData.brandingId,
         };
         // update point to point only
-        if (pointToPoint) {
+        if (isPointToPointTicket(ticket)) {
             publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.LineRef.ref =
                 coreData.lineName;
         } else {
@@ -77,14 +72,14 @@ const netexGenerator = (
                 isGeoZoneTicket(ticket) ? 'NETWORK' : 'LINE'
             }_FARE_OFFER:FXCP`;
 
-            publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.PreassignedFareProductRef = (ticket as
-                | PeriodTicket
-                | SchemeOperatorTicket).products.map(product => ({
-                version: '1.0',
-                ref: `op:Pass@${product.productName}_${ticket.passengerType}`,
-            }));
+            publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.PreassignedFareProductRef = ticket.products.map(
+                product => ({
+                    version: '1.0',
+                    ref: `op:Pass@${product.productName}_${ticket.passengerType}`,
+                }),
+            );
             // check if multiOperator and delete as required
-            if (isMultiOperator) {
+            if (isMultiOperatorTicket(ticket)) {
                 publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.GroupOfOperatorsRef = {
                     version: '1.0',
                     ref: 'operators@bus',
@@ -108,7 +103,7 @@ const netexGenerator = (
         const compositeFrameToUpdate = { ...compositeFrame };
         const { nocCode } = baseOperatorInfo as Operator;
         const { lineIdName, ticketType } = coreData;
-        if (pointToPoint) {
+        if (isPointToPointTicket(ticket)) {
             compositeFrameToUpdate.id = `epd:UK:${nocCode}:CompositeFrame_UK_PI_LINE_FARE_OFFER:Trip@${coreData.lineIdName}:op`;
             compositeFrameToUpdate.Name.$t = `Fares for ${lineIdName}`;
             compositeFrameToUpdate.Description.$t = `${nocCode} ${lineIdName} is accessible as a ${ticketType} trip fare.  Prices are given zone to zone, where each zone is a linear group of stops, i.e. fare stage.`;
@@ -128,7 +123,7 @@ const netexGenerator = (
         const resourceFrameToUpdate = { ...resourceFrame };
 
         resourceFrameToUpdate.id = `epd:UK:${coreData.operatorIdentifier}:ResourceFrame_UK_PI_COMMON${`:${
-            !pointToPoint ? `${coreData.operatorIdentifier}:` : ''
+            !isPointToPointTicket(ticket) ? `${coreData.operatorIdentifier}:` : ''
         }`}op`;
         resourceFrameToUpdate.codespaces.Codespace.XmlnsUrl.$t = coreData.website;
         resourceFrameToUpdate.dataSources.DataSource.Email.$t = baseOperatorInfo.ttrteEnq;
@@ -145,24 +140,22 @@ const netexGenerator = (
         resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.Name.$t = coreData.operatorName;
         resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.Url.$t = coreData.website;
 
-        if (isMultiOperator && (isMultiOperatorGeoZoneTicket(ticket) || isSchemeOperatorTicket(ticket))) {
+        if (isMultiOperatorTicket(ticket) && (isMultiOperatorGeoZoneTicket(ticket) || isSchemeOperatorTicket(ticket))) {
             const nocs = [...ticket.additionalNocs];
             if (isGeoZoneTicket(ticket)) {
-                nocs.push((ticket as MultiOperatorGeoZoneTicket).nocCode);
+                nocs.push(ticket.nocCode);
                 resourceFrameToUpdate.organisations.Operator = getOrganisations(operatorData);
             } else if (isBaseSchemeOperatorInfo(baseOperatorInfo) && isSchemeOperatorTicket(ticket)) {
                 resourceFrameToUpdate.organisations.Operator = getOrganisations(operatorData, baseOperatorInfo);
             }
             resourceFrameToUpdate.groupsOfOperators = getGroupOfOperators(operatorData);
-        } else if (isMultiOperator && isMultiOperatorMultipleServicesTicket(ticket)) {
-            const nocs: string[] = ticket.additionalOperators.map(
-                (additionalOperator: { nocCode: any }) => additionalOperator.nocCode,
-            );
+        } else if (isMultiOperatorMultipleServicesTicket(ticket)) {
+            const nocs: string[] = ticket.additionalOperators.map(additionalOperator => additionalOperator.nocCode);
             nocs.push(ticket.nocCode);
             resourceFrameToUpdate.organisations.Operator = getOrganisations(operatorData);
             resourceFrameToUpdate.groupsOfOperators = getGroupOfOperators(operatorData);
         } else if (
-            !isMultiOperator &&
+            !isMultiOperatorTicket(ticket) &&
             !isSchemeOperatorTicket(ticket) &&
             !isMultiOperatorMultipleServicesTicket(ticket)
         ) {

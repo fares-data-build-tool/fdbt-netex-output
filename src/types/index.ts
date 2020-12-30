@@ -183,6 +183,9 @@ export const isMultiOperatorGeoZoneTicket = (ticketData: Ticket): ticketData is 
     (ticketData as MultiOperatorGeoZoneTicket).additionalNocs &&
     (ticketData as MultiOperatorGeoZoneTicket).additionalNocs.length > 0;
 
+export const isPointToPointTicket = (ticketData: Ticket): ticketData is PointToPointTicket =>
+    ticketData.type === 'single' || ticketData.type === 'return';
+
 export type GeoZoneTicket = PeriodGeoZoneTicket | MultiOperatorGeoZoneTicket | SchemeOperatorTicket;
 
 export interface PeriodMultipleServicesTicket extends BasePeriodTicket {
@@ -202,6 +205,11 @@ export const isMultiOperatorMultipleServicesTicket = (
 ): ticketData is MultiOperatorMultipleServicesTicket =>
     (ticketData as MultiOperatorMultipleServicesTicket).additionalOperators &&
     (ticketData as MultiOperatorMultipleServicesTicket).additionalOperators.length > 0;
+
+export const isMultiOperatorTicket = (
+    ticketData: Ticket,
+): ticketData is MultiOperatorGeoZoneTicket | MultiOperatorMultipleServicesTicket =>
+    isMultiOperatorGeoZoneTicket(ticketData) || isMultiOperatorMultipleServicesTicket(ticketData);
 
 export type MultipleServicesTicket = PeriodMultipleServicesTicket | MultiOperatorMultipleServicesTicket;
 
