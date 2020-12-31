@@ -217,6 +217,8 @@ const netexGenerator = (
         return null;
     };
 
+    // This method is called for all period-type tickets instead of 'updateZoneFareFrame'.
+    // Only GeoZoneTickets need a NetworkFareFrame. MultiServiceTickets do not need a NetworkFareFrame.
     const updateNetworkFareFrame = (networkFareFrame: NetexObject): NetexObject | null => {
         if (isGeoZoneTicket(ticket)) {
             const networkFareFrameToUpdate = { ...networkFareFrame };
@@ -241,6 +243,7 @@ const netexGenerator = (
         return null;
     };
 
+    // This method is called for all point-to-point-type tickets instead of 'updateNetworkFareFrame'.
     const updateZoneFareFrame = (zoneFareFrame: NetexObject): NetexObject | null => {
         if (isPointToPointTicket(ticket)) {
             const zoneFareFrameToUpdate = { ...zoneFareFrame };
@@ -261,6 +264,7 @@ const netexGenerator = (
 
             return zoneFareFrameToUpdate;
         }
+
         return null;
     };
 
@@ -380,29 +384,15 @@ const netexGenerator = (
 
         const netexFrames = netexJson.PublicationDelivery.dataObjects.CompositeFrame[0].frames;
         netexFrames.ResourceFrame = updateResourceFrame(netexFrames.ResourceFrame);
-
         netexFrames.ServiceFrame = updateServiceFrame(netexFrames.ServiceFrame);
 
-        if (isPointToPointTicket(ticket)) {
-            // Point-To-Point Ticket does not need a Network Frame but does need a ZoneFareFrame
-            netexFrames.FareFrame = [
-                updateZoneFareFrame(netexFrames.FareFrame[0]),
-                updatePriceFareFrame(netexFrames.FareFrame[1]),
-                updateFareTableFareFrame(netexFrames.FareFrame[2]),
-            ];
-        } else if (isGeoZoneTicket(ticket)) {
-            netexFrames.FareFrame = [
-                updateNetworkFareFrame(netexFrames.FareFrame[0]),
-                updatePriceFareFrame(netexFrames.FareFrame[1]),
-                updateFareTableFareFrame(netexFrames.FareFrame[2]),
-            ];
-        } else if (isMultiServiceTicket(ticket)) {
-            // Multi Service Ticket does not need a NetworkFrame
-            netexFrames.FareFrame = [
-                updatePriceFareFrame(netexFrames.FareFrame[1]),
-                updateFareTableFareFrame(netexFrames.FareFrame[2]),
-            ];
-        }
+        netexFrames.FareFrame = [
+            isPointToPointTicket(ticket)
+                ? updateZoneFareFrame(netexFrames.FareFrame[0])
+                : updateNetworkFareFrame(netexFrames.FareFrame[0]),
+            updatePriceFareFrame(netexFrames.FareFrame[1]),
+            updateFareTableFareFrame(netexFrames.FareFrame[2]),
+        ];
 
         return convertJsonToXml(netexJson);
     };
