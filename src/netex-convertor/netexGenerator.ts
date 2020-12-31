@@ -1,6 +1,7 @@
 import {
     isReturnTicket,
     getPointToPointScheduledStopPointsList,
+    getFareZoneList,
 } from './point-to-point-tickets/pointToPointTicketNetexHelpers';
 import {
     getCoreData,
@@ -21,6 +22,8 @@ import {
     isPointToPointTicket,
     isMultiOperatorTicket,
     ScheduledStopPoints,
+    FareZoneList,
+    isSingleTicket,
 } from '../types/index';
 
 import {
@@ -238,6 +241,29 @@ const netexGenerator = (
         return null;
     };
 
+    const updateZoneFareFrame = (zoneFareFrame: NetexObject): NetexObject | null => {
+        if (isPointToPointTicket(ticket)) {
+            const zoneFareFrameToUpdate = { ...zoneFareFrame };
+            zoneFareFrameToUpdate.id = `epd:UK:${ticket.nocCode}:FareFrame_UK_PI_FARE_NETWORK:${coreData.lineIdName}:op`;
+
+            if (isReturnTicket(ticket)) {
+                const outbound = getFareZoneList(ticket.outboundFareZones);
+                const inbound = getFareZoneList(ticket.inboundFareZones);
+
+                const fareZones: FareZoneList[] = inbound.concat(outbound);
+
+                zoneFareFrameToUpdate.fareZones.FareZone = [...new Set(fareZones.map(({ id }) => id))].map(e =>
+                    fareZones.find(({ id }) => id === e),
+                );
+            } else if (isSingleTicket(ticket)) {
+                zoneFareFrameToUpdate.fareZones.FareZone = getFareZoneList(ticket.fareZones);
+            }
+
+            return zoneFareFrameToUpdate;
+        }
+        return null;
+    };
+
     const updatePriceFareFrame = (priceFareFrame: NetexObject): NetexObject => {
         const priceFareFrameToUpdate = { ...priceFareFrame };
 
@@ -357,14 +383,21 @@ const netexGenerator = (
 
         netexFrames.ServiceFrame = updateServiceFrame(netexFrames.ServiceFrame);
 
-        // Multi Service does not need a Network Frame
-        if (isGeoZoneTicket(ticket)) {
+        if (isPointToPointTicket(ticket)) {
+            // Point-To-Point Ticket does not need a Network Frame but does need a ZoneFareFrame
+            netexFrames.FareFrame = [
+                updateZoneFareFrame(netexFrames.FareFrame[0]),
+                updatePriceFareFrame(netexFrames.FareFrame[1]),
+                updateFareTableFareFrame(netexFrames.FareFrame[2]),
+            ];
+        } else if (isGeoZoneTicket(ticket)) {
             netexFrames.FareFrame = [
                 updateNetworkFareFrame(netexFrames.FareFrame[0]),
                 updatePriceFareFrame(netexFrames.FareFrame[1]),
                 updateFareTableFareFrame(netexFrames.FareFrame[2]),
             ];
         } else if (isMultiServiceTicket(ticket)) {
+            // Multi Service Ticket does not need a NetworkFrame
             netexFrames.FareFrame = [
                 updatePriceFareFrame(netexFrames.FareFrame[1]),
                 updateFareTableFareFrame(netexFrames.FareFrame[2]),
