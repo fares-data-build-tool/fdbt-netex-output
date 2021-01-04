@@ -288,7 +288,7 @@ const netexGenerator = (
         priceFareFrameToUpdate.tariffs.Tariff.id = isPointToPointTicket(ticket)
             ? `Tariff@${coreData.ticketType}@${coreData.lineIdName}`
             : `op:Tariff@${coreData.placeholderGroupOfProductsName}`;
-        priceFareFrameToUpdate.tariffs.Tariff.Name.$t = `${ticketIdentifier} - Fares for ${coreData.ticketType} ticket`;
+        priceFareFrameToUpdate.tariffs.Tariff.Name.$t = `${coreData.operatorName} - ${ticketIdentifier} - Fares for ${coreData.ticketType} ticket`;
         let validityCondition;
 
         if (isPointToPointTicket(ticket)) {
