@@ -55,7 +55,6 @@ import {
 } from './period-tickets/periodTicketNetexHelpers';
 
 const netexGenerator = (
-    // userPeriodTicket: PeriodTicket | SchemeOperatorTicket,
     ticket: PointToPointTicket | PeriodTicket | SchemeOperatorTicket,
     operatorData: Operator[],
 ): { generate: Function } => {
@@ -86,6 +85,12 @@ const netexGenerator = (
         };
         // update point to point only
         if (isPointToPointTicket(ticket)) {
+            publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.LineRef.ref =
+                coreData.lineName;
+            publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.OperatorRef.ref =
+                coreData.nocCodeFormat;
+            publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.OperatorRef.$t =
+                coreData.opIdNocFormat;
             publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.LineRef.ref =
                 coreData.lineName;
         } else {
@@ -158,9 +163,13 @@ const netexGenerator = (
         resourceFrameToUpdate.responsibilitySets.ResponsibilitySet[1].roles.ResponsibilityRoleAssignment.ResponsibleOrganisationRef.$t =
             coreData.operatorName;
 
-        resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.id = coreData.brandingId;
-        resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.Name.$t = coreData.operatorName;
-        resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.Url.$t = coreData.website;
+        if (!isPointToPointTicket(ticket)) {
+            resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.id = coreData.brandingId;
+            resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.Name.$t = coreData.operatorName;
+            resourceFrameToUpdate.typesOfValue.ValueSet[0].values.Branding.Url.$t = coreData.website;
+        } else {
+            resourceFrameToUpdate.typesOfValue.ValueSet.values.Branding.id = coreData.brandingId;
+        }
 
         if (isMultiOperatorGeoZoneTicket(ticket) || isSchemeOperatorTicket(ticket)) {
             const nocs = [...ticket.additionalNocs];
@@ -478,14 +487,13 @@ const netexGenerator = (
     };
 
     const generate = async (): Promise<string> => {
-        // if period
-        const netexJson: NetexObject = await getNetexTemplateAsJson('period-tickets/periodTicketNetexTemplate.xml');
+        let netexJson;
 
-        // else
-
-        // const netexJson: NetexObject = await getNetexTemplateAsJson(
-        //     'point-to-point-tickets/pointToPointTicketNetexTemplate.xml',
-        // );
+        if (isPointToPointTicket(ticket)) {
+            netexJson = await getNetexTemplateAsJson('point-to-point-tickets/pointToPointTicketNetexTemplate.xml');
+        } else {
+            netexJson = await getNetexTemplateAsJson('period-tickets/periodTicketNetexTemplate.xml');
+        }
 
         netexJson.PublicationDelivery = updatePublicationTimeStamp(netexJson.PublicationDelivery);
         netexJson.PublicationDelivery.PublicationRequest = updatePublicationRequest(
@@ -499,13 +507,16 @@ const netexGenerator = (
         netexFrames.ResourceFrame = updateResourceFrame(netexFrames.ResourceFrame);
         netexFrames.ServiceFrame = updateServiceFrame(netexFrames.ServiceFrame);
 
-        netexFrames.FareFrame = [
-            isPointToPointTicket(ticket)
-                ? updateZoneFareFrame(netexFrames.FareFrame[0])
-                : updateNetworkFareFrame(netexFrames.FareFrame[0]),
-            updatePriceFareFrame(netexFrames.FareFrame[1]),
-            updateFareTableFareFrame(netexFrames.FareFrame[2]),
-        ];
+        if (isPointToPointTicket(ticket)) {
+            netexFrames.FareFrame[0] = updateZoneFareFrame(netexFrames.FareFrame[0]);
+        }
+
+        if (!isPointToPointTicket(ticket)) {
+            netexFrames.FareFrame[0] = updateNetworkFareFrame(netexFrames.FareFrame[0]);
+        }
+
+        netexFrames.FareFrame[1] = updatePriceFareFrame(netexFrames.FareFrame[1]);
+        netexFrames.FareFrame[2] = updateFareTableFareFrame(netexFrames.FareFrame[2]);
 
         return convertJsonToXml(netexJson);
     };
