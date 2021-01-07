@@ -509,9 +509,7 @@ const netexGenerator = (
 
         if (isPointToPointTicket(ticket)) {
             netexFrames.FareFrame[0] = updateZoneFareFrame(netexFrames.FareFrame[0]);
-        }
-
-        if (!isPointToPointTicket(ticket)) {
+        } else {
             netexFrames.FareFrame[0] = updateNetworkFareFrame(netexFrames.FareFrame[0]);
         }
 
