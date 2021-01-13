@@ -62,54 +62,30 @@ export const generateFileName = (eventFileName: string): string => eventFileName
 export const buildNocList = (ticket: PointToPointTicket | PeriodTicket | SchemeOperatorTicket): string[] => {
     const nocs: string[] = [];
 
-    // if (isPointToPointTicket(ticket)) {
-    //     nocs.push(ticket.nocCode);
-    // } else if (isPeriodTicket(ticket)) {
-    //     if (ticket.type === 'multiOperator') {
-    //         if (isMultiOperatorGeoZoneTicket(ticket) || isSchemeOperatorTicket(ticket)) {
-    //             nocs.concat(ticket.additionalNocs);
-    //             if (isMultiOperatorGeoZoneTicket(ticket)) {
-    //                 nocs.push(ticket.nocCode);
-    //             }
-    //         } else if (isMultiOperatorMultipleServicesTicket(ticket)) {
-    //             const additionalNocs = ticket.additionalOperators.map(additionalOperator => additionalOperator.nocCode);
-    //             nocs.concat(additionalNocs);
-    //         } else {
-    //             nocs.push(ticket.nocCode);
-    //         }
-    //     } else if (
-    //         !isMultiOperatorGeoZoneTicket(ticket) &&
-    //         !isMultiOperatorMultipleServicesTicket(ticket) &&
-    //         !isSchemeOperatorTicket(ticket)
-    //     ) {
-    //         nocs.push(ticket.nocCode);
-    //     }
-    // }
-
     if (isPointToPointTicket(ticket)) {
         nocs.push(ticket.nocCode);
     } else if (isPeriodTicket(ticket)) {
-        const userPeriodTicket: PeriodTicket = ticket;
-        if (ticket.type === 'multiOperator') {
-            if (isMultiOperatorGeoZoneTicket(userPeriodTicket) || isSchemeOperatorTicket(userPeriodTicket)) {
-                const additionalNocs: string[] = [...userPeriodTicket.additionalNocs];
-                if (isMultiOperatorGeoZoneTicket(userPeriodTicket)) {
-                    additionalNocs.push(userPeriodTicket.nocCode);
+        const periodTicket: PeriodTicket = ticket;
+        if (periodTicket.type === 'multiOperator') {
+            if (isMultiOperatorGeoZoneTicket(periodTicket) || isSchemeOperatorTicket(periodTicket)) {
+                const additionalNocs: string[] = [...periodTicket.additionalNocs];
+                if (isMultiOperatorGeoZoneTicket(periodTicket)) {
+                    additionalNocs.push(periodTicket.nocCode);
                 }
                 additionalNocs.forEach(additionalNoc => nocs.push(additionalNoc));
-            } else if (isMultiOperatorMultipleServicesTicket(userPeriodTicket)) {
-                const additionalOperatorNocs: string[] = userPeriodTicket.additionalOperators.map(
+            } else if (isMultiOperatorMultipleServicesTicket(periodTicket)) {
+                const additionalOperatorNocs: string[] = periodTicket.additionalOperators.map(
                     additionalOperator => additionalOperator.nocCode,
                 );
-                additionalOperatorNocs.push(userPeriodTicket.nocCode);
+                additionalOperatorNocs.push(periodTicket.nocCode);
                 additionalOperatorNocs.forEach(additionalOperatorNoc => nocs.push(additionalOperatorNoc));
             }
         } else if (
-            !isMultiOperatorGeoZoneTicket(userPeriodTicket) &&
-            !isMultiOperatorMultipleServicesTicket(userPeriodTicket) &&
-            !isSchemeOperatorTicket(userPeriodTicket)
+            !isMultiOperatorGeoZoneTicket(periodTicket) &&
+            !isMultiOperatorMultipleServicesTicket(periodTicket) &&
+            !isSchemeOperatorTicket(periodTicket)
         ) {
-            nocs.push(userPeriodTicket.nocCode);
+            nocs.push(periodTicket.nocCode);
         }
     }
     return nocs;

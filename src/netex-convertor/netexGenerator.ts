@@ -1,5 +1,5 @@
+import { startCase } from 'lodash';
 import {
-    isReturnTicket,
     getPointToPointScheduledStopPointsList,
     getFareZoneList,
     getDistanceMatrixElements,
@@ -35,6 +35,7 @@ import {
     FareZoneList,
     isSingleTicket,
     User,
+    isReturnTicket,
 } from '../types/index';
 
 import {
@@ -72,9 +73,8 @@ const netexGenerator = (
     };
 
     const updatePublicationRequest = (publicationRequest: NetexObject): NetexObject => {
-        // get the pub request
         const publicationRequestToUpdate = { ...publicationRequest };
-        // update the things that are always there
+
         publicationRequestToUpdate.RequestTimestamp.$t = coreData.currentDate;
         publicationRequestToUpdate.Description.$t = `Request for ${
             isPointToPointTicket(ticket) ? `${ticket.nocCode} ${coreData.lineIdName}` : coreData.operatorIdentifier
@@ -89,8 +89,6 @@ const netexGenerator = (
                 coreData.lineName;
             publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.OperatorRef.ref =
                 coreData.nocCodeFormat;
-            publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.OperatorRef.$t =
-                coreData.opIdNocFormat;
             publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.LineRef.ref =
                 coreData.lineName;
         } else {
@@ -199,6 +197,8 @@ const netexGenerator = (
             resourceFrameToUpdate.organisations.Operator.ContactDetails.Url.$t = coreData.website;
             resourceFrameToUpdate.organisations.Operator.Address.Street.$t = baseOperatorInfo.complEnq;
             resourceFrameToUpdate.organisations.Operator.PrimaryMode.$t = getNetexMode(baseOperatorInfo.mode);
+            resourceFrameToUpdate.organisations.Operator.CustomerServiceContactDetails.Email.$t =
+                baseOperatorInfo.ttrteEnq;
         }
 
         return resourceFrameToUpdate;
@@ -294,12 +294,13 @@ const netexGenerator = (
     const updatePriceFareFrame = (priceFareFrame: NetexObject): NetexObject => {
         const priceFareFrameToUpdate = { ...priceFareFrame };
 
-        // pass on the end of this id might cause issues
         priceFareFrameToUpdate.id = `epd:UK:${coreData.operatorIdentifier}:FareFrame_UK_PI_FARE_PRODUCT:${ticketIdentifier}@pass:op`;
         priceFareFrameToUpdate.tariffs.Tariff.id = isPointToPointTicket(ticket)
             ? `Tariff@${coreData.ticketType}@${coreData.lineIdName}`
             : `op:Tariff@${coreData.placeholderGroupOfProductsName}`;
-        priceFareFrameToUpdate.tariffs.Tariff.Name.$t = `${coreData.operatorName} - ${ticketIdentifier} - Fares for ${coreData.ticketType} ticket`;
+        priceFareFrameToUpdate.tariffs.Tariff.Name.$t = `${
+            coreData.operatorName
+        } - ${ticketIdentifier} - Fares for ${startCase(coreData.ticketType)} ticket`;
         let validityCondition;
 
         if (isPointToPointTicket(ticket)) {
@@ -458,11 +459,10 @@ const netexGenerator = (
     const updateFareTableFareFrame = (fareTableFareFrame: NetexObject): NetexObject => {
         const fareTableFareFrameToUpdate = { ...fareTableFareFrame };
 
-        // pass on the end of this id might cause issues
         const fareFrameId = `epd:UK:${coreData.operatorIdentifier}:FareFrame_UK_PI_FARE_PRICE:${ticketIdentifier}@pass:op`;
         fareTableFareFrameToUpdate.id = fareFrameId;
         fareTableFareFrameToUpdate.Name.$t = `${ticketIdentifier} Prices`;
-        fareTableFareFrameToUpdate.prerequisites.FareFrameRef.ref = fareFrameId;
+        fareTableFareFrameToUpdate.prerequisites.FareFrameRef.ref = `epd:UK:${coreData.operatorIdentifier}:FareFrame_UK_PI_FARE_PRODUCT:${ticketIdentifier}@pass:op`;
 
         if (isPointToPointTicket(ticket)) {
             fareTableFareFrameToUpdate.priceGroups.PriceGroup = getPriceGroups(ticket);

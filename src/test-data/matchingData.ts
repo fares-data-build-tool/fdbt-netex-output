@@ -32,7 +32,7 @@ export const singleTicket: SingleTicket = {
     lineName: '237',
     nocCode: 'MCTR',
     termTime: true,
-    operatorShortName: 'Manchester Community Tr',
+    operatorShortName: 'Test Buses',
     serviceDescription: 'Ashton Under Lyne - Glossop',
     type: 'single',
     email: 'test@example.com',

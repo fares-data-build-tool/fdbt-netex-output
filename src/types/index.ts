@@ -218,7 +218,7 @@ export const isMultiOperatorMultipleServicesTicket = (
 export const isMultiOperatorTicket = (
     ticketData: Ticket,
 ): ticketData is MultiOperatorGeoZoneTicket | MultiOperatorMultipleServicesTicket =>
-    isMultiOperatorGeoZoneTicket(ticketData) || isMultiOperatorMultipleServicesTicket(ticketData);
+    ticketData.type === 'multiOperator';
 
 export type MultipleServicesTicket = PeriodMultipleServicesTicket | MultiOperatorMultipleServicesTicket;
 

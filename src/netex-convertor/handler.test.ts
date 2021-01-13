@@ -13,8 +13,7 @@ import {
 } from '../test-data/matchingData';
 import mockS3Event from './test-data/mockS3Event';
 import * as s3 from '../data/s3';
-import * as pointToPointTicketNetexGenerator from './point-to-point-tickets/pointToPointTicketNetexGenerator';
-import * as periodTicketNetexGenerator from './period-tickets/periodTicketNetexGenerator';
+import * as netexGenerator from './netexGenerator';
 import * as db from '../data/auroradb';
 import { PeriodTicket } from '../types';
 
@@ -26,8 +25,7 @@ const mockUploadNetexToS3Spy = jest.spyOn(s3, 'uploadNetexToS3');
 
 mockUploadNetexToS3Spy.mockImplementation(() => Promise.resolve());
 
-const pointToPointTicketNetexGeneratorSpy = jest.spyOn(pointToPointTicketNetexGenerator, 'default');
-const periodTicketNetexGeneratorSpy = jest.spyOn(periodTicketNetexGenerator, 'default');
+const netexGeneratorSpy = jest.spyOn(netexGenerator, 'default');
 
 describe('netexConvertorHandler', () => {
     beforeEach(() => {
@@ -54,42 +52,42 @@ describe('netexConvertorHandler', () => {
 
     it('should call the pointToPointTicketNetexGenerator when a user uploads info for a single ticket', async () => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        pointToPointTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
+        netexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(singleTicket));
         await netexConvertorHandler(event);
-        expect(pointToPointTicketNetexGeneratorSpy).toHaveBeenCalled();
+        expect(netexGeneratorSpy).toHaveBeenCalled();
     });
 
     it('should call the periodTicketNetexGenerator when a user uploads info for a geozone period ticket', async () => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
+        netexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(periodGeoZoneTicket));
         await netexConvertorHandler(event);
-        expect(periodTicketNetexGeneratorSpy).toHaveBeenCalled();
+        expect(netexGeneratorSpy).toHaveBeenCalled();
     });
 
     it('should call the periodTicketNetexGenerator when a user uploads info for a multiple services period ticket', async () => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
+        netexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(periodMultipleServicesTicket));
         await netexConvertorHandler(event);
-        expect(periodTicketNetexGeneratorSpy).toHaveBeenCalled();
+        expect(netexGeneratorSpy).toHaveBeenCalled();
     });
 
     it('should call the periodTicketNetexGenerator when a user uploads info for a flat fare ticket', async () => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
+        netexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(flatFareTicket));
         await netexConvertorHandler(event);
-        expect(periodTicketNetexGeneratorSpy).toHaveBeenCalled();
+        expect(netexGeneratorSpy).toHaveBeenCalled();
     });
 
     it('should call the periodTicketNetexGenerator when a user uploads info for scheme operator ticket', async () => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        periodTicketNetexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
+        netexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(schemeOperatorTicket));
         await netexConvertorHandler(event);
-        expect(periodTicketNetexGeneratorSpy).toHaveBeenCalled();
+        expect(netexGeneratorSpy).toHaveBeenCalled();
     });
 
     it('should throw an error if the user data uploaded to the fdbt-matching-data bucket does not contain a "type" attribute', async () => {
@@ -98,7 +96,7 @@ describe('netexConvertorHandler', () => {
     });
 
     it('should generate single fare netex with no undefined variables', async () => {
-        pointToPointTicketNetexGeneratorSpy.mockRestore();
+        netexGeneratorSpy.mockRestore();
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(singleTicket));
         await netexConvertorHandler(event);
         const generatedNetex: string = mockUploadNetexToS3Spy.mock.calls[0][0];
@@ -106,7 +104,7 @@ describe('netexConvertorHandler', () => {
     });
 
     it('should generate flat fare netex with no undefined variables', async () => {
-        periodTicketNetexGeneratorSpy.mockRestore();
+        netexGeneratorSpy.mockRestore();
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(flatFareTicket));
         await netexConvertorHandler(event);
         const generatedNetex: string = mockUploadNetexToS3Spy.mock.calls[0][0];
@@ -114,7 +112,7 @@ describe('netexConvertorHandler', () => {
     });
 
     it('should generate multiple services period netex with no undefined variables', async () => {
-        periodTicketNetexGeneratorSpy.mockRestore();
+        netexGeneratorSpy.mockRestore();
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(periodMultipleServicesTicket));
         await netexConvertorHandler(event);
         const generatedNetex: string = mockUploadNetexToS3Spy.mock.calls[0][0];
@@ -122,7 +120,7 @@ describe('netexConvertorHandler', () => {
     });
 
     it('should generate geozone period netex with no undefined variables', async () => {
-        periodTicketNetexGeneratorSpy.mockRestore();
+        netexGeneratorSpy.mockRestore();
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(periodGeoZoneTicket));
         await netexConvertorHandler(event);
         const generatedNetex: string = mockUploadNetexToS3Spy.mock.calls[0][0];
@@ -137,7 +135,7 @@ describe('netexConvertorHandler', () => {
     });
 });
 
-describe.only('buildNocList', () => {
+describe('buildNocList', () => {
     it('should return an array of nocs for a single ticket', () => {
         const result = buildNocList(singleTicket);
         expect(result).toStrictEqual(['MCTR']);
