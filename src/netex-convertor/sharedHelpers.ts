@@ -16,6 +16,7 @@ import {
     FullTimeRestriction,
     Operator,
     isPointToPointTicket,
+    TimeBand,
 } from '../types/index';
 
 import { getBaseSchemeOperatorInfo } from './period-tickets/periodTicketNetexHelpers';
@@ -136,25 +137,31 @@ export const getGroupElement = (userPeriodTicket: GroupTicket): NetexObject => {
 
 const getTime = (time: string): string => moment(time, 'HHmm').format('HH:mm:ss');
 
-const getDayLength = (startTime: string, endTime: string): string => {
-    const startMoment = moment(startTime, 'HHmm');
-    const endMoment = moment(endTime, 'HHmm');
-    const diff = endMoment.diff(startMoment, 'minute');
+export const getEarliestTime = (timeRestriction: FullTimeRestriction): string => {
+    const startTimes: string[] = timeRestriction.timeBands
+        .map(timeband => timeband.startTime || '')
+        .filter(startTime => startTime !== '');
+    return startTimes.sort()[0];
+};
 
-    return moment.duration(diff, 'minute').toISOString();
+export const getTimeBand = (timeBand: TimeBand, index: string, day: string): NetexObject => {
+    return {
+        version: '1.0',
+        id: `op:timeband_for_${day}@timeband_${index}`,
+        StartTime: {
+            $t: timeBand.startTime ? getTime(timeBand.startTime) : null,
+        },
+        EndTime: {
+            $t: timeBand.endTime ? getTime(timeBand.endTime) : null,
+        },
+    };
 };
 
 export const getFareDayTypeElements = (timeRestriction: FullTimeRestriction): NetexObject => ({
     id: `op@Tariff@DayType@${timeRestriction.day}`,
     version: '1.0',
     EarliestTime: {
-        $t: timeRestriction.startTime ? getTime(timeRestriction.startTime) : null,
-    },
-    DayLength: {
-        $t:
-            timeRestriction.startTime && timeRestriction.endTime
-                ? getDayLength(timeRestriction.startTime, timeRestriction.endTime)
-                : null,
+        $t: getEarliestTime(timeRestriction) ? getTime(getEarliestTime(timeRestriction)) : null,
     },
     properties: {
         PropertyOfDay: {
@@ -165,6 +172,11 @@ export const getFareDayTypeElements = (timeRestriction: FullTimeRestriction): Ne
                 $t: timeRestriction.day === 'bankHoliday' ? 'NationalHoliday' : null,
             },
         },
+    },
+    timebands: {
+        Timeband: timeRestriction.timeBands.map((timeBand, index) =>
+            getTimeBand(timeBand, (index + 1).toString(), timeRestriction.day),
+        ),
     },
 });
 
