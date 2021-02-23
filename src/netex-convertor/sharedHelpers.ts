@@ -24,7 +24,6 @@ export interface NetexObject {
     [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export const getCleanWebsite = (nocWebsite: string): string => {
     if (nocWebsite !== null) {
         const splitWebsite = nocWebsite.split('#');
@@ -213,9 +212,13 @@ export const replaceIWBusCoNocCode = (nocCode: string): string => {
 
 export const getCoreData = (
     operators: Operator[],
-    ticket: PointToPointTicket | PeriodTicket | SchemeOperatorTicket,
+    ticket: PointToPointTicket | PeriodTicket | FlatFareTicket | SchemeOperatorTicket,
 ): CoreData => {
     if (isPointToPointTicket(ticket)) {
+        const baseOperatorInfo = operators.find(operator => operator.nocCode === replaceIWBusCoNocCode(ticket.nocCode));
+        if (!baseOperatorInfo) {
+            throw new Error('Could not find base operator information for point to point ticket.');
+        }
         return {
             opIdNocFormat: `noc:${operators[0].opId}`,
             nocCodeFormat: `noc:${ticket.nocCode}`,
@@ -223,9 +226,9 @@ export const getCoreData = (
             website: getCleanWebsite(operators[0].website),
             brandingId: `op:${ticket.nocCode}@brand`,
             operatorIdentifier: ticket.nocCode,
-            baseOperatorInfo: [],
+            baseOperatorInfo: [baseOperatorInfo],
             placeholderGroupOfProductsName: '',
-            ticketUserConcat: '',
+            ticketUserConcat: `${ticket.type}_${ticket.passengerType}`,
             operatorPublicNameLineNameFormat: `${operators[0].operatorPublicName} ${ticket.lineName}`,
             nocCodeLineNameFormat: `${ticket.nocCode}_${ticket.lineName}`,
             lineIdName: `Line_${ticket.lineName}`,
@@ -234,10 +237,10 @@ export const getCoreData = (
             ticketType: ticket.type,
         };
     }
-    const periodTicket: PeriodTicket | SchemeOperatorTicket = ticket;
+    const periodTicket: PeriodTicket | FlatFareTicket | SchemeOperatorTicket = ticket;
     const baseOperatorInfo = isSchemeOperatorTicket(periodTicket)
         ? getBaseSchemeOperatorInfo(periodTicket)
-        : operators.find(operator => operator.operatorPublicName === periodTicket.operatorName);
+        : operators.find(operator => operator.nocCode === replaceIWBusCoNocCode(periodTicket.nocCode));
 
     const operatorIdentifier = isSchemeOperatorTicket(periodTicket)
         ? `${periodTicket.schemeOperatorName}-${periodTicket.schemeOperatorRegionCode}`
@@ -270,4 +273,17 @@ export const getCoreData = (
             : periodTicket.operatorName,
         ticketType: periodTicket.type,
     };
+};
+
+export const getDistributionChannel = (purchaseLocation: string): string => {
+    switch (purchaseLocation) {
+        case 'onBoard':
+            return 'on_board';
+        case 'atStop':
+            return 'at_stop';
+        case 'mobileDevice':
+            return 'mobile_device';
+        default:
+            return purchaseLocation;
+    }
 };
