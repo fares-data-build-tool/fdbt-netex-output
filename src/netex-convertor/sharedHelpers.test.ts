@@ -30,7 +30,7 @@ describe('Shared Helpers', () => {
                 day: 'wednesday',
                 timeBands: [
                     {
-                        startTime: '',
+                        startTime: '1350',
                         endTime: '1950',
                     },
                     {
@@ -78,20 +78,7 @@ describe('Shared Helpers', () => {
                                                 },
                                             },
                                         },
-                                        timebands: {
-                                            Timeband: [
-                                                {
-                                                    EndTime: {
-                                                        $t: null,
-                                                    },
-                                                    StartTime: {
-                                                        $t: null,
-                                                    },
-                                                    id: 'op:timeband_for_bankHoliday@timeband_1',
-                                                    version: '1.0',
-                                                },
-                                            ],
-                                        },
+                                        timebands: { Timeband: [] },
                                         version: '1.0',
                                     },
                                     {
@@ -137,7 +124,7 @@ describe('Shared Helpers', () => {
                                     },
                                     {
                                         EarliestTime: {
-                                            $t: '23:50:00',
+                                            $t: '13:50:00',
                                         },
                                         id: 'op@Tariff@DayType@wednesday',
                                         properties: {
@@ -157,7 +144,7 @@ describe('Shared Helpers', () => {
                                                         $t: '19:50:00',
                                                     },
                                                     StartTime: {
-                                                        $t: null,
+                                                        $t: '13:50:00',
                                                     },
                                                     id: 'op:timeband_for_wednesday@timeband_1',
                                                     version: '1.0',

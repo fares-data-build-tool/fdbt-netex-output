@@ -16,7 +16,6 @@ import {
     FullTimeRestriction,
     Operator,
     isPointToPointTicket,
-    TimeBand,
 } from '../types/index';
 
 import { getBaseSchemeOperatorInfo } from './period-tickets/periodTicketNetexHelpers';
@@ -144,18 +143,21 @@ export const getEarliestTime = (timeRestriction: FullTimeRestriction): string =>
     return startTimes.sort()[0];
 };
 
-export const getTimeBand = (timeBand: TimeBand, index: string, day: string): NetexObject => {
-    return {
-        version: '1.0',
-        id: `op:timeband_for_${day}@timeband_${index}`,
-        StartTime: {
-            $t: timeBand.startTime ? getTime(timeBand.startTime) : null,
-        },
-        EndTime: {
-            $t: timeBand.endTime ? getTime(timeBand.endTime) : null,
-        },
-    };
-};
+export const getAllTimeBands = (timeRestriction: FullTimeRestriction): NetexObject =>
+    timeRestriction.timeBands
+        .filter(timeBand => timeBand.startTime)
+        .map((timeband, index) => {
+            return {
+                version: '1.0',
+                id: `op:timeband_for_${timeRestriction.day}@timeband_${(index + 1).toString()}`,
+                StartTime: {
+                    $t: timeband.startTime ? getTime(timeband.startTime) : null,
+                },
+                EndTime: {
+                    $t: timeband.endTime ? getTime(timeband.endTime) : null,
+                },
+            };
+        });
 
 export const getFareDayTypeElements = (timeRestriction: FullTimeRestriction): NetexObject => ({
     id: `op@Tariff@DayType@${timeRestriction.day}`,
@@ -173,11 +175,7 @@ export const getFareDayTypeElements = (timeRestriction: FullTimeRestriction): Ne
             },
         },
     },
-    timebands: {
-        Timeband: timeRestriction.timeBands.map((timeBand, index) =>
-            getTimeBand(timeBand, (index + 1).toString(), timeRestriction.day),
-        ),
-    },
+    timebands: { Timeband: getAllTimeBands(timeRestriction) },
 });
 
 export const getTimeRestrictions = (timeRestrictionData: FullTimeRestriction[]): NetexObject => {
