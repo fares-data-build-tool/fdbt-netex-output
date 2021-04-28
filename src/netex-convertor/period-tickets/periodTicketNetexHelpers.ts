@@ -104,7 +104,10 @@ export const getLinesList = (
                 Description: { $t: service.serviceDescription },
                 Url: { $t: currentOperator ? getCleanWebsite(currentOperator.website) : '' },
                 PublicCode: { $t: service.lineName },
-                PrivateCode: { type: 'noc', $t: `${operator.nocCode}_${service.lineName}` },
+                PrivateCode: {
+                    type: `lineName${service.lineId ?? '_lineId'}`,
+                    $t: `${service.lineName}${service.lineId ?? `_${service.lineId}`}`,
+                },
                 OperatorRef: {
                     version: '1.0',
                     ref: `noc:${operator.nocCode}`,
