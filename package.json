@@ -8,7 +8,11 @@
         "lint": "eslint . --ext .ts",
         "lint:fix": "eslint --fix . --ext .ts",
         "netexConvert": "NODE_ENV=development UNVALIDATED_NETEX_BUCKET=$UNVALIDATED_NETEX_BUCKET ts-node src/netex-convertor/run-local.ts \"$EVENT_DATA\"",
-        "netexEmail": "NODE_ENV=development MATCHING_DATA_BUCKET=$MATCHING_DATA_BUCKET ts-node src/netex-emailer/run-local.ts \"$EVENT_DATA\""
+        "netexEmail": "NODE_ENV=development MATCHING_DATA_BUCKET=$MATCHING_DATA_BUCKET ts-node src/netex-emailer/run-local.ts \"$EVENT_DATA\"",
+        "preinstall": "npx npm-force-resolutions"
+    },
+    "resolutions": {
+        "hosted-git-info": "3.0.8"
     },
     "husky": {
         "hooks": {
@@ -36,7 +40,7 @@
         "libxmljs": "^0.19.7",
         "libxmljs2": "^0.25.0",
         "libxslt": "^0.9.0",
-        "lodash": "^4.17.19",
+        "lodash": "^4.17.21",
         "moment": "^2.27.0",
         "moment-timezone": "^0.5.31",
         "mysql2": "^2.1.0",
