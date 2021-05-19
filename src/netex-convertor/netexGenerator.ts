@@ -28,7 +28,6 @@ import {
     isSchemeOperatorTicket,
     isMultiOperatorGeoZoneTicket,
     isMultiOperatorMultipleServicesTicket,
-    SchemeOperatorTicket,
     isPointToPointTicket,
     isMultiOperatorTicket,
     ScheduledStopPoints,
@@ -36,6 +35,13 @@ import {
     isSingleTicket,
     User,
     isReturnTicket,
+    SchemeOperatorFlatFareTicket,
+    SchemeOperatorGeoZoneTicket,
+    ProductDetails,
+    FlatFareProductDetails,
+    isSchemeOperatorGeoZoneTicket,
+    isSchemeOperatorFlatFareTicket,
+    FlatFareTicket,
 } from '../types/index';
 
 import {
@@ -53,10 +59,16 @@ import {
     getOrganisations,
     getGroupOfOperators,
     isBaseSchemeOperatorInfo,
+    isProductDetails,
 } from './period-tickets/periodTicketNetexHelpers';
 
 const netexGenerator = (
-    ticket: PointToPointTicket | PeriodTicket | SchemeOperatorTicket,
+    ticket:
+        | PointToPointTicket
+        | PeriodTicket
+        | FlatFareTicket
+        | SchemeOperatorGeoZoneTicket
+        | SchemeOperatorFlatFareTicket,
     operatorData: Operator[],
 ): { generate: Function } => {
     const coreData = getCoreData(operatorData, ticket);
@@ -97,7 +109,8 @@ const netexGenerator = (
                 isGeoZoneTicket(ticket) ? 'NETWORK' : 'LINE'
             }_FARE_OFFER:FXCP`;
 
-            publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.PreassignedFareProductRef = ticket.products.map(
+            const products = ticket.products as Array<ProductDetails | FlatFareProductDetails>;
+            publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.PreassignedFareProductRef = products.map(
                 product => ({
                     version: '1.0',
                     ref: `op:Pass@${product.productName}_${ticket.passengerType}`,
@@ -135,7 +148,7 @@ const netexGenerator = (
         } else {
             const operatorName = isSchemeOperatorTicket(ticket) ? ticket.schemeOperatorName : coreData.operatorName;
             compositeFrameToUpdate.id = `epd:UK:${coreData.operatorIdentifier}:CompositeFrame_UK_PI_${
-                isGeoZoneTicket(ticket) ? 'NETWORK' : 'LINE'
+                isGeoZoneTicket(ticket) || isSchemeOperatorGeoZoneTicket(ticket) ? 'NETWORK' : 'LINE'
             }_FARE_OFFER:Pass@${coreData.placeholderGroupOfProductsName}:op`;
             compositeFrameToUpdate.Name.$t = `Fares for ${operatorName}`;
             compositeFrameToUpdate.Description.$t = `Period ticket for ${operatorName}`;
@@ -169,18 +182,18 @@ const netexGenerator = (
             resourceFrameToUpdate.typesOfValue.ValueSet.values.Branding.id = coreData.brandingId;
         }
 
-        if (isMultiOperatorGeoZoneTicket(ticket) || isSchemeOperatorTicket(ticket)) {
-            const nocs = [...ticket.additionalNocs];
+        if (
+            isMultiOperatorGeoZoneTicket(ticket) ||
+            isSchemeOperatorGeoZoneTicket(ticket) ||
+            isSchemeOperatorFlatFareTicket(ticket)
+        ) {
             if (!isSchemeOperatorTicket(ticket)) {
-                nocs.push(ticket.nocCode);
                 resourceFrameToUpdate.organisations.Operator = getOrganisations(operatorData);
             } else if (isBaseSchemeOperatorInfo(baseOperatorInfo) && isSchemeOperatorTicket(ticket)) {
                 resourceFrameToUpdate.organisations.Operator = getOrganisations(operatorData, baseOperatorInfo);
             }
             resourceFrameToUpdate.groupsOfOperators = getGroupOfOperators(operatorData);
         } else if (isMultiOperatorMultipleServicesTicket(ticket)) {
-            const nocs: string[] = ticket.additionalOperators.map(additionalOperator => additionalOperator.nocCode);
-            nocs.push(ticket.nocCode);
             resourceFrameToUpdate.organisations.Operator = getOrganisations(operatorData);
             resourceFrameToUpdate.groupsOfOperators = getGroupOfOperators(operatorData);
         } else if (
@@ -206,8 +219,8 @@ const netexGenerator = (
 
     const updateServiceFrame = (serviceFrame: NetexObject): NetexObject | null => {
         const serviceFrameToUpdate = { ...serviceFrame };
-        if (isMultiServiceTicket(ticket)) {
-            serviceFrameToUpdate.id = `epd:UK:${ticket.nocCode}:ServiceFrame_UK_PI_NETWORK:${coreData.placeholderGroupOfProductsName}:op`;
+        if (isMultiServiceTicket(ticket) || isSchemeOperatorFlatFareTicket(ticket)) {
+            serviceFrameToUpdate.id = `epd:UK:${coreData.operatorIdentifier}:ServiceFrame_UK_PI_NETWORK:${coreData.placeholderGroupOfProductsName}:op`;
             serviceFrameToUpdate.lines.Line = getLinesList(ticket, coreData.website, operatorData);
 
             return serviceFrameToUpdate;
@@ -397,7 +410,7 @@ const netexGenerator = (
 
         if (isGeoZoneTicket(ticket)) {
             priceFareFrameToUpdate.prerequisites.FareFrameRef.ref = `epd:UK:${coreData.operatorIdentifier}:FareFrame_UK_PI_FARE_NETWORK:${coreData.placeholderGroupOfProductsName}@pass:op`;
-        } else if (isMultiServiceTicket(ticket)) {
+        } else if (isMultiServiceTicket(ticket) || isSchemeOperatorFlatFareTicket(ticket)) {
             priceFareFrameToUpdate.prerequisites = null;
         }
 
@@ -431,7 +444,7 @@ const netexGenerator = (
         }
 
         // Time intervals
-        if (isGeoZoneTicket(ticket) || (isMultiServiceTicket(ticket) && ticket.products[0].productDuration)) {
+        if (isGeoZoneTicket(ticket) || (isMultiServiceTicket(ticket) && isProductDetails(ticket.products[0]))) {
             priceFareFrameToUpdate.tariffs.Tariff.timeIntervals.TimeInterval = getTimeIntervals(ticket);
         } else {
             priceFareFrameToUpdate.tariffs.Tariff.timeIntervals = null;
@@ -472,17 +485,13 @@ const netexGenerator = (
         if (isPointToPointTicket(ticket)) {
             fareTableFareFrameToUpdate.priceGroups.PriceGroup = getPriceGroups(ticket);
             fareTableFareFrameToUpdate.fareTables.FareTable = getFareTables(ticket, coreData.lineIdName);
-
-            return fareTableFareFrameToUpdate;
-        }
-
-        if (isGeoZoneTicket(ticket)) {
+        } else if (isGeoZoneTicket(ticket)) {
             fareTableFareFrameToUpdate.fareTables.FareTable = getGeoZoneFareTable(
                 ticket,
                 coreData.placeholderGroupOfProductsName,
                 coreData.ticketUserConcat,
             );
-        } else if (isMultiServiceTicket(ticket)) {
+        } else if (isMultiServiceTicket(ticket) || isSchemeOperatorFlatFareTicket(ticket)) {
             fareTableFareFrameToUpdate.fareTables.FareTable = getMultiServiceFareTable(
                 ticket,
                 coreData.ticketUserConcat,

@@ -1,23 +1,45 @@
 import { S3Event } from 'aws-lambda';
 import libxslt from 'libxslt';
 import {
-    isMultiOperatorMultipleServicesTicket,
     PointToPointTicket,
     PeriodTicket,
-    isMultiOperatorGeoZoneTicket,
     isSchemeOperatorTicket,
-    SchemeOperatorTicket,
     Ticket,
+    FlatFareTicket,
+    PeriodGeoZoneTicket,
+    PeriodMultipleServicesTicket,
+    MultiOperatorGeoZoneTicket,
+    MultiOperatorMultipleServicesTicket,
+    SchemeOperatorGeoZoneTicket,
+    SchemeOperatorFlatFareTicket,
 } from '../types/index';
 import * as db from '../data/auroradb';
 import * as s3 from '../data/s3';
 import netexGenerator from './netexGenerator';
 
-const isPointToPointTicket = (ticket: Ticket): ticket is PointToPointTicket =>
-    ticket.type === 'single' || ticket.type === 'return';
+const hasOneNoc = (
+    ticket: Ticket,
+): ticket is PointToPointTicket | FlatFareTicket | PeriodGeoZoneTicket | PeriodMultipleServicesTicket =>
+    ticket.type === 'single' ||
+    ticket.type === 'return' ||
+    ticket.type === 'period' ||
+    (ticket.type === 'flatFare' && !isSchemeOperatorTicket(ticket));
 
-const isPeriodTicket = (ticket: Ticket): ticket is PeriodTicket =>
-    ticket.type === 'period' || ticket.type === 'flatFare' || ticket.type === 'multiOperator';
+const hasUserNocAndAdditionalNocs = (ticket: Ticket): ticket is MultiOperatorGeoZoneTicket =>
+    ticket.type === 'multiOperator' &&
+    !isSchemeOperatorTicket(ticket) &&
+    (ticket as MultiOperatorGeoZoneTicket).additionalNocs !== undefined;
+
+const hasUserNocAndAdditionalOperators = (ticket: Ticket): ticket is MultiOperatorMultipleServicesTicket =>
+    ticket.type === 'multiOperator' &&
+    !isSchemeOperatorTicket(ticket) &&
+    (ticket as MultiOperatorMultipleServicesTicket).additionalOperators !== undefined;
+
+const hasOnlyAdditionalNocs = (ticket: Ticket): ticket is SchemeOperatorGeoZoneTicket =>
+    ticket.type === 'multiOperator' && isSchemeOperatorTicket(ticket);
+
+const hasOnlyAdditionalOperators = (ticket: Ticket): ticket is SchemeOperatorFlatFareTicket =>
+    ticket.type === 'flatFare' && isSchemeOperatorTicket(ticket);
 
 const xsl = `
     <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -59,34 +81,27 @@ const uploadToS3 = async (netex: string, fileName: string): Promise<void> => {
 
 export const generateFileName = (eventFileName: string): string => eventFileName.replace('.json', '.xml');
 
-export const buildNocList = (ticket: PointToPointTicket | PeriodTicket | SchemeOperatorTicket): string[] => {
+export const buildNocList = (
+    ticket: PointToPointTicket | PeriodTicket | SchemeOperatorGeoZoneTicket | SchemeOperatorFlatFareTicket,
+): string[] => {
     const nocs: string[] = [];
 
-    if (isPointToPointTicket(ticket)) {
+    if (hasOneNoc(ticket)) {
         nocs.push(ticket.nocCode);
-    } else if (isPeriodTicket(ticket)) {
-        const periodTicket: PeriodTicket = ticket;
-        if (periodTicket.type === 'multiOperator') {
-            if (isMultiOperatorGeoZoneTicket(periodTicket) || isSchemeOperatorTicket(periodTicket)) {
-                const additionalNocs: string[] = [...periodTicket.additionalNocs];
-                if (isMultiOperatorGeoZoneTicket(periodTicket)) {
-                    additionalNocs.push(periodTicket.nocCode);
-                }
-                additionalNocs.forEach(additionalNoc => nocs.push(additionalNoc));
-            } else if (isMultiOperatorMultipleServicesTicket(periodTicket)) {
-                const additionalOperatorNocs: string[] = periodTicket.additionalOperators.map(
-                    additionalOperator => additionalOperator.nocCode,
-                );
-                additionalOperatorNocs.push(periodTicket.nocCode);
-                additionalOperatorNocs.forEach(additionalOperatorNoc => nocs.push(additionalOperatorNoc));
-            }
-        } else if (
-            !isMultiOperatorGeoZoneTicket(periodTicket) &&
-            !isMultiOperatorMultipleServicesTicket(periodTicket) &&
-            !isSchemeOperatorTicket(periodTicket)
-        ) {
-            nocs.push(periodTicket.nocCode);
-        }
+    }
+    if (hasUserNocAndAdditionalNocs(ticket)) {
+        ticket.additionalNocs.forEach(additionalNoc => nocs.push(additionalNoc));
+        nocs.push(ticket.nocCode);
+    }
+    if (hasUserNocAndAdditionalOperators(ticket)) {
+        ticket.additionalOperators.forEach(additionalOperator => nocs.push(additionalOperator.nocCode));
+        nocs.push(ticket.nocCode);
+    }
+    if (hasOnlyAdditionalNocs(ticket)) {
+        ticket.additionalNocs.forEach(additionalNoc => nocs.push(additionalNoc));
+    }
+    if (hasOnlyAdditionalOperators(ticket)) {
+        ticket.additionalOperators.forEach(additionalOperator => nocs.push(additionalOperator.nocCode));
     }
 
     return nocs;
@@ -94,7 +109,9 @@ export const buildNocList = (ticket: PointToPointTicket | PeriodTicket | SchemeO
 
 export const netexConvertorHandler = async (event: S3Event): Promise<void> => {
     try {
-        const ticket = await s3.fetchDataFromS3<PointToPointTicket | PeriodTicket | SchemeOperatorTicket>(event);
+        const ticket = await s3.fetchDataFromS3<
+            PointToPointTicket | PeriodTicket | SchemeOperatorGeoZoneTicket | SchemeOperatorFlatFareTicket
+        >(event);
         const s3FileName = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '));
         const { type } = ticket;
 

@@ -198,7 +198,7 @@ export const isReturnTicket = (ticket: PointToPointTicket): ticket is ReturnTick
 export const isSingleTicket = (ticket: PointToPointTicket): ticket is SingleTicket =>
     (ticket as SingleTicket).fareZones !== undefined && (ticket as SingleTicket).fareZones.length > 0;
 
-export type GeoZoneTicket = PeriodGeoZoneTicket | MultiOperatorGeoZoneTicket | SchemeOperatorTicket;
+export type GeoZoneTicket = PeriodGeoZoneTicket | MultiOperatorGeoZoneTicket;
 
 export interface PeriodMultipleServicesTicket extends BasePeriodTicket {
     selectedServices: SelectedService[];
@@ -259,6 +259,7 @@ export interface ProductDetails extends BaseProduct {
 export interface SchemeOperatorTicket {
     schemeOperatorName: string;
     schemeOperatorRegionCode: string;
+    nocCode?: string;
     type: string;
     passengerType: string;
     ageRange?: string;
@@ -268,17 +269,34 @@ export interface SchemeOperatorTicket {
     proofDocuments?: string[];
     email: string;
     uuid: string;
-    timeRestriction?: FullTimeRestriction[];
+    timeRestriction: FullTimeRestriction[];
     ticketPeriod: TicketPeriod;
-    products: ProductDetails[];
+}
+
+export interface SchemeOperatorGeoZoneTicket extends SchemeOperatorTicket {
     zoneName: string;
     stops: Stop[];
+    products: ProductDetails[];
     additionalNocs: string[];
+}
+
+export interface SchemeOperatorFlatFareTicket extends SchemeOperatorTicket {
+    products: FlatFareProductDetails[];
+    additionalOperators: {
+        nocCode: string;
+        selectedServices: SelectedService[];
+    }[];
 }
 
 export const isSchemeOperatorTicket = (data: Ticket): data is SchemeOperatorTicket =>
     (data as SchemeOperatorTicket).schemeOperatorName !== undefined &&
     (data as SchemeOperatorTicket).schemeOperatorRegionCode !== undefined;
+
+export const isSchemeOperatorGeoZoneTicket = (data: Ticket): data is SchemeOperatorGeoZoneTicket =>
+    isSchemeOperatorTicket(data) && (data as SchemeOperatorGeoZoneTicket).zoneName !== undefined;
+
+export const isSchemeOperatorFlatFareTicket = (data: Ticket): data is SchemeOperatorFlatFareTicket =>
+    isSchemeOperatorTicket(data) && (data as SchemeOperatorFlatFareTicket).additionalOperators !== undefined;
 
 // NeTEx
 
