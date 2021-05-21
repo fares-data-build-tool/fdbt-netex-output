@@ -106,7 +106,7 @@ const netexGenerator = (
         } else {
             // update period only
             publicationRequestToUpdate.topics.NetworkFrameTopic.TypeOfFrameRef.ref = `fxc:UK:DFT:TypeOfFrame_UK_PI_${
-                isGeoZoneTicket(ticket) ? 'NETWORK' : 'LINE'
+                isGeoZoneTicket(ticket) || isSchemeOperatorGeoZoneTicket(ticket) ? 'NETWORK' : 'LINE'
             }_FARE_OFFER:FXCP`;
 
             const products = ticket.products as Array<ProductDetails | FlatFareProductDetails>;
@@ -183,24 +183,17 @@ const netexGenerator = (
         }
 
         if (
+            isSchemeOperatorTicket(ticket) ||
             isMultiOperatorGeoZoneTicket(ticket) ||
-            isSchemeOperatorGeoZoneTicket(ticket) ||
-            isSchemeOperatorFlatFareTicket(ticket)
+            isMultiOperatorMultipleServicesTicket(ticket)
         ) {
-            if (!isSchemeOperatorTicket(ticket)) {
-                resourceFrameToUpdate.organisations.Operator = getOrganisations(operatorData);
-            } else if (isBaseSchemeOperatorInfo(baseOperatorInfo) && isSchemeOperatorTicket(ticket)) {
+            resourceFrameToUpdate.groupsOfOperators = getGroupOfOperators(operatorData);
+            if (isSchemeOperatorTicket(ticket) && isBaseSchemeOperatorInfo(baseOperatorInfo)) {
                 resourceFrameToUpdate.organisations.Operator = getOrganisations(operatorData, baseOperatorInfo);
+            } else if (isMultiOperatorGeoZoneTicket(ticket) || isMultiOperatorMultipleServicesTicket(ticket)) {
+                resourceFrameToUpdate.organisations.Operator = getOrganisations(operatorData);
             }
-            resourceFrameToUpdate.groupsOfOperators = getGroupOfOperators(operatorData);
-        } else if (isMultiOperatorMultipleServicesTicket(ticket)) {
-            resourceFrameToUpdate.organisations.Operator = getOrganisations(operatorData);
-            resourceFrameToUpdate.groupsOfOperators = getGroupOfOperators(operatorData);
-        } else if (
-            !isMultiOperatorTicket(ticket) &&
-            !isSchemeOperatorTicket(ticket) &&
-            !isMultiOperatorMultipleServicesTicket(ticket)
-        ) {
+        } else {
             resourceFrameToUpdate.organisations.Operator.id = coreData.nocCodeFormat;
             resourceFrameToUpdate.organisations.Operator.PublicCode.$t = coreData.operatorIdentifier;
             resourceFrameToUpdate.organisations.Operator.Name.$t = coreData.operatorName;

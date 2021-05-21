@@ -220,7 +220,7 @@ export const isMultiOperatorMultipleServicesTicket = (
 
 export const isMultiOperatorTicket = (
     ticketData: Ticket,
-): ticketData is MultiOperatorGeoZoneTicket | MultiOperatorMultipleServicesTicket =>
+): ticketData is MultiOperatorGeoZoneTicket | MultiOperatorMultipleServicesTicket | SchemeOperatorGeoZoneTicket =>
     ticketData.type === 'multiOperator';
 
 export type MultipleServicesTicket = PeriodMultipleServicesTicket | MultiOperatorMultipleServicesTicket;
@@ -259,7 +259,6 @@ export interface ProductDetails extends BaseProduct {
 export interface SchemeOperatorTicket {
     schemeOperatorName: string;
     schemeOperatorRegionCode: string;
-    nocCode?: string;
     type: string;
     passengerType: string;
     ageRange?: string;
@@ -269,7 +268,7 @@ export interface SchemeOperatorTicket {
     proofDocuments?: string[];
     email: string;
     uuid: string;
-    timeRestriction: FullTimeRestriction[];
+    timeRestriction?: FullTimeRestriction[];
     ticketPeriod: TicketPeriod;
 }
 

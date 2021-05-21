@@ -84,7 +84,7 @@ describe('netexConvertorHandler', () => {
         expect(netexGeneratorSpy).toHaveBeenCalled();
     });
 
-    it('should call the periodTicketNetexGenerator when a user uploads info for scheme operator goezone ticket', async () => {
+    it('should call the periodTicketNetexGenerator when a user uploads info for scheme operator geozone ticket', async () => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         netexGeneratorSpy.mockImplementation(() => ({ generate: (): void => {} }));
         mockFetchDataFromS3Spy.mockImplementation(() => Promise.resolve(schemeOperatorGeoZoneTicket));

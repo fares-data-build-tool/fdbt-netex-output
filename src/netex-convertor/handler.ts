@@ -17,13 +17,19 @@ import * as db from '../data/auroradb';
 import * as s3 from '../data/s3';
 import netexGenerator from './netexGenerator';
 
-const hasOneNoc = (
+const hasOnlyUserNoc = (
     ticket: Ticket,
 ): ticket is PointToPointTicket | FlatFareTicket | PeriodGeoZoneTicket | PeriodMultipleServicesTicket =>
     ticket.type === 'single' ||
     ticket.type === 'return' ||
     ticket.type === 'period' ||
     (ticket.type === 'flatFare' && !isSchemeOperatorTicket(ticket));
+
+const hasOnlyAdditionalNocs = (ticket: Ticket): ticket is SchemeOperatorGeoZoneTicket =>
+    ticket.type === 'multiOperator' && isSchemeOperatorTicket(ticket);
+
+const hasOnlyAdditionalOperators = (ticket: Ticket): ticket is SchemeOperatorFlatFareTicket =>
+    ticket.type === 'flatFare' && isSchemeOperatorTicket(ticket);
 
 const hasUserNocAndAdditionalNocs = (ticket: Ticket): ticket is MultiOperatorGeoZoneTicket =>
     ticket.type === 'multiOperator' &&
@@ -34,12 +40,6 @@ const hasUserNocAndAdditionalOperators = (ticket: Ticket): ticket is MultiOperat
     ticket.type === 'multiOperator' &&
     !isSchemeOperatorTicket(ticket) &&
     (ticket as MultiOperatorMultipleServicesTicket).additionalOperators !== undefined;
-
-const hasOnlyAdditionalNocs = (ticket: Ticket): ticket is SchemeOperatorGeoZoneTicket =>
-    ticket.type === 'multiOperator' && isSchemeOperatorTicket(ticket);
-
-const hasOnlyAdditionalOperators = (ticket: Ticket): ticket is SchemeOperatorFlatFareTicket =>
-    ticket.type === 'flatFare' && isSchemeOperatorTicket(ticket);
 
 const xsl = `
     <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -86,8 +86,14 @@ export const buildNocList = (
 ): string[] => {
     const nocs: string[] = [];
 
-    if (hasOneNoc(ticket)) {
+    if (hasOnlyUserNoc(ticket)) {
         nocs.push(ticket.nocCode);
+    }
+    if (hasOnlyAdditionalNocs(ticket)) {
+        ticket.additionalNocs.forEach(additionalNoc => nocs.push(additionalNoc));
+    }
+    if (hasOnlyAdditionalOperators(ticket)) {
+        ticket.additionalOperators.forEach(additionalOperator => nocs.push(additionalOperator.nocCode));
     }
     if (hasUserNocAndAdditionalNocs(ticket)) {
         ticket.additionalNocs.forEach(additionalNoc => nocs.push(additionalNoc));
@@ -96,12 +102,6 @@ export const buildNocList = (
     if (hasUserNocAndAdditionalOperators(ticket)) {
         ticket.additionalOperators.forEach(additionalOperator => nocs.push(additionalOperator.nocCode));
         nocs.push(ticket.nocCode);
-    }
-    if (hasOnlyAdditionalNocs(ticket)) {
-        ticket.additionalNocs.forEach(additionalNoc => nocs.push(additionalNoc));
-    }
-    if (hasOnlyAdditionalOperators(ticket)) {
-        ticket.additionalOperators.forEach(additionalOperator => nocs.push(additionalOperator.nocCode));
     }
 
     return nocs;

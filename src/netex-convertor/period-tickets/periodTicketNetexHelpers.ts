@@ -673,7 +673,7 @@ export const getPreassignedFareProducts = (
     });
 };
 
-export const getTimeIntervals = (userPeriodTicket: PeriodTicket): NetexObject[] => {
+export const getTimeIntervals = (userPeriodTicket: PeriodTicket | SchemeOperatorGeoZoneTicket): NetexObject[] => {
     const timeIntervals = userPeriodTicket.products.map(product => {
         const amount = product.productDuration.split(' ')[0];
         const type = product.productDuration.split(' ')[1];
