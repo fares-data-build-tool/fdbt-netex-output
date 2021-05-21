@@ -17,7 +17,6 @@ import {
     convertJsonToXml,
     getTimeRestrictions,
     getNetexMode,
-    isGroupTicket,
     getUserProfile,
     getGroupElement,
 } from './sharedHelpers';
@@ -42,6 +41,11 @@ import {
     isSchemeOperatorGeoZoneTicket,
     isSchemeOperatorFlatFareTicket,
     FlatFareTicket,
+    isGeoZoneTicket,
+    isBaseSchemeOperatorInfo,
+    isMultiServiceTicket,
+    isGroupTicket,
+    isProductDetails,
 } from '../types/index';
 
 import {
@@ -54,12 +58,8 @@ import {
     getSalesOfferPackageList,
     getTimeIntervals,
     getFareStructuresElements,
-    isMultiServiceTicket,
-    isGeoZoneTicket,
     getOrganisations,
     getGroupOfOperators,
-    isBaseSchemeOperatorInfo,
-    isProductDetails,
 } from './period-tickets/periodTicketNetexHelpers';
 
 const netexGenerator = (
@@ -109,9 +109,8 @@ const netexGenerator = (
                 isGeoZoneTicket(ticket) || isSchemeOperatorGeoZoneTicket(ticket) ? 'NETWORK' : 'LINE'
             }_FARE_OFFER:FXCP`;
 
-            const products = ticket.products as Array<ProductDetails | FlatFareProductDetails>;
-            publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.PreassignedFareProductRef = products.map(
-                product => ({
+            publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.PreassignedFareProductRef = ticket.products.map(
+                (product: ProductDetails | FlatFareProductDetails) => ({
                     version: '1.0',
                     ref: `op:Pass@${product.productName}_${ticket.passengerType}`,
                 }),

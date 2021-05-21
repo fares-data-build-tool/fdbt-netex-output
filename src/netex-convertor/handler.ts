@@ -5,41 +5,20 @@ import {
     PeriodTicket,
     isSchemeOperatorTicket,
     Ticket,
-    FlatFareTicket,
-    PeriodGeoZoneTicket,
-    PeriodMultipleServicesTicket,
-    MultiOperatorGeoZoneTicket,
-    MultiOperatorMultipleServicesTicket,
     SchemeOperatorGeoZoneTicket,
     SchemeOperatorFlatFareTicket,
+    isPointToPointTicket,
+    isSchemeOperatorFlatFareTicket,
+    isFlatFareTicket,
+    isPeriodGeoZoneTicket,
+    isPeriodMultipleServicesTicket,
+    isSchemeOperatorGeoZoneTicket,
+    isMultiOperatorGeoZoneTicket,
+    isMultiOperatorMultipleServicesTicket,
 } from '../types/index';
 import * as db from '../data/auroradb';
 import * as s3 from '../data/s3';
 import netexGenerator from './netexGenerator';
-
-const hasOnlyUserNoc = (
-    ticket: Ticket,
-): ticket is PointToPointTicket | FlatFareTicket | PeriodGeoZoneTicket | PeriodMultipleServicesTicket =>
-    ticket.type === 'single' ||
-    ticket.type === 'return' ||
-    ticket.type === 'period' ||
-    (ticket.type === 'flatFare' && !isSchemeOperatorTicket(ticket));
-
-const hasOnlyAdditionalNocs = (ticket: Ticket): ticket is SchemeOperatorGeoZoneTicket =>
-    ticket.type === 'multiOperator' && isSchemeOperatorTicket(ticket);
-
-const hasOnlyAdditionalOperators = (ticket: Ticket): ticket is SchemeOperatorFlatFareTicket =>
-    ticket.type === 'flatFare' && isSchemeOperatorTicket(ticket);
-
-const hasUserNocAndAdditionalNocs = (ticket: Ticket): ticket is MultiOperatorGeoZoneTicket =>
-    ticket.type === 'multiOperator' &&
-    !isSchemeOperatorTicket(ticket) &&
-    (ticket as MultiOperatorGeoZoneTicket).additionalNocs !== undefined;
-
-const hasUserNocAndAdditionalOperators = (ticket: Ticket): ticket is MultiOperatorMultipleServicesTicket =>
-    ticket.type === 'multiOperator' &&
-    !isSchemeOperatorTicket(ticket) &&
-    (ticket as MultiOperatorMultipleServicesTicket).additionalOperators !== undefined;
 
 const xsl = `
     <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -81,25 +60,37 @@ const uploadToS3 = async (netex: string, fileName: string): Promise<void> => {
 
 export const generateFileName = (eventFileName: string): string => eventFileName.replace('.json', '.xml');
 
-export const buildNocList = (
-    ticket: PointToPointTicket | PeriodTicket | SchemeOperatorGeoZoneTicket | SchemeOperatorFlatFareTicket,
-): string[] => {
+export const buildNocList = (ticket: Ticket): string[] => {
     const nocs: string[] = [];
 
-    if (hasOnlyUserNoc(ticket)) {
+    if (
+        // has only user noc
+        isPointToPointTicket(ticket) ||
+        isFlatFareTicket(ticket) ||
+        isPeriodGeoZoneTicket(ticket) ||
+        isPeriodMultipleServicesTicket(ticket)
+    ) {
         nocs.push(ticket.nocCode);
-    }
-    if (hasOnlyAdditionalNocs(ticket)) {
+    } else if (
+        // has only additionalNocs
+        isSchemeOperatorGeoZoneTicket(ticket)
+    ) {
         ticket.additionalNocs.forEach(additionalNoc => nocs.push(additionalNoc));
-    }
-    if (hasOnlyAdditionalOperators(ticket)) {
+    } else if (
+        // has only additional operators
+        isSchemeOperatorFlatFareTicket(ticket)
+    ) {
         ticket.additionalOperators.forEach(additionalOperator => nocs.push(additionalOperator.nocCode));
-    }
-    if (hasUserNocAndAdditionalNocs(ticket)) {
+    } else if (
+        // has user noc and additional nocs
+        isMultiOperatorGeoZoneTicket(ticket)
+    ) {
         ticket.additionalNocs.forEach(additionalNoc => nocs.push(additionalNoc));
         nocs.push(ticket.nocCode);
-    }
-    if (hasUserNocAndAdditionalOperators(ticket)) {
+    } else if (
+        // has user noc and additional operators
+        isMultiOperatorMultipleServicesTicket(ticket)
+    ) {
         ticket.additionalOperators.forEach(additionalOperator => nocs.push(additionalOperator.nocCode));
         nocs.push(ticket.nocCode);
     }

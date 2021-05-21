@@ -18,6 +18,7 @@ import {
     SchemeOperatorGeoZoneTicket,
     SchemeOperatorFlatFareTicket,
     SchemeOperatorTicket,
+    isGroupTicket,
 } from '../types/index';
 
 import { getBaseSchemeOperatorInfo } from './period-tickets/periodTicketNetexHelpers';
@@ -52,10 +53,6 @@ export const convertJsonToXml = (netexFileAsJsonObject: NetexObject): string => 
 
     return netexFileAsXmlString;
 };
-
-export const isGroupTicket = (
-    ticket: PeriodTicket | PointToPointTicket | FlatFareTicket | SchemeOperatorTicket,
-): ticket is GroupTicket => (ticket as GroupTicket).groupDefinition !== undefined;
 
 export const getProfileRef = (
     ticket: PeriodTicket | PointToPointTicket | FlatFareTicket | SchemeOperatorTicket,
