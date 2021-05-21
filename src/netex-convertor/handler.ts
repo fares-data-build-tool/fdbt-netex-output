@@ -72,7 +72,7 @@ export const buildNocList = (ticket: Ticket): string[] => {
     ) {
         nocs.push(ticket.nocCode);
     } else if (
-        // has only additionalNocs
+        // has only additional nocs
         isSchemeOperatorGeoZoneTicket(ticket)
     ) {
         ticket.additionalNocs.forEach(additionalNoc => nocs.push(additionalNoc));
