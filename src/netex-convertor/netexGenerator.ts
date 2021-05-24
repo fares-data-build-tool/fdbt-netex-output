@@ -116,7 +116,7 @@ const netexGenerator = (
                 }),
             );
             // check if multiOperator and delete as required
-            if (isMultiOperatorTicket(ticket)) {
+            if (isMultiOperatorTicket(ticket) || isSchemeOperatorFlatFareTicket(ticket)) {
                 publicationRequestToUpdate.topics.NetworkFrameTopic.NetworkFilterByValue.objectReferences.GroupOfOperatorsRef = {
                     version: '1.0',
                     ref: 'operators@bus',
@@ -164,6 +164,7 @@ const netexGenerator = (
         }`}op`;
         resourceFrameToUpdate.codespaces.Codespace.XmlnsUrl.$t = coreData.website;
         resourceFrameToUpdate.dataSources.DataSource.Email.$t = baseOperatorInfo.ttrteEnq;
+
         resourceFrameToUpdate.responsibilitySets.ResponsibilitySet[0].roles.ResponsibilityRoleAssignment.ResponsibleOrganisationRef.ref =
             coreData.nocCodeFormat;
         resourceFrameToUpdate.responsibilitySets.ResponsibilitySet[0].roles.ResponsibilityRoleAssignment.ResponsibleOrganisationRef.$t =
@@ -423,7 +424,7 @@ const netexGenerator = (
             ValidityCondition: validityCondition,
         };
 
-        if (ticket.type === 'multiOperator') {
+        if (ticket.type === 'multiOperator' || isSchemeOperatorFlatFareTicket(ticket)) {
             priceFareFrameToUpdate.tariffs.Tariff.GroupOfOperatorsRef = {
                 version: '1.0',
                 ref: 'operators@bus',
